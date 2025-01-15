@@ -8,16 +8,14 @@ library(ggrepel)
 library(readxl)
 library(readr)
 library("MetBrewer")
-library(scales)
-library("cowplot")
-library(ggpubr)
+
 
 #import imputed ROH data and info
-#info <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
-#roh <- read.csv('~/Downloads/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogwolf.hom', sep="")
+#info <- read.delim('~/Downloads/roh_check/Dog_Wolf_aDNA_WG-Master.tsv')
+#roh <- read.csv('~/Downloads/roh_check/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info <- read.delim(snakemake@input[[1]])
 roh <- read.csv(snakemake@input[[3]], sep="")
- 
+
 colnames(info)[colnames(info) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] ="Dog_PCA"
 colnames(info)[colnames(info) == "Wolf.Dog_PCA"] ="Wolf_Dog_PCA"
 colnames(info)[1] <- "Sample"
@@ -31,8 +29,8 @@ roh$Sample[roh$Sample == 'WolfHead'] <- 'Wolf_head_IN18-016'
 final <- left_join(roh, info %>% dplyr::select(Sample, Wolf_Dog_PCA, Dog_PCA, Meta.Population, Species, Age_Mean_BP), "Sample")
 
 #import modern ROH data and info
-#info_ref <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Modern.tsv')
-#roh_ref <- read.csv('~/Downloads/ref-panel_allchrom_sample-snp_filltags_filter_MAF_0.01_all_sites_hom_win_het_1_dogwolf.hom', sep="")
+#info_ref <- read.delim('~/Downloads/roh_check/Dog_Wolf_aDNA_WG-Modern.tsv')
+#roh_ref <- read.csv('~/Downloads/roh_check/ref-panel_allchrom_sample-snp_filltags_filter_MAF_0.01_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info_ref <- read.delim(snakemake@input[[2]])
 roh_ref <- read.csv(snakemake@input[[4]], sep="")
 colnames(info_ref)[colnames(info_ref) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] = "Dog_PCA"
@@ -74,8 +72,10 @@ final_ref <- left_join(roh_ref, info_ref %>% dplyr::select(Sample, Wolf_Dog_PCA,
 final_ref$Age_Mean_BP <- 0
 
 #import genome sizes per chromosome (for Froh estimation)
+#sizes_autosomes <- read.delim('~/Downloads/CanFam31_allchr_size.genome', header=FALSE)
+#sizes_autosomes <- read.delim(snakemake@input[[5]], header=FALSE)
 sizes_autosomes <- read.table(snakemake@input[[5]], quote="\"", comment.char="")
-#sizes_autosomes <- read.table('~/Downloads/CanFam31_allchrom_size.genome', quote="\"", comment.char="")
+#sizes_autosomes <- read.table('~/Downloads/roh_check/CanFam31_allchrom_size.genome', quote="\"", comment.char="")
 total_genome_size <- sum(sizes_autosomes$V2)
 
 #add type column
@@ -121,6 +121,10 @@ for (i in 1:nrow(t.first)) {
     ab[nrow(ab) + 1, ] <- t.first[i,]
   }
 }
+
+#export table with Froh and ROH data
+write.table(ab, file=snakemake@output[[]], quote=FALSE, sep='\t', row.names = FALSE)
+
 
 
 ##########  PLOTTING  ########## 
@@ -168,38 +172,37 @@ group_names <- c(
 png(snakemake@output[[1]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-a <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-  geom_label_repel(data = no_wolves %>% filter(ROH_tol_2>500 & type!='modern'), 
-                   aes(x=ROH_tol_2, y=n, label=Sample),size=3, box.padding = 1, max.overlaps = Inf)+
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
   labs(x = "Total ROH length (Mb)", y='Total # ROH')+
   labs(fill = "Sample age (ybp)")+
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=18),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-a
 dev.off()
 
 #ROH count against size labelled
 png(snakemake@output[[2]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-b<- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
@@ -209,51 +212,47 @@ b<- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=18),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-b
 dev.off()
 
 #Froh against time per population
 cols <- c('#ce4441','#62929a','#ffbb44')
-
-#create exp(x)-1 transformation, the inverse of log(1+p). (this is to avoid the loess going below 0)
-expm1_trans <-  function() trans_new("expm1", "expm1", "log1p")
-
 png(snakemake@output[[3]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-c <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans()) +
-  coord_trans(y=expm1_trans()) +
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
+  #geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
+  #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=2, box.padding = 1, max.overlaps = Inf)+
   labs(x = "Time (kya)", y=expression(paste(italic('F')[ROH])))+
   theme_bw()+
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-c
 dev.off()
 
 #Froh against time per population labelled
@@ -261,14 +260,12 @@ cols <- c('#ce4441','#62929a','#ffbb44')
 png(snakemake@output[[4]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-d <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans()) +
-  coord_trans(y=expm1_trans()) +
   #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
   #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
@@ -278,83 +275,16 @@ d <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-d
 dev.off()
-
-### coeff plot with names above 0.1 for main text
-c_label_2 <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
-  geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
-  geom_label_repel(data = no_wolves %>% filter(froh > 0.1 & type=='imputed'), 
-                   aes(x = Age_Mean_KBP,y = froh, label=Sample),size=3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1)+
-  scale_fill_manual(values=cols) + 
-  scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans()) +
-  coord_trans(y=expm1_trans()) +
-  labs(x = "Time (kya)", y=expression(paste(italic('F')[ROH])))+
-  theme_bw()+
-  theme(legend.position = "none")+
-  facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
-  theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank())
-
-
-
-#Box plots for Froh of ancient and present-day
-type_names <- c(
-  'imputed' = "Ancient",
-  'modern' = "Present-day"
-)
-
-#specify x-axis names to use
-levels(no_wolves$Meta.Population) <- c('Near East', 'Europe', 'Arctic')
-
-#png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
-par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
-options(scipen = 999)
-e <- ggplot(no_wolves, aes(x=Meta.Population, y=froh)) + 
-  geom_boxplot(aes(fill=Meta.Population),outlier.shape = NA)+
-  geom_jitter(colour='gray28', size=1.5, alpha=0.5)+
-  scale_fill_manual(values=cols) + 
-  scale_x_discrete(labels=c("African_NearEast_India_Dogs" = "Near East", "Arctic_Dogs" = "Arctic",
-                            "European_Dogs" = "Europe"))+
-  theme_bw()+
-  theme(legend.position = "none")+
-  theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_blank(),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  labs(y=expression(paste(italic('F')[ROH])))+
-  facet_grid(. ~ type, labeller = as_labeller(type_names))
-#e
-#dev.off()
-
-
-
 
 #### Mann–Whitney U test to check if Froh is different between the 3 dog pops
 
@@ -473,6 +403,7 @@ for (i in 1:nrow(t.first)) {
 }
 
 
+
 ##########  PLOTTING  ########## 
 
 #############
@@ -515,29 +446,28 @@ group_names <- c(
 png(snakemake@output[[5]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-a_long <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-  geom_label_repel(data = no_wolves %>% filter(ROH_tol_2 > 250 & type=='imputed'), 
-                   aes(x = ROH_tol_2,y = n, label=Sample),size=3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1)+
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
   labs(x = "Total ROH length (Mb) (ROH >= 1.6Mb)", y='Total # ROH (ROH >= 1.6Mb)')+
   labs(fill = "Sample age (ybp)")+
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-a_long
 dev.off()
 
 
@@ -545,9 +475,9 @@ dev.off()
 png(snakemake@output[[6]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-b_long <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
@@ -557,37 +487,31 @@ b_long <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-b_long
 dev.off()
-
-#create exp(x)-1 transformation, the inverse of log(1+p). (this is to avoid the loess going below 0)
-expm1_trans <-  function() trans_new("expm1", "expm1", "log1p")
 
 #Froh against time per population
 cols <- c('#ce4441','#62929a','#ffbb44')
 png(snakemake@output[[7]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-c_long <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans(), labels=c('0.0', '0.1', '0.2', '0.3', '0.4', '0.5'), breaks=c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5)) +
-  coord_trans(y=expm1_trans()) +
-  geom_label_repel(data = no_wolves %>% filter(froh > 0.1 & type=='imputed'), 
-                   aes(x = Age_Mean_KBP,y = froh, label=Sample),size=3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1)+
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
   #geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
   #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=2, box.padding = 1, max.overlaps = Inf)+
   labs(x = "Time (kya)", y=expression(paste(italic('F')[ROH],' (ROH >= 1.6Mb)',sep="")))+
@@ -595,32 +519,28 @@ c_long <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-c_long
 dev.off()
-
 
 #Froh against time per population labelled
 cols <- c('#ce4441','#62929a','#ffbb44')
 png(snakemake@output[[8]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-d_long <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans(), labels=c('0.0', '0.1', '0.2', '0.3', '0.4', '0.5'), breaks=c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5)) +
-  coord_trans(y=expm1_trans()) +
   #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
   #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
@@ -630,55 +550,16 @@ d_long <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-d_long
 dev.off()
-
-
-#Box plots for Froh of ancient and present-day
-type_names <- c(
-  'imputed' = "Ancient",
-  'modern' = "Present-day"
-)
-
-#specify x-axis names to use
-levels(no_wolves$Meta.Population) <- c('Near East', 'Europe', 'Arctic')
-
-#png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
-par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
-options(scipen = 999)
-e_long <- ggplot(no_wolves, aes(x=Meta.Population, y=froh)) + 
-  geom_boxplot(aes(fill=Meta.Population),outlier.shape = NA)+
-  geom_jitter(colour='gray28', size=1.5, alpha=0.5)+
-  scale_fill_manual(values=cols) + 
-  scale_x_discrete(labels=c("African_NearEast_India_Dogs" = "Near East", "Arctic_Dogs" = "Arctic",
-                            "European_Dogs" = "Europe"))+
-  theme_bw()+
-  theme(legend.position = "none")+
-  theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_blank(),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  labs(y=expression(paste(italic('F')[ROH],' (ROH >= 1.6Mb)',sep="")))+
-  ylim(-0.0001, 0.8)+
-  facet_grid(. ~ type, labeller = as_labeller(type_names))
-#e_long
-#dev.off()
-
 
 #### Mann–Whitney U test to check if Froh is different between the 3 dog pops
 
@@ -838,38 +719,37 @@ group_names <- c(
 png(snakemake@output[[9]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-a_short <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-  #geom_label_repel(data = no_wolves %>% filter(ROH_tol_2 > 240 & type=='imputed'), 
-  #                 aes(x = ROH_tol_2,y = n, label=Sample),size=3, box.padding = 1, max.overlaps = Inf, nudge_x = 1)+
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
   labs(x = "Total ROH length (Mb) (ROH < 1.6Mb)", y='Total # ROH (ROH < 1.6Mb)')+
   labs(fill = "Sample age (ybp)")+
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-a_short
 dev.off()
 
 #ROH count against size labelled
 png(snakemake@output[[10]], width=7, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-b_short <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=3, shape=21, alpha=0.8)+
+ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Age_Mean_BP), size=4, shape=21, alpha=0.8)+
   scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option='G') +
   geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
@@ -879,54 +759,45 @@ b_short <- ggplot(no_wolves, aes(x=ROH_tol_2, y=n)) +
   facet_wrap(.~factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs')) , labeller = as_labeller(group_names), ncol = 1, strip.position="right")+
   theme_bw()+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        legend.key.size = unit(0.6, "cm"),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
+        legend.key.size = unit(0.9, "cm"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-b_short
 dev.off()
-
-
-
-#create exp(x)-1 transformation, the inverse of log(1+p). (this is to avoid the loess going below 0)
-expm1_trans <-  function() trans_new("expm1", "expm1", "log1p")
 
 #Froh against time per population
 cols <- c('#ce4441','#62929a','#ffbb44')
 png(snakemake@output[[11]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-c_short <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans()) +
-  coord_trans(y=expm1_trans()) +
-  geom_label_repel(data = no_wolves %>% filter(froh>0.1 & type!='modern'), 
-                   aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 1, max.overlaps = Inf)+
+  #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
+  #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
   labs(x = "Time (kya)", y=expression(paste(italic('F')[ROH],' (ROH < 1.6Mb)',sep="")))+
   theme_bw()+
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-c_short
 dev.off()
 
 #Froh against time per population labelled
@@ -934,14 +805,12 @@ cols <- c('#ce4441','#62929a','#ffbb44')
 png(snakemake@output[[12]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
 options(scipen = 999)
-d_short <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
+ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   geom_smooth(method = "loess", formula = y ~ x, se = TRUE, span=1, aes(fill=Meta.Population), colour="black", size=0.5) +
-  geom_point(data = df_layer_1, size=2, alpha=0.6, colour='grey')+
-  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=3, shape=21, alpha=0.8)+
+  geom_point(data = df_layer_1, size=3, alpha=0.6, colour='grey')+
+  geom_point(data = df_layer_2, aes(fill=Meta.Population), size=4, shape=21, alpha=0.8)+
   scale_fill_manual(values=cols) + 
   scale_x_continuous(breaks=seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
-  scale_y_continuous(trans=log1p_trans()) +
-  coord_trans(y=expm1_trans()) +
   geom_label_repel(data = no_wolves %>% filter(type=='imputed'), 
                    aes(x=Age_Mean_KBP, y=froh, label=Sample),size=2, box.padding = 1, max.overlaps = Inf)+
   #geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs), 
@@ -951,55 +820,16 @@ d_short <- ggplot(no_wolves, aes(x=Age_Mean_KBP, y=froh)) +
   theme(legend.position = "none")+
   facet_grid(factor(Meta.Population, levels=c('African_NearEast_India_Dogs','European_Dogs','Arctic_Dogs'))~. , labeller = as_labeller(group_names))+
   theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_text(size=11),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
+        strip.text = element_text(colour = 'white', size=18),
+        axis.text.y=element_text(size=16),
+        axis.text.x=element_text(size=16),
+        axis.title.y=element_text(size=18),
+        axis.title.x=element_text(size=18),
+        legend.text=element_text(size=16),
+        legend.title=element_text(size=18),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
-d_short
 dev.off()
-
-
-
-#Box plots for Froh of ancient and present-day
-type_names <- c(
-  'imputed' = "Ancient",
-  'modern' = "Present-day"
-)
-
-#specify x-axis names to use
-levels(no_wolves$Meta.Population) <- c('Near East', 'Europe', 'Arctic')
-
-#png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
-par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
-options(scipen = 999)
-e_short <- ggplot(no_wolves, aes(x=Meta.Population, y=froh)) + 
-  geom_boxplot(aes(fill=Meta.Population),outlier.shape = NA)+
-  geom_jitter(colour='gray28', size=1.5, alpha=0.5)+
-  scale_fill_manual(values=cols) + 
-  scale_x_discrete(labels=c("African_NearEast_India_Dogs" = "Near East", "Arctic_Dogs" = "Arctic",
-                            "European_Dogs" = "Europe"))+
-  theme_bw()+
-  theme(legend.position = "none")+
-  theme(strip.background =element_rect(fill="gray28"),
-        strip.text = element_text(colour = 'white', size=11),
-        axis.text.y=element_text(size=11),
-        axis.text.x=element_text(size=11),
-        axis.title.y=element_text(size=11),
-        axis.title.x=element_blank(),
-        legend.text=element_text(size=10),
-        legend.title=element_text(size=11),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank()) +
-  labs(y=expression(paste(italic('F')[ROH],' (ROH < 1.6Mb)',sep="")))+
-  ylim(-0.0001, 0.8)+
-  facet_grid(. ~ type, labeller = as_labeller(type_names))
-#e_short
-#dev.off()
 
 
 #### Mann–Whitney U test to check if Froh is different between the 3 dog pops
@@ -1110,7 +940,7 @@ options(scipen=999)
 
 #all samples, no cutoff
 samples <- read.delim(snakemake@input[[1]])
-#samples <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
+#samples <- read.delim('~/Downloads/roh_check/Dog_Wolf_aDNA_WG-Master.tsv')
 
 
 sites <- samples %>% select('name_haplo_VCF','Lat','Long','Meta.Population','Age_Mean_BP', 'Other_ID')
@@ -1141,22 +971,17 @@ sites_2$Long[sites_2$Sample=='TRF.02.49'] <- 189
 #add column with name and age 
 sites_2$name_age <- paste(sites_2$Sample, " (", sites_2$Age_Mean_BP.x," BP)", sep = "")
 
-
-#png(snakemake@output[[]], width=8, height=8, units='in', res=200, pointsize=4)
+png(snakemake@output[[14]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab  = 2)
-map_plot <- ggplot() + 
+ggplot() + 
   geom_polygon(data = worldmap, 
                aes(x = long, y = lat, group = group), 
                fill = 'gray85', color = 'gray85') + 
   coord_fixed(ratio = 1, xlim = c(-5,190), ylim = c(20, 80)) + 
-  geom_point(data = sites_2 %>% filter(Sample!='KT0056'), 
+  geom_point(data = sites_2, 
              aes(x = as.numeric(Long), 
-                 y = as.numeric(Lat), fill = froh), alpha = .7, size=3, shape=21) +
-  geom_point(data = sites_2 %>% filter(Sample=='KT0056'), 
-             aes(x = as.numeric(Long), 
-                 y = as.numeric(Lat), fill = froh), alpha = .7, size=3, shape=21) +
-  #scale_fill_viridis_c(option='A', trans = "log") + 
-  scale_fill_viridis_c(option='A', direction=-1) + 
+                 y = as.numeric(Lat), fill = froh), alpha = .7, size=3.5, shape=21) +
+  scale_fill_viridis_c(option='A', trans = "log") + 
   geom_label_repel(data = sites_2 %>% filter(froh > 0.1), 
                    aes(x = as.numeric(Long),y = as.numeric(Lat), label=name_age),size=3, box.padding = 1, max.overlaps = Inf)+
   theme(legend.position = 'right', legend.direction = 'vertical') + 
@@ -1171,55 +996,24 @@ map_plot <- ggplot() +
     plot.background = element_rect(fill = "transparent",colour = NA),
     legend.title=element_text(size=11),
     legend.text=element_text(size=10),
-    legend.key.size = unit(0.6, 'cm'),
+    legend.key.size = unit(0.5, 'cm'),
     legend.position = c(0.88, 0.23),
     legend.direction = "vertical")+
-  labs(fill=bquote(""~italic(F)[ROH]*""))
-#map_plot
-#dev.off()
+  labs(fill=bquote(""~F[ROH]*""))
+dev.off()
+
+
+#Box plots for dogs, ancient vs present-day:
 
 
 
-#export FROH values etc:
+
+### Export tables with ROH data per sample:
+
+#merge all rohs, long and short:
 ab$category <- 'all_rohs'
 ab_long$category <- 'long_rohs'
 ab_short$category <- 'short_rohs'
 all_roh_results <- rbind(ab, ab_long, ab_short)
 
-write.table(all_roh_results, file=snakemake@output[[14]], quote=FALSE, sep='\t', row.names = FALSE)
-
-
-#######################
-#fix plots for paper:
-#######################
-
-#main figure
-png(snakemake@output[[15]], width=10, height=9, units='in', res=200, pointsize=4)
-ggdraw() +
-  draw_plot(c_label_2, x = 0.02, y = .4, width = .5, height = .6) +
-  draw_plot(a, x = .55, y = .4, width = .45, height = .6) +
-  draw_plot(map_plot, x = 0, y = 0, width = 1, height = .4) +
-  draw_plot_label(label = c("a", "b", "c"), size = 15,
-                  x = c(0.02, 0.56,0.02), y = c(1, 1, 0.4))
-dev.off()
-
-
-#supp figure:
-png(snakemake@output[[16]], width=10, height=9, units='in', res=200, pointsize=4)
-ggdraw() +
-  draw_plot(c_short, x = 0.03, y = 0, width = .5, height = .5) +
-  draw_plot(a_short, x = .56, y = 0, width = .42, height = .5) +
-  draw_plot(c_long, x = 0.03, y = .5, width = .5, height = .5) +
-  draw_plot(a_long, x = .56, y = .5, width = .42, height = .5) +
-  draw_plot_label(label = c("a", "b", "c", "d"), size = 15,
-                  x = c(0.02, 0.55, 0.02, 0.55), y = c(1, 1, .5, .5))
-dev.off()
-
-
-
-#supp figure boxplot:
-png(snakemake@output[[17]], width=10, height=11, units='in', res=200, pointsize=4)
-ggarrange(e, e_long, e_short, 
-          labels = c("a", "b", "c"),
-          ncol = 1, nrow = 3)
-dev.off()
+write.table(all_roh_results, file=snakemake@output[[15]], quote=FALSE, sep='\t', row.names = FALSE)

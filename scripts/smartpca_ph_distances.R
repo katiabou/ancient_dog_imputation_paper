@@ -150,3 +150,13 @@ ggplot(HC_PC_dist, aes(x=cov, y=Total, colour=type))+
   guides(color = guide_legend(override.aes = list(size = 5)))
   ggtitle(name_title_final)
 dev.off()
+
+
+#get Proportion of green against blue to see how much the pseudohaploid is doing better
+HC_PC_dist_prop <- HC_PC_dist %>% select(Total, cov, type) %>% group_by(cov) %>% 
+                    summarise(ratio_pseudohaploid_imputed = Total[type=="Pseudohaploid"]/Total[type=="Imputed"]) %>% 
+                    mutate(sample=name)
+
+#export data table 
+#write.table(HC_PC_dist_prop, file='~/Downloads/test.tsv', quote=FALSE, sep='\t', row.names = FALSE)
+write.table(HC_PC_dist_prop, file=snakemake@output[[2]], quote=FALSE, sep='\t', row.names = FALSE)

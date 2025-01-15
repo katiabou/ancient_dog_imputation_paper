@@ -11,14 +11,12 @@ rule transversions_validation:
     Only take transversions from filtered validation data
     """
     input:
-        validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation_filt_qual_dp_ab.bcf',
+        validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf',
     output:
-        tranversion_sites = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_transversions.tsv.gz',
-        validation_transversions = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions.vcf.gz'
+        tranversion_sites = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_transversions.tsv.gz',
+        validation_transversions = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions.vcf.gz'
     log:
-        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions.vcf.gz.log'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions.vcf.gz.log'
     shell:
         '''
         bcftools query -e 'REF="A" && ALT="G" || REF="G" && ALT="A" || REF="C" && ALT="T" || REF="T" && ALT="C"' \
@@ -39,15 +37,13 @@ rule make_plink_transversions_validation:
     Prepare file format for plink
     """
     input:
-        validation_transversions = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions.vcf.gz'
+        validation_transversions = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions.vcf.gz'
     output:
-        expand('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_plink.{doc}', doc=DOCS, allow_missing=True)
+        expand('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_plink.{doc}', doc=DOCS, allow_missing=True)
     params:
-        prefix = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_plink'
+        prefix = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_plink'
     log:
-        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_plink.log'
-    #conda:
-        #'../envs/plink19.yaml'
+        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_plink.log'
     shell:
         '''
         plink \
@@ -63,16 +59,14 @@ rule roh_transversions_validation:
     Run ROH estimation with plink
     """
     input:
-        bim = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_plink.bim'
+        bim = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_plink.bim'
     output:
-        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink.hom'
+        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink.hom'
     params:
-        prefix_in = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_plink',
-        prefix_out = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink'
+        prefix_in = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_plink',
+        prefix_out = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink'
     log:
-        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_transversions_hom_win_het_{hom_win_het}_plink.hom.log'
-    #conda:
-        #'../envs/plink19.yaml'
+        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_transversions_hom_win_het_{hom_win_het}_plink.hom.log'
     shell:
         '''
         plink \
@@ -92,10 +86,10 @@ rule roh_transversions_validation:
 
 rule merge_roh_transversions_validation:
     input:
-        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink.hom'
+        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink.hom'
     output:
-        temp1_roh_validation = temp('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp1.hom'),
-        temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom'
+        temp1_roh_validation = temp('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp1.hom'),
+        temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom'
     shell:
         '''
         scp {input.validation_roh} {output.temp1_roh_validation}
@@ -113,15 +107,13 @@ rule make_plink_all_sites_validation:
     Prepare file format for plink
     """
     input:
-        validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation_filt_qual_dp_ab.bcf',
+        validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf',
     output:
-        expand('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_plink.{doc}', doc=DOCS, allow_missing=True)
+        expand('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_plink.{doc}', doc=DOCS, allow_missing=True)
     params:
-        prefix = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_plink'
+        prefix = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_plink'
     log:
-        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_plink.log'
-    #conda:
-        #'../envs/plink19.yaml'
+        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_plink.log'
     shell:
         '''
         plink \
@@ -138,16 +130,14 @@ rule roh_all_sites_validation:
     Run ROH estimation with plink
     """
     input:
-        bim = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_plink.bim'
+        bim = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_plink.bim'
     output:
-        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom'
+        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom'
     params:
-        prefix_in = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_plink',
-        prefix_out = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink'
+        prefix_in = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_plink',
+        prefix_out = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink'
     log:
-        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom.log'
-    #conda:
-        #'../envs/plink19.yaml'
+        '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom.log'
     shell:
         '''
         plink \
@@ -167,10 +157,10 @@ rule roh_all_sites_validation:
 
 rule merge_roh_all_sites_validation:
     input:
-        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom'
+        validation_roh = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom'
     output:
-        temp1_roh_validation = temp('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp1.hom'),
-        temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom_con}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom'
+        temp1_roh_validation = temp('{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp1.hom'),
+        temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom'
     shell:
         '''
         scp {input.validation_roh} {output.temp1_roh_validation}

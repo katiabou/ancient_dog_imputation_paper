@@ -2,10 +2,11 @@
 chromosome_number: '38'
 
 #specify output folder/path
-path: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper/GLIMPSE'
+path: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper_v2/GLIMPSE/GITHUB_SCRIPTS/DOG_IMPUTATION_PAPER'
 
 #path to reference panel
-reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/1715g_WildSled.SNP.INDEL.chrAll.vcf.gz'
+#reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/1715g_WildSled.SNP.INDEL.chrAll.vcf.gz'
+reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/PUBLISHABLE_VERSION/1701g_WildSled.SNP.INDEL.chrAll.vcf.gz'
 
 #reference fasta file
 ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
@@ -15,7 +16,7 @@ ref_validation_list: 'sample_lists/target_names_reference_remove_published.txt'
 
 #genetic maps for concordance ### should check that this is actually accurate
 gen_map_path: '/maps/projects/racimolab/people/qcj125/Siberian_dogs/Reference/dog_recombination/GLIMPSE_formated_gen_maps/'
-gen_map_files: '{chrom_con}_average_canFam3.1_modified.txt'
+gen_map_files: '{chrom}_average_canFam3.1_modified.txt'
 
 #genetic maps for full imputation
 gen_map_files_impute: '{chrom}_average_canFam3.1_modified.txt'
@@ -45,22 +46,20 @@ window_size: '2000000'
 buffer_size: '200000'
 
 
-
 ##### PARAMETERS TO BE CHOSEN AFTER IMPUTATION ACCURACY ASSESSMENT #####
-maf: ['0.0','0.01', '0.02', '0.03', '0.04','0.05']
-maf_cutoff: ['0.01']
-info: '0.8' 
+maf_cutoff: '0.01'
+info_cutoff: '0.8' 
 
 #ROH plink parameters:
 roh:
-  homozyg_density: '50' #OK (Ceballos used 30)
-  homozyg_gap: '500' #not 100% sure
-  homozyg_kb: '500' #OK
-  homozyg_snp: '50' #OK-should be the same as homozyg_window_snp
-  homozyg_window_het: ['0','1'] 
-  homozyg_window_missing: '5' #OK
-  homozyg_window_snp: '50' #OK-should be the same as homozyg_snp
-  homozyg_window_threshold: '0.05' #OK
+  homozyg_density: '50' 
+  homozyg_gap: '500'
+  homozyg_kb: '500' 
+  homozyg_snp: '50' 
+  homozyg_window_het: '1'
+  homozyg_window_missing: '5' 
+  homozyg_window_snp: '50' 
+  homozyg_window_threshold: '0.05'
 
 
 ##### FILES USED FOR PCA #####
@@ -68,12 +67,15 @@ modern_canid_subset: 'sample_lists/ref_panel_filt_{canid_subset}.txt'
 imputed_canid_subset: 'sample_lists/names_imputed_{canid_subset}.txt'
 
 #Reference panel metadata
-#reference_panel_metadata: 'sample_lists/ref_panel_metadata.txt'
 reference_panel_metadata: 'sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv'
 
-# both of these seem to give the same result:
-#canfam31_annotation: '/projects/racimolab/people/qcj125/CanFam31_annotation/Canis_lupus_familiaris.CanFam3.1.104.chr.gtf'
-canfam31_annotation: '/projects/racimolab/people/qcj125/CanFam31_annotation/Canis_lupus_familiaris.CanFam3.1.104.gtf'
+#Canfam3.1 annotation file
+canfam31_annotation: 'data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf'
 
-##### FILES USED FOR adxmiture #####
-#modern_subset_admixture: 'sample_lists/ref_panel_subset_admixture.txt'
+
+#ROHan results from Sabhrina (have to adjust if I use min, mid, max):
+
+#rohan with 1 Mbp window size:
+rohan: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper_v2/GLIMPSE/GITHUB_SCRIPTS/DOG_IMPUTATION_PAPER/data/ROHan/ROHan_4e-5_KatiaPipeline.txt'
+
+

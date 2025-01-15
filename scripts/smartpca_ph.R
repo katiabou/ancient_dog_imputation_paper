@@ -117,7 +117,7 @@ df_layer_2 <- b[b$target!="reference_panel",]
 
 gen_data <- c(
   'imputed' = "Imputed",
-  'non-imputed' = "Pseudohalploid",
+  'non-imputed' = "Pseudohaploid",
   'genotyped' = "HC genotyped",
   'reference_panel' = "Reference panel"
 )

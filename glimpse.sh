@@ -35,7 +35,7 @@ MAX_MEM=$((MAX_MEM - 20480))
 
 flags="--cores 96 "
 #flags+="--nolock "
-#flags+="--keep-going "
+flags+="--keep-going "
 #flags+="--printshellcmds "
 #flags+="--show-failed-logs "
 flags+="--rerun-incomplete "

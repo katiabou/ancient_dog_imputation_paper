@@ -11,24 +11,30 @@ library(scales)
 library(ggridges)
 library(lme4)
 library(broom)
+library(ggpubr)
 
 options(scipen=999)
 
 #imputed dogs
-#hom_sum <-fread("~/Downloads/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.summary")
-#ind_file <- fread("~/Downloads/merged_phased.chr1_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.indiv")
+#hom_sum <-fread("~/Desktop/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.summary")
+#ind_file <- fread("~/Desktop/merged_phased.chr1_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.indiv")
 hom_sum <-fread(snakemake@input[[1]])
 ind_file <- fread(snakemake@input[[2]])
 
 #modern dogs
+#hom_sum_modern <-fread("~/Desktop/ref-panel_allchrom_sample-snp_filltags_filter_MAF_0.01_all_sites_hom_win_het_1_dogs.hom.summary")
+#ind_file_modern <- fread("~/Desktop/ref-panel_chr1_sample-snp_filltags_filter_MAF_0.01_all_sites_hom_win_het_1_dogs.hom.indiv")
 hom_sum_modern <-fread(snakemake@input[[3]])
 ind_file_modern <- read.csv(snakemake@input[[4]], sep="")
 
 #imputed and modern dogs
+#hom_sum_alldogs <-fread("~/Desktop/merged_phased_modern.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.summary")
+#ind_file_alldogs <- fread("~/Desktop/merged_phased_modern.chr1_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogs.hom.indiv")
 hom_sum_alldogs <-fread(snakemake@input[[5]])
 ind_file_alldogs <- fread(snakemake@input[[6]])
 
 #per window coverage estimate file
+#all_cov_window <- read.delim("~/Desktop/dogs_allchrom_windows_cov_500kb.txt", header=FALSE)
 all_cov_window <- read.delim(snakemake@input[[7]], header=FALSE)
 
 
@@ -118,13 +124,13 @@ hom_sum_all <- hom_sum_alldogs %>%
 # UNAFF_n is number of SNPs in a window
 # UNAFF_mean is mean ROH prevalence in a window
 running_roh_all <- winScan(x = hom_sum_all,
-                       groups = "CHR",
-                       position = "BP",
-                       values = "UNAFF",
-                       win_size = 500000,
-                       win_step = 500000,
-                       funs = c("mean"),
-                       cores = 8)
+                           groups = "CHR",
+                           position = "BP",
+                           values = "UNAFF",
+                           win_size = 500000,
+                           win_step = 500000,
+                           funs = c("mean"),
+                           cores = 8)
 
 #prepare region colomn:
 running_roh_all$region <- paste(running_roh_all$CHR,":",running_roh_all$win_start,"-",running_roh_all$win_end, sep="")
@@ -159,7 +165,7 @@ p1 <- ggplot(running_roh_p_all_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_
                      breaks = seq(0, 125000000, by = 10000000),
                      labels = as.character(seq(0, 125000, 10000)/1000))+
   ylab("Chromosome") +
-  scale_fill_gradientn("% of samples with ROH",
+  scale_fill_gradientn("% of present-day and ancient samples with ROH",
                        colors = rev(fill_cols), 
                        #values = qn,
                        limits = c(0, 0.55),
@@ -172,19 +178,23 @@ p1 <- ggplot(running_roh_p_all_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_
                 base_size = 13)+
   theme(panel.spacing.y=unit(0.1, "lines"),
         panel.grid=element_blank(),
-        axis.title.x = element_text(margin=margin(t=5)),
-        axis.title.y = element_text(margin=margin(r=5)),
+        axis.title.x = element_text(margin=margin(t=5), size=15),
+        axis.title.y = element_text(margin=margin(r=5), size=15),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(color = "black"),
+        axis.text.x = element_text(color = "black", size=14),
+        strip.text.y.left = element_text(size = 14, angle = 0),
         axis.ticks.x = element_line(linewidth = 0.3),
         plot.margin = margin(r = 0.5, l = 0.1, b = 0.5, unit = "cm"),
         axis.line.y = element_blank(),
         axis.ticks.y = element_blank(),
-        legend.position = c(0.805,0.13),
+        legend.position = c(0.75,0.13),
         legend.direction = "horizontal",
-        strip.text.y.left = element_text(size = 10, angle = 0),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=15),
         #axis.line.x = element_line(size = 0.3)
   ) +
+  ggtitle('Ancient and present-day')+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size=18))+
   guides(fill = guide_colourbar(title.position = "bottom" ,
                                 barwidth = 12, barheight = 0.8))
 p1
@@ -213,13 +223,13 @@ p2 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) +
                 base_size = 13)+
   theme(legend.position = "none",
         panel.grid=element_blank(),
-        axis.text.x = element_text(size=15),
-        axis.text.y = element_text(size=15),
-        axis.title.y = element_text(size=15),
+        axis.text.x = element_text(size=20),
+        axis.text.y = element_text(size=20),
+        axis.title.y = element_text(size=22),
         axis.ticks.x = element_blank(),
         axis.line.x = element_blank(),
         axis.title.x = element_blank()) + 
-    ylab("Density")
+  ylab("Density")
 
 p2
 
@@ -257,13 +267,13 @@ hom_sum <- hom_sum %>%
 # UNAFF_n is number of SNPs in a window
 # UNAFF_mean is mean ROH prevalence in a window
 running_roh_imputed <- winScan(x = hom_sum,
-                            groups = "CHR",
-                            position = "BP",
-                            values = "UNAFF",
-                            win_size = 500000,
-                            win_step = 500000,
-                            funs = c("mean"),
-                            cores = 8)
+                               groups = "CHR",
+                               position = "BP",
+                               values = "UNAFF",
+                               win_size = 500000,
+                               win_step = 500000,
+                               funs = c("mean"),
+                               cores = 8)
 
 #take for df:
 running_roh_imputed$region <- paste(running_roh_imputed$CHR,":",running_roh_imputed$win_start,"-",running_roh_imputed$win_end, sep="")
@@ -286,7 +296,7 @@ final_window_remove <- joinn %>% filter(Mean<low | Mean>high)
 running_roh_p_imputed_nogrey <- running_roh_p_imputed %>%
   filter(!region %in% final_window_remove$region)
 
-p1 <- ggplot(running_roh_p_imputed_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_mean)) + 
+p3 <- ggplot(running_roh_p_imputed_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_mean)) + 
   #geom_tile(color = "grey", size = 0) +
   geom_tile() +
   geom_tile(data = final_window_remove, aes(x = win_start, y = 0.5), fill = 'grey') +
@@ -295,7 +305,7 @@ p1 <- ggplot(running_roh_p_imputed_nogrey, aes(x = win_start, y = 0.5, fill = UN
                      breaks = seq(0, 125000000, by = 10000000),
                      labels = as.character(seq(0, 125000, 10000)/1000))+
   ylab("Chromosome") +
-  scale_fill_gradientn("% of samples with ROH",
+  scale_fill_gradientn("% of ancient samples with ROH",
                        colors = rev(fill_cols), 
                        #values = qn,
                        limits = c(0,0.55),
@@ -308,31 +318,35 @@ p1 <- ggplot(running_roh_p_imputed_nogrey, aes(x = win_start, y = 0.5, fill = UN
                 base_size = 13)+
   theme(panel.spacing.y=unit(0.1, "lines"),
         panel.grid=element_blank(),
-        axis.title.x = element_text(margin=margin(t=5)),
-        axis.title.y = element_text(margin=margin(r=5)),
+        axis.title.x = element_text(margin=margin(t=5), size=15),
+        axis.title.y = element_text(margin=margin(r=5), size=15),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(color = "black"),
+        axis.text.x = element_text(color = "black", size=14),
+        strip.text.y.left = element_text(size = 14, angle = 0),
         axis.ticks.x = element_line(linewidth = 0.3),
         plot.margin = margin(r = 0.5, l = 0.1, b = 0.5, unit = "cm"),
         axis.line.y = element_blank(),
         axis.ticks.y = element_blank(),
-        legend.position = c(0.805,0.13),
+        legend.position = c(0.75,0.13),
         legend.direction = "horizontal",
-        strip.text.y.left = element_text(size = 10, angle = 0),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=15),
         #axis.line.x = element_line(size = 0.3)
   ) +
+  ggtitle('Ancient')+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size=18))+
   guides(fill = guide_colourbar(title.position = "bottom" ,
                                 barwidth = 12, barheight = 0.8))
-p1
+p3
 
-ggsave(snakemake@output[[4]], p1, width = 7, height = 6, bg='transparent')
+ggsave(snakemake@output[[4]], p3, width = 7, height = 6, bg='transparent')
 
 
 #density plot (add manually to previous plot)
 x <- running_roh_p_imputed_nogrey$UNAFF_mean
 y <- density(x, n = 2^12)
 
-p2 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) + 
+p4 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) + 
   geom_line() + 
   geom_segment(aes(xend = x, yend = 0, color = x)) +
   scale_x_continuous(expand = c(0, 0), 
@@ -349,17 +363,18 @@ p2 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) +
                 base_size = 13)+
   theme(legend.position = "none",
         panel.grid=element_blank(),
-        axis.text.x = element_text(size=15),
-        axis.text.y = element_text(size=15),
-        axis.title.y = element_text(size=15),
+        axis.text.x = element_text(size=20),
+        axis.text.y = element_text(size=20),
+        axis.title.y = element_text(size=22),
         axis.ticks.x = element_blank(),
         axis.line.x = element_blank(),
         axis.title.x = element_blank()) + 
   ylab("Density")
 
-p2
+p4
 
-ggsave(snakemake@output[[5]], p2, width = 5, height = 2.5)
+ggsave(snakemake@output[[5]], p4, width = 5, height = 2.5)
+#ggsave('~/Desktop/den_imp.png', p4, width = 5, height = 2.5)
 
 #get 5% of rows:
 #perc <- round(nrow(running_roh_p_imputed_nogrey)*0.05)
@@ -389,13 +404,13 @@ hom_sum_modern <- hom_sum_modern %>%
 # UNAFF_n is number of SNPs in a window
 # UNAFF_mean is mean ROH prevalence in a window
 running_roh_modern <- winScan(x = hom_sum_modern,
-                               groups = "CHR",
-                               position = "BP",
-                               values = "UNAFF",
-                               win_size = 500000,
-                               win_step = 500000,
-                               funs = c("mean"),
-                               cores = 8)
+                              groups = "CHR",
+                              position = "BP",
+                              values = "UNAFF",
+                              win_size = 500000,
+                              win_step = 500000,
+                              funs = c("mean"),
+                              cores = 8)
 
 #take for df:
 running_roh_modern$region <- paste(running_roh_modern$CHR,":",running_roh_modern$win_start,"-",running_roh_modern$win_end, sep="")
@@ -417,9 +432,9 @@ final_window_remove <- joinn %>% filter(Mean<low | Mean>high)
 
 #remove windows with extreme depth estimates (may have CNVs):
 running_roh_p_modern_nogrey <- running_roh_p_modern %>%
-                               filter(!region %in% final_window_remove$region)
+  filter(!region %in% final_window_remove$region)
 
-p1 <- ggplot(running_roh_p_modern_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_mean)) + 
+p5 <- ggplot(running_roh_p_modern_nogrey, aes(x = win_start, y = 0.5, fill = UNAFF_mean)) + 
   #geom_tile(color = "grey", size = 0) +
   geom_tile() +
   geom_tile(data = final_window_remove, aes(x = win_start, y = 0.5), fill = 'grey') +
@@ -428,7 +443,7 @@ p1 <- ggplot(running_roh_p_modern_nogrey, aes(x = win_start, y = 0.5, fill = UNA
                      breaks = seq(0, 125000000, by = 10000000),
                      labels = as.character(seq(0, 125000, 10000)/1000))+
   ylab("Chromosome") +
-  scale_fill_gradientn("% of samples with ROH",
+  scale_fill_gradientn("% of present-day samples with ROH",
                        colors = rev(fill_cols), 
                        #values = qn,
                        limits = c(0,0.55),
@@ -442,31 +457,35 @@ p1 <- ggplot(running_roh_p_modern_nogrey, aes(x = win_start, y = 0.5, fill = UNA
                 base_size = 13)+
   theme(panel.spacing.y=unit(0.1, "lines"),
         panel.grid=element_blank(),
-        axis.title.x = element_text(margin=margin(t=5)),
-        axis.title.y = element_text(margin=margin(r=5)),
+        axis.title.x = element_text(margin=margin(t=5), size=15),
+        axis.title.y = element_text(margin=margin(r=5), size=15),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(color = "black"),
+        axis.text.x = element_text(color = "black", size=14),
+        strip.text.y.left = element_text(size = 14, angle = 0),
         axis.ticks.x = element_line(linewidth = 0.3),
         plot.margin = margin(r = 0.5, l = 0.1, b = 0.5, unit = "cm"),
         axis.line.y = element_blank(),
         axis.ticks.y = element_blank(),
-        legend.position = c(0.805,0.13),
+        legend.position = c(0.75,0.13),
         legend.direction = "horizontal",
-        strip.text.y.left = element_text(size = 10, angle = 0),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=15),
         #axis.line.x = element_line(size = 0.3)
   ) +
+  ggtitle('Present-day')+
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size=18))+
   guides(fill = guide_colourbar(title.position = "bottom" ,
                                 barwidth = 12, barheight = 0.8))
-p1
+p5
 
-ggsave(snakemake@output[[6]], p1, width = 7, height = 6, bg='transparent')
+ggsave(snakemake@output[[6]], p5, width = 7, height = 6, bg='transparent')
 
 
 #density plot (add manually to previous plot)
 x <- running_roh_p_modern_nogrey$UNAFF_mean
 y <- density(x, n = 2^12)
 
-p2 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) + 
+p6 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) + 
   geom_line() + 
   geom_segment(aes(xend = x, yend = 0, color = x)) +
   scale_x_continuous(expand = c(0, 0), 
@@ -484,17 +503,18 @@ p2 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) +
                 base_size = 13)+
   theme(legend.position = "none",
         panel.grid=element_blank(),
-        axis.text.x = element_text(size=15),
-        axis.text.y = element_text(size=15),
-        axis.title.y = element_text(size=15),
+        axis.text.x = element_text(size=20),
+        axis.text.y = element_text(size=20),
+        axis.title.y = element_text(size=22),
         axis.ticks.x = element_blank(),
         axis.line.x = element_blank(),
         axis.title.x = element_blank()) + 
   ylab("Density")
 
-p2
+p6
 
-ggsave(snakemake@output[[7]], p2, width = 5, height = 2.5)
+ggsave(snakemake@output[[7]], p6, width = 5, height = 2.5)
+#ggsave('~/Desktop/den_mod.png', p6, width = 5, height = 2.5)
 
 
 #get 5% of rows:
@@ -728,3 +748,17 @@ stats1 = res_hyper1[[1]]
 
 #output table with GO terms:
 write.table(stats1, snakemake@output[[17]], sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+
+
+
+
+
+####################################### merge_plots  ######################################
+
+#supp figure heatmap:
+png(snakemake@output[[18]], width=17, height=10, units='in', res=200, pointsize=4)
+#png('~/Desktop/heat.png', width=17, height=10, units='in', res=200, pointsize=4)
+ggarrange(p3, p5,
+          labels = c("a", "b"),
+          ncol = 2, nrow = 1, font.label=list(size=20))
+dev.off()

@@ -8,23 +8,21 @@ rule compute_GLs_HC_samples_concordance:
     Compute GLs of HC target bams 
     """
     input:
-        target_bams_chr = '{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom_con}.bam',
-        ref_panel_sites_vcf = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_sites.vcf.gz',
-        ref_panel_sites_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_sites.tsv.gz',
-        ref_fasta_chr = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom_con}.fasta'
+        target_bams_chr = '{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam',
+        ref_panel_sites_vcf = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz',
+        ref_panel_sites_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz',
+        ref_fasta_chr = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta'
     output:
-        GL_vcf_HC_target_bams = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom_con}.vcf.gz',
-        GL_vcf_HC_target_bams_csi = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom_con}.vcf.gz.csi'
+        GL_vcf_HC_target_bams = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz',
+        GL_vcf_HC_target_bams_csi = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz.csi'
     log:
-        '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom_con}.log'
+        '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.log'
     threads: 8
     benchmark:
-        '{path}/benchmarks/GLs_target_bams/{sample}_{chrom_con}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/benchmarks/GLs_target_bams/{sample}_{chrom}.tsv'
     shell:
         '''
-        bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom_con} {input.target_bams_chr} -Ou | \
+        bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.target_bams_chr} -Ou | \
         bcftools call -Aim -C alleles -T {input.ref_panel_sites_tsv} -Oz -o {output.GL_vcf_HC_target_bams} --threads {threads} 2> {log}
         
         bcftools index -f {output.GL_vcf_HC_target_bams}
@@ -32,26 +30,24 @@ rule compute_GLs_HC_samples_concordance:
 
 rule impute_HC_concordance:
     """
-    Impute all samples at the same time!!!
+    Impute each sample seperately
     """
     input:
-        GL_vcf_HC_target_bams = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom_con}.vcf.gz',
-        ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.bcf',
-        chunks = '{path}/output/GLIMPSE_concordance/chunks/{chrom_con}_chunks.txt'
+        GL_vcf_HC_target_bams = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz',
+        ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf',
+        chunks = '{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt'
     output:
-        imputed = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}.00.bcf',
-        imputed_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}.00.bcf.csi'
+        imputed = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf',
+        imputed_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf.csi'
     params:    
         gen_map_path = config['gen_map_path'],
         gen_map_files = config['gen_map_files'],
-        prefix = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}'
+        prefix = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}'
     threads: 2
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}.log'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.log'
     benchmark:
-        '{path}/benchmarks/GLIMPSE_imputed/{sample}_{chrom_con}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/benchmarks/GLIMPSE_imputed/{sample}_{chrom}.tsv'
     shell:
         '''
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -74,14 +70,12 @@ rule ligate_HC_list_concordance:
     Create list of imputed output files for each chunk to merge later
     """
     input:
-        chunks = '{path}/output/GLIMPSE_concordance/chunks/{chrom_con}_chunks.txt',
-        imputed = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}.00.bcf'
+        chunks = '{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt',
+        imputed = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf'
     output:
-        ligated_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom_con}.txt'
+        ligated_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt'
     params:
-        prefix = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom_con}'
-    #conda:
-        #'../envs/environment.yaml'
+        prefix = '{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}'
     shell:
         '''
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -96,17 +90,15 @@ rule ligate_HC_concordance:
     Merge all imputed chunks
     """
     input:
-        ligated_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom_con}.txt'
+        ligated_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt'
     output:
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf',
-        ligated_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf.csi'
+        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf',
+        ligated_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf.csi'
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.log'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.log'
     threads: 8
     benchmark:
-        '{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv'
     shell:
         '''
         {glimpse_ligate} \
@@ -122,17 +114,15 @@ rule phase_HC_concordance:
     Phase!!!
     """
     input:
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf'
+        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf'
     output:
-        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}.bcf',
-        phased_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}.bcf.csi'
+        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf',
+        phased_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf.csi'
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}.log'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.log'
     threads: 8
     benchmark:
-        '{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom_con}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}.tsv'
     shell:
         '''
         {glimpse_sample} \
@@ -147,17 +137,15 @@ rule filter_info_score_HC:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf',
+        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf',
     output:
-        info_imputed_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom_con}-INFO_{info_cutoff}.bcf',
-        info_imputed_info_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom_con}-INFO_{info_cutoff}.bcf.csi'
+        info_imputed_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf',
+        info_imputed_info_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf.csi'
     params:
         info_val = '{info_cutoff}'
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom_con}-INFO_{info_cutoff}.log'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.log'
     threads: 8
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         bcftools view {input.ligated_bcf} \
@@ -168,81 +156,46 @@ rule filter_info_score_HC:
         bcftools index -f {output.info_imputed_info}
         '''
 
-rule get_ID_for_targets_HC:
+
+
+#######################################
+#                                     #
+#  Run GLIMPSE concordance all chrom  #
+#                                     #
+#######################################
+
+rule prepare_merged_chr_list_HC_concordance:
+    """ 
+    Prepare list to merge chromosomes for reference, imputed and validation
+    """
     input:
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf',
+        info_imputed_info = expand('{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf', chrom=CHROM, allow_missing=True),
     output:
-        sm_samples = '{path}/output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom_con}.txt'
-    #conda:
-        #'../envs/environment.yaml'
+        chr_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt',
     shell:
         '''
-        bcftools query -l {input.ligated_bcf} > {output.sm_samples}
-        '''
+        ls -v {input.info_imputed_info} >> {output.chr_list}
+        '''  
 
-rule prepare_HC_concordance_lst_info_score_filtered:
+rule merge_chr_HC_concordance:
     """
-    Prepare the lst files required to run GLIMPSE_concordance
+    Filter sites based on different INFO score cutoffs
     """
     input:
-        ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.bcf',
-        validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation_filt_qual_dp_ab.bcf',
-        info_imputed_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom_con}-INFO_{info_cutoff}.bcf'
+        chr_list = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt',
     output:
-        concordance_lst_info_score_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered.lst'
-    #conda:
-        #'../envs/environment.yaml'
-    shell:
-        '''
-        echo {wildcards.chrom_con} {input.ref_concordance_sample_excl_filltags_filter} {input.validation_sample_filt_allelic} {input.info_imputed_info} > {output.concordance_lst_info_score_filtered}
-        '''
-
-rule GLIMPSE_concordance_HC_info_score_filtered:
-    """
-    Run GLIMPSE concordance specifying the target sample we want
-    """
-    input:
-        concordance_lst_info_score_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered.lst',
-        sm_samples = '{path}/output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom_con}.txt'
-    output:
-        concordance_output_info_score_sample_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz',
-        concordance_output_discordance_sample_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered.error.spl.txt.gz'
-    params:
-        prefix = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered'
+        info_imputed_info_allchrom = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf',
+        info_imputed_info_allchrom_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf.csi'
     log:
-        '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_{info_cutoff}_filtered.log'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.log'
     threads: 8
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
-        {glimpse_concordance} \
-        --input {input.concordance_lst_info_score_filtered} \
-        --minDP 8 \
-        --output {params.prefix} \
-        --minPROB 0.9 \
-        --bins 0.00000 0.00100 0.00200 0.00500 0.01000 0.05000 0.10000 0.20000 0.50000 \
-        --sample {input.sm_samples} \
-        --af-tag AF \
-        --thread {threads} 2> {log}
+        bcftools concat \
+        --file-list {input.chr_list} \
+        -Ob -o {output.info_imputed_info_allchrom} \
+        --threads {threads} 2> {log}
+
+        bcftools index -f {output.info_imputed_info_allchrom}
         '''
 
-rule plot_rsquare_accuracy_HC_sample_filtered:
-    """
-    Plot accuracy 
-    """
-    input:
-        concordance_output_info_score_1 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_0.8_filtered.rsquare.grp.txt.gz',
-        concordance_output_info_score_2 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_0.9_filtered.rsquare.grp.txt.gz',
-        concordance_output_info_score_3 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_0.95_filtered.rsquare.grp.txt.gz',
-        concordance_output_info_score_4 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom_con}-INFO_0.0_filtered.rsquare.grp.txt.gz'
-    output:
-        plot = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_{sample}_{chrom_con}_filtered.png'
-    params:
-        chr = '{chrom_con}',
-        name = '{sample}',
-        cov = 'HC_imputed'
-    #conda:
-        #'../envs/r4.3.1.yaml'
-    script:
-        "../scripts/rsquare_accuracy.R"

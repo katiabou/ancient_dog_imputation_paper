@@ -66,7 +66,7 @@ final_ref$Age_Mean_BP <- 0
 
 dog_list <- c('AfghanHound01','Basenji02','IndigenousDogNigeria02','Saluki01_1233','AlaskanHusky01',
               'AlaskanMalamute02','Beagle02','BelgianMalinois01','BorderCollie01','BullTerrier01',
-              'CockerSpanielAmerican01_11414','GL01.01','GermanShepherd01','GoldenRetriever01','LabradorRetriever01',
+              'CockerSpanielAmerican01_11414','GreenlandDog01','GermanShepherd01','GoldenRetriever01','LabradorRetriever01',
               'Pomeranian01','Samoyed01_176', 'YorkshireTerrier01')
 
 sub_ref <- subset(final_ref, FID %in% dog_list)

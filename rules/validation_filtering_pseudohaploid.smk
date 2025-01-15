@@ -3,55 +3,14 @@
 ##########################################################
 
 
-rule create_bamlist_per_sample:
-    """
-    Create list of bam files for HC target bams before PH calling
-    """
-    input:
-        target_bams_chr = '{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom_con}.bam'
-    output:
-        target_bams_chr_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom_con}.txt'
-    shell:
-        '''
-        ls  {input.target_bams_chr} > {output.target_bams_chr_list}
-        '''
-
-rule pseudohaploid_calling_HC:
-    """
-    PH calling for HC target samples on ALL SITES and not the reference panel sites, since it's crazy slow if you specify regions
-    """
-    input:
-        target_bams_chr_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom_con}.txt'
-    output:
-        validation_sample_filt_pseudohaploid_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation.haplo.gz'
-    params:    
-        prefix = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation'
-    threads: 2
-    log:
-        '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation.haplo.gz.log'
-    #conda:
-        #'../envs/angsd09.yaml'
-    shell:
-        '''
-        angsd -b {input.target_bams_chr_list} \
-        -doHaploCall 1 \
-        -doCounts 1 \
-        -minMapQ 30 -minQ 30 \
-        -trim 5 \
-        -noTrans 1 \
-        -P {threads} \
-        -checkBamHeaders 0 \
-        -out {params.prefix} 2> {log}
-        '''
-
 rule create_bamlist_per_sample_downsampled:
     """
     Create list of bam files for downsampled target bams before PH calling
     """
     input:
-        downsampled_bam = '{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom_con}_{coverage_val}x.bam'
+        downsampled_bam = '{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam'
     output:
-        downsampled_bam_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom_con}_{coverage_val}x.txt'
+        downsampled_bam_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom}_{coverage_val}x.txt'
     shell:
         '''
         ls  {input.downsampled_bam} > {output.downsampled_bam_list}
@@ -62,16 +21,14 @@ rule pseudohaploid_calling_downsampled:
     PH calling for downsampled target samples on ALL SITES and not the reference panel sites, since it's crazy slow if you specify regions
     """
     input:
-        downsampled_bam_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom_con}_{coverage_val}x.txt'
+        downsampled_bam_list = '{path}/output/GLIMPSE_concordance/target_bams/list_{sample}_{chrom}_{coverage_val}x.txt'
     output:
-        validation_sample_filt_pseudohaploid_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_{coverage_val}x_validation.haplo.gz'
+        validation_sample_filt_pseudohaploid_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_{coverage_val}x_validation.haplo.gz'
     params:    
-        prefix = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_{coverage_val}x_validation'
+        prefix = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_{coverage_val}x_validation'
     threads: 2
     log:
-        '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_{coverage_val}x_validation.haplo.gz.log'
-    #conda:
-        #'../envs/angsd09.yaml'
+        '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_{coverage_val}x_validation.haplo.gz.log'
     shell:
         '''
         angsd -b {input.downsampled_bam_list} \

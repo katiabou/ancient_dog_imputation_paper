@@ -12,20 +12,18 @@ rule MAF_sites_ref_pan:
     Extract sites using a MAF filter from the reference panel 
     """
     input:
-        ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.bcf'
+        ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf'
     output:
-        ref_concordance_sample_excl_filltags_filter_maf_vcf = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.vcf.gz',
-        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.tsv.gz'
-    #params:
-    #    maf=config['maf']
+        ref_concordance_sample_excl_filltags_filter_maf_vcf = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.vcf.gz',
+        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz'
+    params:
+        maf=config['maf_cutoff']
     log:
-        '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.bcf.log'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.bcf.log'
     shell:
         '''
         bcftools view \
-        -q {wildcards.maf}:minor \
+        -q {params.maf}:minor \
         {input.ref_concordance_sample_excl_filltags_filter} \
         -Oz -o {output.ref_concordance_sample_excl_filltags_filter_maf_vcf} 2> {log}
         
@@ -37,48 +35,44 @@ rule MAF_sites_ref_pan:
         tabix -s1 -b2 -e2 {output.ref_concordance_sample_excl_filltags_filter_maf_tsv}
         '''
 
-rule maf_INFO_sites_concordance_imputed:
-    """
-    Extract MAF and INFO filtered sites from imputed VCF
-    """
-    input:
-        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.tsv.gz',
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x.bcf',
-    output:
-        imputed_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
-    params:
-        info=config['info']
-    log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log'
-    #conda:
-        #'../envs/environment.yaml'
-    threads: 8
-    shell:
-        '''
-        bcftools view {input.ligated_bcf} \
-        --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
-        --include 'INFO/INFO >= {params.info}' \
-        --threads {threads} \
-        -Oz -o {output.imputed_maf_info} 2> {log}
+# rule maf_INFO_sites_concordance_imputed:
+#     """
+#     Extract MAF and INFO filtered sites from imputed VCF
+#     """
+#     input:
+#         ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz',
+#         ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x.bcf',
+#     output:
+#         imputed_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
+#     params:
+#         info=config['info']
+#     log:
+#         '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log'
+#     threads: 8
+#     shell:
+#         '''
+#         bcftools view {input.ligated_bcf} \
+#         --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
+#         --include 'INFO/INFO >= {params.info}' \
+#         --threads {threads} \
+#         -Oz -o {output.imputed_maf_info} 2> {log}
 
-        bcftools index -f {output.imputed_maf_info}
-        '''
+#         bcftools index -f {output.imputed_maf_info}
+#         '''
 
 rule maf_INFO_sites_concordance_phased:
     """
     Extract MAF and INFO filtered sites from phased VCF
     """
     input:
-        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.tsv.gz',
-        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_{coverage_val}x.bcf',
+        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz',
+        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf',
     output:
-        phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
+        phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
     params:
-        info=config['info']
+        info=config['info_cutoff']
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log'
     threads: 8
     shell:
         '''
@@ -90,6 +84,7 @@ rule maf_INFO_sites_concordance_phased:
 
         bcftools index -f {output.phased_maf_info}
         '''
+        
 #rule make_lov_cov_sample_file_concordance:
 #    """
 #    Remove low coverage samples from imputed dataset (<0.5x)
@@ -140,48 +135,44 @@ rule maf_INFO_sites_concordance_phased:
 
 ### HC imputed ###
 
-rule maf_INFO_sites_concordance_HC_imputed:
-    """
-    Extract MAF sites from HC imputed VCF
-    """
-    input:
-        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.tsv.gz',
-        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf',
-    output:
-        imputed_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz'
-    params:
-        info=config['info']
-    log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz.log'
-    #conda:
-        #'../envs/environment.yaml'
-    threads: 8
-    shell:
-        '''
-        bcftools view {input.ligated_bcf} \
-        --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
-        --include 'INFO/INFO >= {params.info}' \
-        --threads {threads} \
-        -Oz -o {output.imputed_maf_info} 2> {log}
+# rule maf_INFO_sites_concordance_HC_imputed:
+#     """
+#     Extract MAF sites from HC imputed VCF
+#     """
+#     input:
+#         ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz',
+#         ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}.bcf',
+#     output:
+#         imputed_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz'
+#     params:
+#         info=config['info']
+#     log:
+#         '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz.log'
+#     threads: 8
+#     shell:
+#         '''
+#         bcftools view {input.ligated_bcf} \
+#         --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
+#         --include 'INFO/INFO >= {params.info}' \
+#         --threads {threads} \
+#         -Oz -o {output.imputed_maf_info} 2> {log}
 
-        bcftools index -f {output.imputed_maf_info}
-        '''
+#         bcftools index -f {output.imputed_maf_info}
+#         '''
 
 rule maf_INFO_sites_concordance_HC_phased:
     """
     Extract MAF sites from HC phased VCF
     """
     input:
-        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter_MAF_{maf}.tsv.gz',
-        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}.bcf',
+        ref_concordance_sample_excl_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz',
+        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf',
     output:
-        phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz'
+        phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz'
     params:
-        info=config['info']
+        info=config['info_cutoff']
     log:
-        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz.log'
-    #conda:
-        #'../envs/environment.yaml'
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz.log'
     threads: 8
     shell:
         '''
@@ -221,5 +212,6 @@ rule maf_INFO_sites_concordance_HC_phased:
 
 #        tabix -p vcf {output.phased_vcf_maf_info}
 #        '''
+
 
 

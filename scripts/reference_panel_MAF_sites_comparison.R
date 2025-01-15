@@ -49,7 +49,7 @@ cols = met.brewer(name="Demuth", n=8, type="discrete") #cb friendly nice
 ref.labs <- c("All canid reference panel", "Dog reference panel")
 names(ref.labs) <- c("all_canids", "dogs_only")
 
-sample.labs <- c("Pleistocene wolf (CGG32 1x)", "Neolithic European dog (Newgrange 0.5x)")
+sample.labs <- c("Pleistocene wolf (CGG32 1x)", "Neolithic European dog (NGDG 0.5x)")
 names(sample.labs) <- c("CGG32_1", "NGDG_0.5")
 
 #change bar order
@@ -61,11 +61,16 @@ melt_data2 <- melt_data2 %>%
   mutate(value_2 = value / 1000)
 
 #barplot
-ggplot(data=melt_data2, aes(x=INFO, y=value_2, fill=MAF_bins)) +
+ggplot(data=melt_data2, aes(x=INFO, y=value_2, fill=MAF_bins, label = round(value_2, digits = 0))) +
   geom_bar(stat="identity")+
+  geom_text(size = 3.5, position = position_stack(vjust = 0.5))+
+  geom_text(
+    aes(label = round(after_stat(y), digits = 0), group = INFO), 
+    stat = 'summary', fun = sum, vjust = -0.5
+  )+
   facet_grid(Sample_cov ~ Ref_panel, labeller=labeller(Ref_panel=ref.labs, Sample_cov=sample.labs))+
   scale_fill_manual(values = cols, name = "MAF bins")+
-  scale_y_continuous(breaks = seq(0, 1600, by = 100))+
+  #scale_y_continuous(breaks = seq(0, 1600, by = 100))+
   ylab(bquote("Number of sites " (10^3)))+
   theme_bw()+
   theme(axis.text.x=element_text(size = 14, vjust = 0.5)) +
@@ -81,5 +86,4 @@ ggplot(data=melt_data2, aes(x=INFO, y=value_2, fill=MAF_bins)) +
   theme(panel.grid.major.x = element_blank()) +
   theme(legend.key.size = unit(0.8, "cm"))
 ggsave(snakemake@output[[1]], width = 14, height = 10)
-
 

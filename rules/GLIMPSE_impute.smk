@@ -14,8 +14,6 @@ rule extract_chrom_ref_fast:
     output:
         ref_fasta_chr = '{path}/output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta',
         ref_fasta_chr_fai = '{path}/output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta.fai'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         samtools faidx {input.ref_fasta} {wildcards.chrom} > {output.ref_fasta_chr}
@@ -27,7 +25,7 @@ rule extract_var_pos:
     Extract sites from reference panel to use for GLs estimation from bams afterwards
     """
     input:
-        ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz'
+        ref_panel_phased = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz',
     output:
         ref_panel_sites_vcf = '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.vcf.gz',
         ref_panel_sites_tsv = '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv.gz'
@@ -36,12 +34,10 @@ rule extract_var_pos:
     threads: 10
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         bcftools view -G -m 2 -M 2 -v snps \
-        {input.ref_sample_snp_filltags_filter} \
+        {input.ref_panel_phased} \
         --threads {threads} \
         -Oz -o {output.ref_panel_sites_vcf} 2> {log}
 
@@ -69,8 +65,6 @@ rule compute_GLs_imputed_samples:
     threads: 10
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.imputation_bams} -Ou | \
@@ -78,30 +72,6 @@ rule compute_GLs_imputed_samples:
         
         bcftools index -f {output.GL_imputed_bams}
         '''
-
-#rule merge_GLs:
-#    """
-#    Merge GLs of all samples per chromosome
-#    """
-#    input:
-#        GL_vcf_imputed_bams = expand('{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz', bam_imputation=BAM, allow_missing=True)
-#    output:
-#        GL_list = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/merged/list_{chrom}.txt',
-#        GL_merg = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/merged/merged.{chrom}.vcf.gz'
-#    log:
-#        '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/merged/merged.{chrom}.log'
-#    threads: 10
-#    benchmark:
-#        '{path}/benchmarks/GLIMPSE_imputation/GLs_imputed_bams/merged/merged.{chrom}.tsv'
-#    #conda:
-#        #'../envs/environment.yaml'
-#    shell:
-#        '''
-#        ls {input.GL_vcf_imputed_bams} > {output.GL_list}
-#        bcftools merge -m none -r {wildcards.chrom} -Oz -o {output.GL_merg} -l {output.GL_list} --threads {threads} 2> {log}
-        
-#        bcftools index -f {output.GL_merg}
-#        '''
 
 rule chunk_spliting:
     """
@@ -116,8 +86,6 @@ rule chunk_spliting:
     params:
         window_size = config['window_size'],
         buffer_size = config['buffer_size']
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         {glimpse_chunk} \
@@ -132,9 +100,9 @@ rule imput_phase:
     Impute all samples individually
     """
     input:
-        #GL_merg = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/merged/merged.{chrom}.vcf.gz',
         GL_imputed_bams = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz',
-        ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
+        #ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
+        ref_panel_phased = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz',
         chunks = '{path}/output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt'
     output:
         imputed = expand('{path}/output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf', allow_missing = True)
@@ -147,8 +115,6 @@ rule imput_phase:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.log'
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -158,7 +124,7 @@ rule imput_phase:
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
             {glimpse_impute} \
-            --input {input.GL_imputed_bams} --reference {input.ref_sample_snp_filltags_filter} --map {params.gen_map_path}{params.gen_map_files} \
+            --input {input.GL_imputed_bams} --reference {input.ref_panel_phased} --map {params.gen_map_path}{params.gen_map_files} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
             --thread {threads}
@@ -177,8 +143,6 @@ rule ligate_list:
         ligated_list = '{path}/output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated_list.{chrom}.txt'
     params:
         prefix = '{path}/output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -201,8 +165,6 @@ rule ligate:
     threads: 10
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.tsv'
-    #conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         {glimpse_ligate} \
@@ -226,8 +188,6 @@ rule sample_haplotype:
     threads: 10
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.tsv'
-    ##conda:
-        #'../envs/environment.yaml'
     shell:
         '''
         {glimpse_sample} \
@@ -237,4 +197,25 @@ rule sample_haplotype:
         --thread {threads} 2> {log}
         
         bcftools index -f {output.phased_bcf}
+        '''
+
+rule annotate_fields:
+    input:
+        phased_bcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf',
+        GL_imputed_bams = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz',
+    output:
+        phased_vcf_annotate = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz',
+    log:
+        '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.bcf.log'
+    benchmark:
+        '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.bcf.tsv'
+    shell:
+        '''
+        bcftools annotate \
+        --annotations {input.GL_imputed_bams} \
+        --columns 'FORMAT/PL' \
+        --output-type z \
+        --output {output.phased_vcf_annotate} {input.phased_bcf} 2> {log}
+        
+        bcftools index --tbi {output.phased_vcf_annotate}
         '''

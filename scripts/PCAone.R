@@ -14,17 +14,10 @@ meta <- read.delim(snakemake@input[[4]])
 info <- read.delim(snakemake@input[[5]])
 canid_group <- as.character(snakemake@params[["canid_group"]])
 
-# eigenval_output <- read.table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves_eigenval_output', quote="\"", comment.char="")
-# eigenvec_output <- read_table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves_eigenvec_output', col_names = FALSE)
-# fam <- read.table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves-mod.fam', quote="\"", comment.char="")
-# meta <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Modern.tsv')
-# info <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
-# canid_group <- 'Wolves'
 
 #fix modern metadata file column name (can't use the meta.population column since it has gaps)
 colnames(meta)[colnames(meta) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] = "Dog_PCA"
 colnames(meta)[colnames(meta) == "Wolf.Dog_PCA"] = "Wolf_Dog_PCA"
-meta$Dog_PCA <- ifelse(meta$Dog_PCA=='Wolves', meta$Wolf_Dog_PCA, meta$Dog_PCA)
 ref_meta <- meta %>% select(Other_ID_2, Dog_PCA)
 colnames(ref_meta) <- c('Sample', 'Group')
 ref_meta$type <- 'modern'
@@ -43,10 +36,12 @@ colnames(samples) <- 'Sample'
 
 final_df <- dplyr::inner_join(samples, all_meta, by='Sample')
 
+colnames(eigenvec_output)[1:10] <- c("PC1", "PC2", "PC3", "PC4","PC5", "PC6", "PC7", "PC8","PC9","PC10")
+eigenvec_output$Sample <- fam$V1
+
 #merge to the smartpca output
-fn <- eigenvec_output[-1,]
-colnames(fn)[1:12] <- c("Sample","PC1", "PC2", "PC3", "PC4","PC5", "PC6", "PC7", "PC8","PC9","PC10","pop")
-eigenvec_output_meta <- dplyr::inner_join(fn, final_df, by='Sample')
+eigenvec_output_meta <- dplyr::inner_join(eigenvec_output, final_df, by='Sample')
+
 
 #make list with % of each PC:
 mylist<-c()
@@ -71,7 +66,7 @@ values = c("African_NearEast_India_Dogs" = "#04a3bd",
            "European_Dogs"="#247d3f", 
            "preContact_Dogs"="#20235b", 
            "Eastern_Eurasian_Wolves"="maroon2", 
-           "North_American_Wolves"='gray58', 
+           "North_American_Wolves"='grey', 
            "Pleistocene_Wolves"='lightgreen', 
            "Western_Eurasian_Wolves"='dodgerblue', 
            "Wolves"='purple2', 
@@ -83,26 +78,12 @@ order_d <- c("African_NearEast_India_Dogs", "Americas_Dogs", "Arctic_Dogs",
              "Eastern_Eurasian_Wolves","North_American_Wolves","Pleistocene_Wolves",
              "Western_Eurasian_Wolves","Wolves","Undet")
 
-labels_all <- c("African_NearEast_India_Dogs" = "African, Near East, India", 
-                "Americas_Dogs" = "Americas", 
-                "Arctic_Dogs" = "Arctic",
-                "East_Asian_Dogs" = "East Asian",
-                "European_Dogs"="European", 
-                "preContact_Dogs"="Americas pre-Contact", 
-                "Eastern_Eurasian_Wolves"="Eastern Eurasian", 
-                "North_American_Wolves"='North American', 
-                "Pleistocene_Wolves"='Pleistocene', 
-                "Western_Eurasian_Wolves"='Western Eurasian', 
-                "Wolves"='Wolves', 
-                "Undet"='Undet')
-
 #define modern and ancient layers
 df_layer_1 <- eigenvec_output_meta[eigenvec_output_meta$type=="modern",]
 df_layer_2 <- eigenvec_output_meta[eigenvec_output_meta$type!="modern",]
 
-plot_title2 <- ifelse(canid_group=='dogs', 'Dog', canid_group)
-plot_title3 <- ifelse(plot_title2=='wolves', 'Wolf', plot_title2)
-plot_title <- paste(plot_title3, "PCA", sep=" ")
+
+plot_title <- paste(canid_group, "PCA", sep=" ")
 
 png(snakemake@output[[1]], width=9, height=6, units='in', res=200, pointsize=4)
 par(
@@ -111,11 +92,11 @@ par(
   yaxs     = "i",
   cex.axis = 2,
   cex.lab  = 2)
-ggplot(eigenvec_output_meta, aes(x=-PC1, y=-PC2)) +
+ggplot(eigenvec_output_meta, aes(x=PC1, y=PC2)) +
   geom_point(data = df_layer_1, aes(col=Group, shape=type), size = 1, alpha=0.3)+
   geom_point(data = df_layer_2, aes(col=Group, shape=type), size = 2, alpha=0.7)+
   scale_shape_manual(values=c(19,8), labels=c('Imputed','Reference panel'))+ 
-  scale_color_manual(values = values, breaks=order_d, labels=labels_all) + 
+  scale_color_manual(values = values, breaks=order_d) + 
   labs(x = paste("PC1 (",PC1,"%)", sep = ""), y = paste("PC2 (",PC2,"%)", sep = ""))+
   theme_classic()+
   geom_vline(xintercept = 0, size=0.1, linetype = "dashed")+
@@ -125,8 +106,8 @@ ggplot(eigenvec_output_meta, aes(x=-PC1, y=-PC2)) +
         legend.text = element_text(size=12),
         legend.title = element_text(size=12),
         plot.title = element_text(hjust = 0.5))+
-  labs(shape="Genotype data", colour="Group") +
-ggtitle(plot_title)
+  labs(shape="Genotype data", colour="Group")+
+  ggtitle(plot_title)
 dev.off()
 
 png(snakemake@output[[2]], width=9, height=6, units='in', res=200, pointsize=4)
@@ -136,13 +117,13 @@ par(
   yaxs     = "i",
   cex.axis = 2,
   cex.lab  = 2)
-ggplot(eigenvec_output_meta, aes(x=-PC1, y=-PC2)) +
+ggplot(eigenvec_output_meta, aes(x=PC1, y=PC2)) +
   geom_point(data = df_layer_1, aes(col=Group, shape=type), size = 1, alpha=0.3)+
   geom_point(data = df_layer_2, aes(col=Group, shape=type), size = 2, alpha=0.7)+
   scale_shape_manual(values=c(19,8), labels=c('Imputed','Reference panel'))+ 
   geom_label_repel(data = eigenvec_output_meta %>% filter(type=='imputed'), 
-                   aes(x=-PC1, y=-PC2, label=Sample),size=1.3, box.padding = 1, max.overlaps = Inf)+
-  scale_color_manual(values = values, breaks=order_d, labels=labels_all) + 
+                   aes(x=PC1, y=PC2, label=Sample),size=1.3, box.padding = 1, max.overlaps = Inf)+
+  scale_color_manual(values = values, breaks=order_d) + 
   labs(x = paste("PC1 (",PC1,"%)", sep = ""), y = paste("PC2 (",PC2,"%)", sep = ""))+
   theme_classic()+
   geom_vline(xintercept = 0, size=0.1, linetype = "dashed")+
@@ -152,6 +133,6 @@ ggplot(eigenvec_output_meta, aes(x=-PC1, y=-PC2)) +
         legend.text = element_text(size=12),
         legend.title = element_text(size=12),
         plot.title = element_text(hjust = 0.5))+
-  labs(shape="Genotype data", colour="Group") +
-ggtitle(plot_title)
+  labs(shape="Genotype data", colour="Group")+
+  ggtitle(plot_title)
 dev.off()
