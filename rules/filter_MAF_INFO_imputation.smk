@@ -10,13 +10,12 @@ rule merge_phased_bcfs:
     Merge all phased samples 
     """
     input: 
-        #phased_bcf = expand('{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf', bam_imputation = BAM, allow_missing = True)
         phased_vcf_annotate = expand('{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz', bam_imputation = BAM, allow_missing = True)
     output:
         merged_phased_vcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz'
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz'
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools merge \
@@ -24,12 +23,12 @@ rule merge_phased_bcfs:
         -Oz -o {output.merged_phased_vcf} \
         --threads {threads}
 
-        tabix -p vcf {output.merged_phased_vcf}
+        bcftools index -f {output.merged_phased_vcf}
         '''
 
 rule MAF_sites_ref_pan_phased:
     """
-    Extract sites using a MAF filter from the reference panel 
+    Extract sites from the reference panel based on selected MAF filter
     """
     input:
         ref_panel_phased = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz',
@@ -40,6 +39,7 @@ rule MAF_sites_ref_pan_phased:
         maf=config['maf_cutoff']
     log:
         '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.log'
+    threads: 4
     shell:
         '''
         bcftools view \
@@ -57,7 +57,7 @@ rule MAF_sites_ref_pan_phased:
 
 rule maf_sites_phased_vcf:
     """
-    Extract MAF sites from merged phased VCF
+    Extract MAF sites from the merged phased VCF
     """
     input:
         ref_sample_snp_filltags_filter_maf_tsv = '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.tsv.gz', 
@@ -66,7 +66,7 @@ rule maf_sites_phased_vcf:
         merged_phased_vcf_maf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz.log'
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools view {input.merged_phased_vcf} \
@@ -78,35 +78,35 @@ rule maf_sites_phased_vcf:
         '''
 
 
-rule filter_INFO_phased_vcf:
-    """
-    Filter for INFO based on concordance results WITHOUT re-calibrating INFO score for all samples together
-    """
-    input:
-        merged_phased_vcf_maf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
-    output:
-        merged_phased_vcf_maf_info = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz'
-    params:
-        info=config['info_cutoff']
-    log:
-        '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz.log'
-    threads: 10
-    shell:
-        '''
-        bcftools view \
-        {input.merged_phased_vcf_maf} \
-        --trim-alt-alleles -Ou | \
-        bcftools view \
-        --include 'INFO/INFO >= {params.info}' \
-        --threads {threads} \
-        -Oz -o {output.merged_phased_vcf_maf_info}
+# rule filter_INFO_phased_vcf:
+#     """
+#     Filter for INFO based on concordance results WITHOUT re-calibrating INFO score for all samples together DON'T DO THIS, IT TAKE THE LAST SAMPLES INFO SCORE AND DOES NOT RECALIBRATE IT
+#     """
+#     input:
+#         merged_phased_vcf_maf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
+#     output:
+#         merged_phased_vcf_maf_info = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz'
+#     params:
+#         info=config['info_cutoff']
+#     log:
+#         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz.log'
+#     threads: 10
+#     shell:
+#         '''
+#         bcftools view \
+#         {input.merged_phased_vcf_maf} \
+#         --trim-alt-alleles -Ou | \
+#         bcftools view \
+#         --include 'INFO/INFO >= {params.info}' \
+#         --threads {threads} \
+#         -Oz -o {output.merged_phased_vcf_maf_info}
 
-        tabix -p vcf {output.merged_phased_vcf_maf_info}
-        '''
+#         tabix -p vcf {output.merged_phased_vcf_maf_info}
+#         '''
 
 rule recalibrate_info_phased_vcf:
     """
-    Re-calibrate INFO scores based on all samples present in the merged VCF (this is for analyses where all samples are used together, like when they're used to create PCs)
+    Re-calibrate INFO scores based on all samples present in the merged VCF. This is essential to properly filter for INFO score in a multi-imputed-sample VCF (when they are imputed individually) 
     """
     input:
         merged_phased_vcf_maf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
@@ -114,7 +114,7 @@ rule recalibrate_info_phased_vcf:
         merged_phased_vcf_maf_recalibrated = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz'
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz.log'
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools plugin impute-info \
@@ -137,16 +137,14 @@ rule filter_recalibrated_INFO_phased_vcf:
         info=config['info_cutoff']
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz.log'
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools view \
         {input.merged_phased_vcf_maf_recalibrated} \
-        --trim-alt-alleles -Ou | \
-        bcftools view \
         --include 'INFO/INFO >= {params.info}' \
         --threads {threads} \
         -Oz -o {output.merged_phased_vcf_maf_recalibrated_info}
 
-        tabix -p vcf {output.merged_phased_vcf_maf_recalibrated_info}
+        bcftools index -f {output.merged_phased_vcf_maf_recalibrated_info}
         '''

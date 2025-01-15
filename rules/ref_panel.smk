@@ -4,7 +4,7 @@
 
 rule vcf_coverage:
     """
-    Estimate depth of coverage of reference panel samples to filter out low coverage
+    Estimate depth of coverage of reference panel samples to filter out low coverage ones
     """
     input:
         ref = config['reference_panel']
@@ -38,15 +38,14 @@ rule make_vcf_sample_list:
         depth_cutoff = config["depth_cutoff"]
     shell:
         '''
-        awk '{{print $1, $3}}' {input.ref_depth} | sed '1d' > temp.txt
-        awk -F" " '$2<{params.depth_cutoff}' temp.txt | awk '{{ print $1 }}' > temp2.txt
-        cat temp2.txt {input.reseq_names} {input.boxer_names} | awk '!seen[$0]++' > {output.sample_list_exclude}
-        rm temp.txt temp2.txt
+        awk -v cutoff="{params.depth_cutoff}" 'NR > 1 && $3 < cutoff {{print $1}}' {input.ref_depth} > temp.txt
+        cat temp.txt {input.reseq_names} {input.boxer_names} | awk '!seen[$0]++' > {output.sample_list_exclude}
+        rm temp.txt
         '''
 
 rule remove_sample_indels_multiallelic_snps:
     """
-    Remove samples, only keep biallelic snps
+    Remove samples, trim-alt alleles created, normalise indels, only keep biallelic snps
     """
     input:
         ref = config['reference_panel'],
@@ -55,23 +54,24 @@ rule remove_sample_indels_multiallelic_snps:
         ref_sample_snp = temp('{path}/output/reference_panel/ref-panel_{chrom}_sample-snp.vcf.gz')
     log:
         '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp.log'
-    threads: 10
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/ref-panel_{chrom}_sample-snp.tsv'
     shell:
         '''
         bcftools view \
         -r {wildcards.chrom} \
-        -m 2 -M 2 \
         -S ^{input.sample_list_exclude} \
         --trim-alt-alleles \
-        {input.ref} -Ou | 
-        bcftools filter -e "type!='snp'" -Oz -o {output.ref_sample_snp}
+        {input.ref} -Ou | \
+        bcftools norm -a -Ou | \
+        bcftools view -m 2 -M 2 -v snps  \
+        -Oz -o {output.ref_sample_snp}
         '''
 
 rule fill_tags:
     """
-    Fill tags to re-estimate fields after sample removal (have to specify F_MISSING)
+    Fill tags to re-estimate fields after sample removal (have to specify F_MISSING, which is the fraction of missing genotypes)
     """
     input:
         ref_sample_snp = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp.vcf.gz'
@@ -79,7 +79,7 @@ rule fill_tags:
         ref_sample_snp_filltags = temp('{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags.vcf.gz')
     log:
         '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags.log'
-    threads: 10
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags.tsv'
     shell:
@@ -125,7 +125,7 @@ rule filter_sites:
         f_missing = config['F_MISSING']
     log:
         '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.log'
-    threads: 10
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.tsv'
     shell:
@@ -170,6 +170,9 @@ rule filter_sites:
 #         '''
 
 rule phase_modern_data_shapeit5: 
+    """
+    Phase filtered reference panel with shapeit5
+    """
     input:
         ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
     output:

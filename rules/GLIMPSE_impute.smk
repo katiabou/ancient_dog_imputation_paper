@@ -31,7 +31,7 @@ rule extract_var_pos:
         ref_panel_sites_tsv = '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv.gz'
     log:
         '{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.log'
-    threads: 10
+    threads: 4
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv'
     shell:
@@ -62,7 +62,7 @@ rule compute_GLs_imputed_samples:
         GL_imputed_bams = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz'
     log:
         '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.log'
-    threads: 10
+    threads: 4
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.tsv'
     shell:
@@ -162,7 +162,7 @@ rule ligate:
         ligated_bcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.bcf'
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.log'
-    threads: 10
+    threads: 8
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.tsv'
     shell:
@@ -185,7 +185,7 @@ rule sample_haplotype:
         phased_bcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf'
     log:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.log'
-    threads: 10
+    threads: 8
     benchmark:
         '{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.tsv'
     shell:
@@ -200,9 +200,13 @@ rule sample_haplotype:
         '''
 
 rule annotate_fields:
+    """
+    SOS: This step is essential to retain the fields from the ligated samples in the phased files (not automatically transferred)
+    GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
+    """
     input:
         phased_bcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf',
-        GL_imputed_bams = '{path}/output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz',
+        ligated_bcf = '{path}/output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.bcf'
     output:
         phased_vcf_annotate = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz',
     log:
@@ -212,8 +216,8 @@ rule annotate_fields:
     shell:
         '''
         bcftools annotate \
-        --annotations {input.GL_imputed_bams} \
-        --columns 'FORMAT/PL' \
+        --annotations {input.ligated_bcf} \
+        --columns FORMAT/DS,FORMAT/GP,FORMAT/HS \
         --output-type z \
         --output {output.phased_vcf_annotate} {input.phased_bcf} 2> {log}
         

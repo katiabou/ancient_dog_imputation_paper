@@ -40,6 +40,7 @@ rule extract_chr_target_bams:
 rule estimate_coverage_fraction:
     """
     Estimate coverage fraction to be used for downsampling the target bams to lower coverages (specified in Snakefile)
+    Based on here: https://davemcg.github.io/post/easy-bam-downsampling/
     """
     input:
         ref_fasta_chr = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta',
@@ -103,7 +104,7 @@ rule prepare_list_validation_reference_removal:
 
 rule prepare_ref_panel:
     """
-    Removes overlapping target and reference panel samples from the reference panel
+    Remove samples, trim-alt alleles created, normalise indels, only keep biallelic snps
     """
     input:
         ref_panel_phased = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz',
@@ -112,25 +113,24 @@ rule prepare_ref_panel:
         ref_concordance_sample_excl = temp('{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz')
     log:
         '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/{chrom}_ref_panel.tsv'
     shell:
         '''
         bcftools view \
-        {input.ref_panel_phased} \
-        -m 2 -M 2 \
+        -r {wildcards.chrom} \
         -S ^{input.ref_val_sample_file} \
         --trim-alt-alleles \
-        --threads {threads} \
-        -Ou | bcftools filter -e "type!='snp'" -Oz -o {output.ref_concordance_sample_excl} 2> {log}
-  
-        bcftools index -f {output.ref_concordance_sample_excl}
+        {input.ref_panel_phased} -Ou | \
+        bcftools norm -a -Ou | \
+        bcftools view -m 2 -M 2 -v snps  \
+        -Oz -o {output.ref_concordance_sample_excl}
         '''
 
 rule fill_tags_ref_sample_excl:
     """
-    Fill tags to re-estimate fields after sample removal (have to specify F_MISSING)
+    Fill tags to re-estimate fields after sample removal (have to specify F_MISSING, which is the fraction of missing genotypes)
     """
     input:
         ref_concordance_sample_excl = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz'
@@ -138,7 +138,7 @@ rule fill_tags_ref_sample_excl:
         ref_concordance_sample_excl_filltags = temp('{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.vcf.gz')
     log:
         '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/{chrom}_ref_panel_filltags.phased.tsv'
     shell:
@@ -162,7 +162,7 @@ rule filter_sites_ref_sample_excl:
         f_missing = config['F_MISSING']
     log:
         '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/{chrom}_ref_panel_filltags_filter.phased.tsv'
     shell:
@@ -199,7 +199,7 @@ rule merge_chr_ref:
         ref_concordance_sample_excl_filltags_filter_allchrom_csi = '{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.csi'
     log:
         '{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.log'
-    threads: 8
+    threads: 4
     shell:
         '''
         bcftools concat \
@@ -221,7 +221,7 @@ rule extract_var_pos_concordance:
         ref_panel_sites_tsv = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz'
     log:
         '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/reference_panel/{chrom}_ref_panel_sites.phased.tsv'
     shell:
@@ -253,7 +253,7 @@ rule compute_GLs_downsampled_samples_concordance:
         GL_vcf_target_bams_csi = '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz.csi'
     log:
         '{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.tsv'
     shell:
@@ -277,6 +277,7 @@ rule chunk_spliting_concordance:
         buffer_size = config['buffer_size']
     log:
         '{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.log'
+    threads: 4
     benchmark:
         '{path}/benchmarks/chunks/{chrom}_chunks.tsv'
     shell:
@@ -285,7 +286,7 @@ rule chunk_spliting_concordance:
         --input {input.ref_panel_sites_vcf} \
         --region {wildcards.chrom} \
         --window-size {params.window_size} --buffer-size {params.buffer_size} \
-        --thread 5 \
+        --thread {threads} \
         --output {output.chunks} 2> {log}
         '''
 
@@ -357,7 +358,7 @@ rule ligate_concordance:
         ligated_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf.csi'
     log:
         '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.tsv'
     shell:
@@ -381,18 +382,44 @@ rule phase_concordance:
         phased_bcf_csi = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf.csi'
     log:
         '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.log'
-    threads: 8
+    threads: 4
     benchmark:
         '{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.tsv'
     shell:
         '''
         {glimpse_sample} \
-        --input {input.ligated_bcf} --solve --output {output.phased_bcf} \
+        --input {input.ligated_bcf} \
+        --solve \
+        --output {output.phased_bcf} \
         --thread {threads} 2> {log}
 
         bcftools index -f {output.phased_bcf}
         '''
+
+rule annotate_fields_concordance:
+    """
+    SOS: This step is essential to retain the fields from the ligated samples in the phased files (not automatically transferred)
+    GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
+    """
+    input:
+        phased_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf',
+        ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf'
+    output:
+        phased_vcf_annotate = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz',
+    log:
+        '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz.log'
+    benchmark:
+        '{path}/benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.tsv'
+    shell:
+        '''
+        bcftools annotate \
+        --annotations {input.ligated_bcf} \
+        --columns FORMAT/DS,FORMAT/GP,FORMAT/HS \
+        --output-type z \
+        --output {output.phased_vcf_annotate} {input.phased_bcf} 2> {log}
         
+        bcftools index --tbi {output.phased_vcf_annotate}
+        '''
 
 
 #####################################################

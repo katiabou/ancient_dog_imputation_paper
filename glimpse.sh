@@ -30,7 +30,7 @@ MAX_MEM=$(free -m | awk '/^Mem:/{print $2}')
 
 # hide 1 GB of RAM from the snakemake scheduler, to avoid exhausting total system RAM
 #MAX_MEM=$((MAX_MEM - 1024))
-MAX_MEM=$((MAX_MEM - 20480))
+MAX_MEM=$((MAX_MEM - 1024))
 
 
 flags="--cores 96 "

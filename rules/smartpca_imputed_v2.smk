@@ -34,7 +34,7 @@ rule extract_sites_phased_ref_panel:
         ref_panel_imputed_sites = '{path}/output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz'
     log:
         '{path}/output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz.log'
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools view {input.ref_panel_phased} \
@@ -62,7 +62,7 @@ rule merge_maf_ref_panel_imputed:
         -Oz -o {output.modern_imputed} \
         --threads {threads}
 
-        tabix -p vcf {output.modern_imputed}
+        bcftools index -f {output.modern_imputed}
         '''
         
 rule prep_canid_list:
@@ -88,16 +88,15 @@ rule canid_subset_merged_vcf:
         modern_imputed_canid_subset = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt',
     output:
         modern_imputed_subset = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz',
-    threads: 10
+    threads: 4
     shell:
         '''
         bcftools view \
         -S {input.modern_imputed_canid_subset} \
-        --trim-alt-alleles \
         --threads {threads} \
         {input.modern_imputed} -Oz -o {output.modern_imputed_subset}
 
-        tabix -p vcf {output.modern_imputed_subset}
+        bcftools index -f {output.modern_imputed_subset}
         '''
 
 # rule canid_subset_merged_vcf_recalculate:
@@ -156,7 +155,7 @@ rule merge_chrom:
         chr_list = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/chr_list.MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.txt'
     output:
         merged_vcf = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz'
-    threads: 8
+    threads: 4
     shell:
         '''
         bcftools concat \
@@ -164,7 +163,7 @@ rule merge_chrom:
         -Oz -o {output.merged_vcf} \
         --threads {threads}
 
-        tabix -p vcf {output.merged_vcf}
+        bcftools index -f {output.merged_vcf}
         '''
 
 rule make_plink:
@@ -191,7 +190,7 @@ rule make_plink:
 
 rule fix_chr_column:
     """
-    Fill info fields in order to filter based on MAF
+    Fix chromosome and snps columns
     """
     input:
         bim = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.bim'

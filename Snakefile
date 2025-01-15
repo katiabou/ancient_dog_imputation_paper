@@ -48,9 +48,9 @@ glimpse_concordance = config['glimpse_concordance']
 ##### Rules to include #####
 
 #Rule for benchmarking
-# include: "rules/ref_panel.smk"
+include: "rules/ref_panel.smk"
 # include: "rules/ref_panel_concordance_only_dogs.smk" 
-include: "rules/GLIMPSE_concordance.smk" 
+# include: "rules/GLIMPSE_concordance.smk" 
 # include: "rules/GLIMPSE_concordance_only_dogs.smk" 
 # include: "rules/GLIMPSE_concordance_HC.smk" 
 # include: "rules/GLIMPSE_concordance_transversions.smk" 
@@ -64,19 +64,29 @@ include: "rules/GLIMPSE_concordance.smk"
 
 
 #Full imputation rules
-# include: "rules/GLIMPSE_impute.smk"
-# include: "rules/filter_MAF_INFO_imputation.smk"
-# include: "rules/smartpca_imputed_v2.smk"
-# include: "rules/plink_ROH_phased.smk"
+include: "rules/GLIMPSE_impute.smk"
+include: "rules/filter_MAF_INFO_imputation.smk"
+include: "rules/smartpca_imputed_v2.smk"
+include: "rules/plink_ROH_phased.smk"
 
 
 rule all:
     input:
+        expand('{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff']),
+        expand('{path}/output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2.png', path=config['path'], info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogs_only.png', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs_only.png', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs_coeff_all_ROHs_map.png', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogs_coeff_all_ROHs_map.png', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_wolves_all_roh_results.tsv', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_wolves_all_roh_results.tsv', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+        expand('{path}/output/GLIMPSE_imputation/plots/ROH_islands_deserts/modern_ancient_heatmap_ROH_500kb_windows_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_main.png', path=config['path'], chrom=CHROM, info=config['info_cutoff'], maf_cutoff=config['maf_cutoff'], canid_subset=CANID_SUBSET, hom_win_het=config['roh']['homozyg_window_het']),
+
         #### output files for imputation benchmarking
         ### ROHs with ROHan
         #expand('{path}/output/GLIMPSE_concordance/plots/ROH_concordance_ROHan/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_imputed_ROHan.png', sample=SAMPLE, coverage_val=COVERAGE_VAL, info=config['info_cutoff'], maf=config['maf_cutoff'], hom_win_het=config['roh']['homozyg_window_het'], path=config['path']),
         #new concordance plots:
-        expand('{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-{sample}.png', sample=SAMPLE, path=config['path']),
+        #expand('{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-{sample}.png', sample=SAMPLE, path=config['path']),
         #expand('{path}/output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.rsquare-mod.grp.txt.gz', sample=SAMPLE, coverage_val=COVERAGE_VAL, info_cutoff=INFO_CUTOFF,  path=config['path']),
         #expand('{path}/output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_allchrom_0.5x_1x_filtered-all_sites_transversions.png', path=config['path']),
         #expand('{path}/output/GLIMPSE_concordance_only_dogs/plots/glimpse_concordance/concordance_allchrom_0.5x_1x_filtered-all_sites_only_dogs.png', path=config['path'])
