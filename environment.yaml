@@ -44,5 +44,6 @@ dependencies:
   - r-viridislite=0.4.2
   - r-xml=3.99-0.14
   - samtools=1.15.1
+  - snakefmt=0.10.2
   - snakemake=5.26.1
   - vcftools=0.1.16
