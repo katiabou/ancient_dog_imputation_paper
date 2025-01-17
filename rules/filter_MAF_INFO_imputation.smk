@@ -2,6 +2,8 @@
 #  Filter imputed dataset based on MAF of reference panel and INFO score #
 ##########################################################################
 
+global BAM
+
 #define output files of make plink
 DOCS = ['bed', 'bim', 'fam']
 
@@ -21,7 +23,7 @@ rule merge_phased_bcfs:
         bcftools merge \
         {input.phased_vcf_annotate} \
         -Oz -o {output.merged_phased_vcf} \
-        --threads {threads}
+        --threads {threads} 2> {log}
 
         bcftools index -f {output.merged_phased_vcf}
         '''
@@ -144,7 +146,7 @@ rule filter_recalibrated_INFO_phased_vcf:
         {input.merged_phased_vcf_maf_recalibrated} \
         --include 'INFO/INFO >= {params.info}' \
         --threads {threads} \
-        -Oz -o {output.merged_phased_vcf_maf_recalibrated_info}
+        -Oz -o {output.merged_phased_vcf_maf_recalibrated_info} 2> {log}
 
         bcftools index -f {output.merged_phased_vcf_maf_recalibrated_info}
         '''

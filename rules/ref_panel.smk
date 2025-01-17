@@ -59,6 +59,7 @@ rule remove_sample_indels_multiallelic_snps:
         '{path}/benchmarks/reference_panel/ref-panel_{chrom}_sample-snp.tsv'
     shell:
         '''
+        (
         bcftools view \
         -r {wildcards.chrom} \
         -S ^{input.sample_list_exclude} \
@@ -67,6 +68,7 @@ rule remove_sample_indels_multiallelic_snps:
         bcftools norm -a -Ou | \
         bcftools view -m 2 -M 2 -v snps  \
         -Oz -o {output.ref_sample_snp}
+        ) 2> {log}
         '''
 
 rule fill_tags:
@@ -84,10 +86,12 @@ rule fill_tags:
         '{path}/benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags.tsv'
     shell:
         '''
+        (
         bcftools +fill-tags {input.ref_sample_snp} \
         --threads {threads} \
         -Oz -o {output.ref_sample_snp_filltags} \
-        -- -t all,F_MISSING 
+        -- -t all,F_MISSING
+        ) 2> {log} 
         '''
 
 #rule get_F_missing_hist:
@@ -132,7 +136,7 @@ rule filter_sites:
         '''
         bcftools view -i 'FILTER=="PASS" & F_MISSING<{params.f_missing}' {input.ref_sample_snp_filltags} \
         --threads {threads} \
-        -Oz -o {output.ref_sample_snp_filltags_filter}
+        -Oz -o {output.ref_sample_snp_filltags_filter} 2> {log}
 
         bcftools index --tbi {output.ref_sample_snp_filltags_filter}
         '''

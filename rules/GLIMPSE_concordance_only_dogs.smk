@@ -2,6 +2,8 @@
 # Running imputation for GLIMPSE concordance #
 ##############################################
 
+global CHROM, COVERAGE_VAL, INFO_CUTOFF, SAMPLE
+
 rule prepare_ref_panel_only_dogs:
     """
     Removes overlapping target and reference panel samples from the reference panel

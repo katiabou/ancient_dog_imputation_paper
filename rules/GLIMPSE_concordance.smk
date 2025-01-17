@@ -2,6 +2,8 @@
 # Running imputation for GLIMPSE concordance #
 ##############################################
 
+global samples_df, CHROM, INFO_CUTOFF, COVERAGE_VAL, SAMPLE
+
 rule extract_chrom_ref_fast_concordance:
     """
     Extract chromosome from fasta reference file
@@ -118,14 +120,16 @@ rule prepare_ref_panel:
         '{path}/benchmarks/reference_panel/{chrom}_ref_panel.tsv'
     shell:
         '''
-        bcftools view \
-        -r {wildcards.chrom} \
-        -S ^{input.ref_val_sample_file} \
-        --trim-alt-alleles \
-        {input.ref_panel_phased} -Ou | \
-        bcftools norm -a -Ou | \
-        bcftools view -m 2 -M 2 -v snps  \
-        -Oz -o {output.ref_concordance_sample_excl}
+        (
+         bcftools view \
+         -r {wildcards.chrom} \
+         -S ^{input.ref_val_sample_file} \
+         --trim-alt-alleles \
+         {input.ref_panel_phased} -Ou | \
+         bcftools norm -a -Ou | \
+         bcftools view -m 2 -M 2 -v snps  \
+         -Oz -o {output.ref_concordance_sample_excl}
+        ) 2> {log}
         '''
 
 rule fill_tags_ref_sample_excl:

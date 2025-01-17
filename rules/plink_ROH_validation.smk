@@ -81,7 +81,7 @@ rule roh_transversions_validation:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_transversions_validation:
@@ -152,7 +152,7 @@ rule roh_all_sites_validation:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_all_sites_validation:

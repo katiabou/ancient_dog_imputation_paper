@@ -2,6 +2,8 @@
 #  Plink ROH to test target imputed against validation #
 ########################################################
 
+global CHROM, COVERAGE_VAL, samples_df
+
 #define output files of make plink
 DOCS = ['bed', 'bim', 'fam']
 
@@ -80,7 +82,7 @@ rule roh_transversions_phased_concordance:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_transversions_phased_concordance_prep:
@@ -192,7 +194,7 @@ rule roh_transversions_phased_HC:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_transversions_phased_prep_HC:
@@ -265,7 +267,7 @@ rule roh_all_sites_phased_concordance:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_all_sites_phased_concordance_prep:
@@ -337,7 +339,7 @@ rule roh_all_sites_phased_HC:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_roh_all_sites_phased_prep_HC:

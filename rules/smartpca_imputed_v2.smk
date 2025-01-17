@@ -2,6 +2,8 @@
 # These rules run smarpca on the whole imputed dataset and the pseudohaploid dataset #
 ##################################################################################
 
+global CHROM
+
 #define output files of make plink
 DOCS = ['bed', 'bim', 'fam']
 
@@ -17,7 +19,7 @@ rule sites_phased:
         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz.log'
     shell:
         '''
-        bcftools query -f'%CHROM\t%POS\t%REF,%ALT\n' {input.merged_phased_vcf_maf_recalibrated_info} | \
+        bcftools query -f'%CHROM\t%POS\t%REF,%ALT\n' {input.merged_phased_vcf_maf_recalibrated_info} 2> {log} | \
         bgzip -c > {output.merged_phased_vcf_maf_recalibrated_info_sites}
 
         tabix -s1 -b2 -e2 {output.merged_phased_vcf_maf_recalibrated_info_sites}

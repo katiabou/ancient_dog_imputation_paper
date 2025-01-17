@@ -2,6 +2,8 @@
 #  Plink ROH for full imputed dataset #
 #######################################
 
+global CHROM
+
 #define output files of make plink
 DOCS = ['bed', 'bim', 'fam']
 
@@ -100,7 +102,7 @@ rule roh_transversions_phased:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_chrom_ROH_phased_transversions:
@@ -214,7 +216,7 @@ rule roh_all_sites_phased:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_chrom_ROH_phased:
@@ -321,7 +323,7 @@ rule roh_transversions_ref_panel:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_chrom_ROH_transversions_ref_panel:
@@ -414,7 +416,7 @@ rule roh_all_sites_ref_panel:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_chrom_ROH_ref_panel:
@@ -525,7 +527,7 @@ rule roh_all_sites_phased_ref_panel:
         --homozyg-window-missing {config[roh][homozyg_window_missing]} \
         --homozyg-window-snp {config[roh][homozyg_window_snp]} \
         --homozyg-window-threshold {config[roh][homozyg_window_threshold]} \
-        --out {params.prefix_out}
+        --out {params.prefix_out} 2> {log}
         '''
 
 rule merge_chrom_ROH_phased_ref_panel:
@@ -554,9 +556,9 @@ rule merge_chrom_ROH_phased_ref_panel:
 #### Steps for plotting all ROH for imputed and selected modern for all sites ####
 ##################################################################################     
 
-# rule estimate_chrom_size:  # this is wrong cause it has unassigned contigs 
+# rule estimate_chrom_size:  # this is wrong because it has unassigned contigs
 #     """
-#     Estimate chromosome sizes for plotting x axis 
+#     Estimate chromosome sizes for plotting x-axis
 #     """
 #     input:
 #         ref_fasta = config['ref_fasta_file']

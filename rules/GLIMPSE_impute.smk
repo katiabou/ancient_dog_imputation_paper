@@ -2,6 +2,7 @@
 # Impute and phase bam files #
 ##############################
 
+global bams_df
 
 ### Make sure bamfile list is correct !!!!
 

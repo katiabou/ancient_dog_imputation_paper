@@ -4,6 +4,8 @@
 # Then smartpca is carried out                                                                                         #
 ########################################################################################################################
 
+global COVERAGE_VAL, CHROM, samples_df
+
 #define output files of haplotoplink
 DOCS_hc = ['tped', 'tfam']
 DOCS = ['bed','bim','fam']
@@ -277,7 +279,7 @@ rule select_canid_subset_from_plink:
         --keep {input.modern_canid_subset_plink_sample} \
         --allow-no-sex \
         --chr-set 38 \
-        --out {params.prefix_output} 
+        --out {params.prefix_output} 2> {log}
         '''
 
 rule merge_downsampled_reference:
@@ -331,7 +333,7 @@ rule rename_sample_concordance_PH:
         bcftools reheader \
         -s {output.new_name_file} \
         {input.phased_maf_info} \
-        -o {output.sample_imputed_new_name}
+        -o {output.sample_imputed_new_name} 2> {log}
 
         bcftools index -f {output.sample_imputed_new_name}
         '''

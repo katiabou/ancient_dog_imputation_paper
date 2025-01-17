@@ -2,6 +2,7 @@
 # Running GLIMPSE concordance for HC imputed #
 ##############################################
 
+global CHROM
 
 rule compute_GLs_HC_samples_concordance:
     """

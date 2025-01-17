@@ -4,6 +4,8 @@
 # Then smartpca is carried out                                                                                         #
 ########################################################################################################################
 
+global COVERAGE_VAL, CHROM, samples_df
+
 #define output files of haplotoplink
 DOCS_hc = ['tped', 'tfam']
 DOCS = ['bed','bim','fam']
@@ -327,7 +329,7 @@ rule rename_sample_concordance_PH_no_filt:
         bcftools reheader \
         -s {output.new_name_file} \
         {input.phased_bcf} \
-        -o {output.sample_imputed_new_name}
+        -o {output.sample_imputed_new_name} 2> {log}
 
         bcftools index -f {output.sample_imputed_new_name}
         '''

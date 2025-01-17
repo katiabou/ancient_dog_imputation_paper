@@ -2,6 +2,8 @@
 #  Estimate sites per MAF bin for each target sample #
 ######################################################
 
+global CHROM, INFO_CUTOFF
+
 rule MAF_bins_sites_ref_pan:
     """
     Extract sites per MAF bin for the reference panel

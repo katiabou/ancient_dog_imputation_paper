@@ -2,6 +2,8 @@
 # Running GLIMPSE concordance #
 ###############################
 
+global CHROM, COVERAGE_VAL, INFO_CUTOFF, SAMPLE
+
 rule transversions_validation_concordance:
     """
     Only take transversions from filtered validation data
