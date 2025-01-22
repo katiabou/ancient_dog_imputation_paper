@@ -199,7 +199,7 @@ rule chunk_spliting_concordance_only_dogs:
         "{path}/benchmarks/chunks/{chrom}_chunks.tsv"
     shell:
         """
-        {glimpse_chunk} \
+        GLIMPSE_chunk \
         --input {input.ref_panel_sites_vcf} \
         --region {wildcards.chrom} \
         --window-size {params.window_size} --buffer-size {params.buffer_size} \
@@ -238,7 +238,7 @@ rule impute_concordance_only_dogs:
             IRG=$(echo $LINE | cut -d" " -f3)
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
-            {glimpse_impute} \
+            GLIMPSE_phase \
             --input {input.GL_vcf_target_bams} --reference {input.ref_concordance_sample_excl_filltags_filter} --map {params.gen_map_path}{params.gen_map_files} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
@@ -285,7 +285,7 @@ rule ligate_concordance_only_dogs:
         "{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
-        {glimpse_ligate} \
+        GLIMPSE_ligate \
         --input {input.ligated_list} \
         --output {output.ligated_bcf} \
         --thread {threads} 2> {log}
@@ -310,7 +310,7 @@ rule phase_concordance_only_dogs:
         "{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
-        {glimpse_sample} \
+        GLIMPSE_sample \
         --input {input.ligated_bcf} --solve --output {output.phased_bcf} \
         --thread {threads} 2> {log}
 
@@ -392,7 +392,7 @@ rule filter_info_score_only_dogs:
 #     threads: 10
 #     shell:
 #         '''
-#         {glimpse_concordance} \
+#         GLIMPSE_concordance \
 #         --input {input.concordance_lst_info_score_filtered} \
 #         --minDP 8 \
 #         --output {params.prefix} \
@@ -569,7 +569,7 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom_only_dogs:
     threads: 8
     shell:
         """
-        {glimpse_concordance} \
+        GLIMPSE_concordance \
         --input {input.concordance_lst_info_score_filtered} \
         --minDP 8 \
         --output {params.prefix} \

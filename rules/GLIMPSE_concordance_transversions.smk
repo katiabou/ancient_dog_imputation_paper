@@ -130,7 +130,7 @@ rule filter_transversions_imputed:
 #     threads: 8
 #     shell:
 #         '''
-#         {glimpse_concordance} \
+#         GLIMPSE_concordance \
 #         --input {input.concordance_lst_info_score_filtered} \
 #         --minDP 8 \
 #         --output {params.prefix} \
@@ -332,7 +332,7 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom_trans:
     threads: 8
     shell:
         """
-        {glimpse_concordance} \
+        GLIMPSE_concordance \
         --input {input.concordance_lst_info_score_filtered} \
         --minDP 8 \
         --output {params.prefix} \

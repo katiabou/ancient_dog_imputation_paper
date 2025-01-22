@@ -48,13 +48,6 @@ INFO_CUTOFF = ["0.0", "0.8", "0.9", "0.95"]
 # datasets to use
 CANID_SUBSET = ["dogs", "wolves", "dogwolf"]
 
-# paths to programmes
-glimpse_chunk = config["glimpse_chunk"]
-glimpse_impute = config["glimpse_impute"]
-glimpse_ligate = config["glimpse_ligate"]
-glimpse_sample = config["glimpse_sample"]
-glimpse_concordance = config["glimpse_concordance"]
-
 ##### Rules to include #####
 
 

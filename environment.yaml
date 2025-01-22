@@ -10,6 +10,7 @@ dependencies:
   - bioconductor-gofuncr=1.18.0
   - bioconductor-rtracklayer=1.58.0
   - eigensoft=8.0.0
+  - glimpse-bio=1.1.1
   - plink=1.90b6.21
   - pyfaidx=0.7.2.1
   - r-base=4.2.3

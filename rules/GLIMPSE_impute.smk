@@ -93,7 +93,7 @@ rule chunk_spliting:
         buffer_size=config["buffer_size"],
     shell:
         """
-        {glimpse_chunk} \
+        GLIMPSE_chunk \
         --input {input.ref_panel_sites_vcf} \
         --region {wildcards.chrom} \
         --window-size {params.window_size} --buffer-size {params.buffer_size} \
@@ -132,7 +132,7 @@ rule imput_phase:
             IRG=$(echo $LINE | cut -d" " -f3)
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
-            {glimpse_impute} \
+            GLIMPSE_phase \
             --input {input.GL_imputed_bams} --reference {input.ref_panel_phased} --map {params.gen_map_path}{params.gen_map_files} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
@@ -178,7 +178,7 @@ rule ligate:
         "{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.tsv"
     shell:
         """
-        {glimpse_ligate} \
+        GLIMPSE_ligate \
         --input {input.ligated_list} \
         --output {output.ligated_bcf} \
         --thread {threads} 2> {log}
@@ -202,7 +202,7 @@ rule sample_haplotype:
         "{path}/benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.tsv"
     shell:
         """
-        {glimpse_sample} \
+        GLIMPSE_sample \
         --input {input.ligated_bcf} \
         --solve \
         --output {output.phased_bcf} \

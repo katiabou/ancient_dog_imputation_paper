@@ -25,13 +25,6 @@ depth_cutoff: '8'
 #F_missing cutoff to filter sites from reference panel
 F_MISSING: '0.05'
 
-#Paths to GLIMPSE modules
-glimpse_chunk: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/chunk/bin/GLIMPSE_chunk'
-glimpse_impute: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/phase/bin/GLIMPSE_phase'
-glimpse_ligate: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/ligate/bin/GLIMPSE_ligate'
-glimpse_sample: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/sample/bin/GLIMPSE_sample'
-glimpse_concordance: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/concordance/bin/GLIMPSE_concordance'
-
 #GLIMPSE_chunk parameters
 window_size: '2000000'
 buffer_size: '200000'

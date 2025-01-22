@@ -59,7 +59,7 @@ rule impute_HC_concordance:
             IRG=$(echo $LINE | cut -d" " -f3)
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
-            {glimpse_impute} \
+            GLIMPSE_phase \
             --input {input.GL_vcf_HC_target_bams} --reference {input.ref_concordance_sample_excl_filltags_filter} --map {params.gen_map_path}{params.gen_map_files} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
@@ -106,7 +106,7 @@ rule ligate_HC_concordance:
         "{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
     shell:
         """
-        {glimpse_ligate} \
+        GLIMPSE_ligate \
         --input {input.ligated_list} \
         --output {output.ligated_bcf} \
         --thread {threads} 2> {log}
@@ -131,7 +131,7 @@ rule phase_HC_concordance:
         "{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
     shell:
         """
-        {glimpse_sample} \
+        GLIMPSE_sample \
         --input {input.ligated_bcf} --solve --output {output.phased_bcf} \
         --thread {threads} 2> {log}
 
