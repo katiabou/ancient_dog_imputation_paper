@@ -47,12 +47,11 @@ rule impute_HC_concordance:
         GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
         ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
         chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
     output:
         imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
         imputed_csi="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf.csi",
     params:
-        gen_map_path=config["gen_map_path"],
-        gen_map_files=config["gen_map_files"],
         prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
     threads: 2
     log:
@@ -68,7 +67,7 @@ rule impute_HC_concordance:
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
             GLIMPSE_phase \
-            --input {input.GL_vcf_HC_target_bams} --reference {input.ref_concordance_sample_excl_filltags_filter} --map {params.gen_map_path}{params.gen_map_files} \
+            --input {input.GL_vcf_HC_target_bams} --reference {input.ref_concordance_sample_excl_filltags_filter} --map {input.gen_map} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
             --thread {threads}

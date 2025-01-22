@@ -173,12 +173,10 @@ rule filter_sites:
 #     """
 #     input:
 #         ref_sample_snp_filltags_filter="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
+#         gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
 #     output:
 #         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
 #         ref_panel_phased_tbi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi",
-#     params:
-#         gen_map_path=config["gen_map_path"],
-#         gen_map_files=config["gen_map_files_impute"],
 #     log:
 #         log_shapeit="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log",
 #     resources:
@@ -190,7 +188,7 @@ rule filter_sites:
 #         """
 #         /projects/racimolab/people/qcj125/programmes/shapeit4/bin/shapeit4.2 \
 #         --input {input.ref_sample_snp_filltags_filter} \
-#         --map {params.gen_map_path}{params.gen_map_files} \
+#         --map {input.gen_map} \
 #         --region {wildcards.chrom} \
 #         --output {output.ref_panel_phased} \
 #         --thread {threads} \
@@ -206,12 +204,10 @@ rule phase_modern_data_shapeit5:
     """
     input:
         ref_sample_snp_filltags_filter="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
     output:
         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
         ref_panel_phased_tbi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi",
-    params:
-        gen_map_path=config["gen_map_path"],
-        gen_map_files=config["gen_map_files_impute"],
     log:
         log_shapeit="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log",
     resources:
@@ -223,7 +219,7 @@ rule phase_modern_data_shapeit5:
         """
         SHAPEIT5_phase_common \
         --input {input.ref_sample_snp_filltags_filter} \
-        --map {params.gen_map_path}{params.gen_map_files} \
+        --map {input.gen_map} \
         --region {wildcards.chrom} \
         --output {output.ref_panel_phased} \
         --thread {threads} &> {log.log_shapeit}

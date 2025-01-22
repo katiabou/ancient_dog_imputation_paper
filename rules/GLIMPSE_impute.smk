@@ -118,14 +118,13 @@ rule imput_phase:
         #ref_sample_snp_filltags_filter = "output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
         chunks="output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
     output:
         imputed=expand(
             "output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf",
             allow_missing=True,
         ),
     params:
-        gen_map_path=config["gen_map_path"],
-        gen_map_files=config["gen_map_files_impute"],
         prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}",
     threads: 2
     log:
@@ -141,7 +140,7 @@ rule imput_phase:
             ORG=$(echo $LINE | cut -d" " -f4)
             OUT={params.prefix}.${{ID}}.bcf
             GLIMPSE_phase \
-            --input {input.GL_imputed_bams} --reference {input.ref_panel_phased} --map {params.gen_map_path}{params.gen_map_files} \
+            --input {input.GL_imputed_bams} --reference {input.ref_panel_phased} --map {input.gen_map} \
             --input-region ${{IRG}} \
             --output-region ${{ORG}} --output ${{OUT}} \
             --thread {threads}

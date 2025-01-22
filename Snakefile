@@ -14,7 +14,7 @@ configfile: "config.yaml"
 
 
 ##### Define total chromosome numbers #####
-CHROM = [f"chr{i}" for i in range(1, int(config["chromosome_number"]) + 1)]
+CHROM = [f"chr{i}" for i in range(1, config["chromosome_number"] + 1)]
 
 
 ##### set wildcard constraints #####
@@ -60,6 +60,7 @@ CANID_SUBSET = ["dogs", "wolves", "dogwolf"]
 
 
 # Rule for benchmarking
+include: "rules/genetic_map.smk"
 include: "rules/ref_panel.smk"
 
 
