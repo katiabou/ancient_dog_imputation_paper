@@ -14,14 +14,14 @@ rule merge_phased_bcfs:
     """
     input:
         phased_vcf_annotate=expand(
-            "{path}/output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz",
+            "output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz",
             bam_imputation=BAM,
             allow_missing=True,
         ),
     output:
-        merged_phased_vcf="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
+        merged_phased_vcf="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
+        "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
     threads: 4
     shell:
         """
@@ -39,14 +39,14 @@ rule MAF_sites_ref_pan_phased:
     Extract sites from the reference panel based on selected MAF filter
     """
     input:
-        ref_panel_phased="{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
+        ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
     output:
-        ref_sample_snp_filltags_filter_maf_vcf="{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.gz",
-        ref_sample_snp_filltags_filter_maf_tsv="{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.tsv.gz",
+        ref_sample_snp_filltags_filter_maf_vcf="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.gz",
+        ref_sample_snp_filltags_filter_maf_tsv="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.tsv.gz",
     params:
         maf=config["maf_cutoff"],
     log:
-        "{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.log",
+        "output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.log",
     threads: 4
     shell:
         """
@@ -69,12 +69,12 @@ rule maf_sites_phased_vcf:
     Extract MAF sites from the merged phased VCF
     """
     input:
-        ref_sample_snp_filltags_filter_maf_tsv="{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.tsv.gz",
-        merged_phased_vcf="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
+        ref_sample_snp_filltags_filter_maf_tsv="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.tsv.gz",
+        merged_phased_vcf="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}.vcf.gz",
     output:
-        merged_phased_vcf_maf="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz",
+        merged_phased_vcf_maf="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz.log",
     threads: 4
     shell:
         """
@@ -92,13 +92,13 @@ rule maf_sites_phased_vcf:
 #     Filter for INFO based on concordance results WITHOUT re-calibrating INFO score for all samples together DON'T DO THIS, IT TAKE THE LAST SAMPLES INFO SCORE AND DOES NOT RECALIBRATE IT
 #     """
 #     input:
-#         merged_phased_vcf_maf = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
+#         merged_phased_vcf_maf = 'output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz'
 #     output:
-#         merged_phased_vcf_maf_info = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz'
+#         merged_phased_vcf_maf_info = 'output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz'
 #     params:
 #         info=config['info_cutoff']
 #     log:
-#         '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz.log'
+#         'output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz.log'
 #     threads: 10
 #     shell:
 #         '''
@@ -119,11 +119,11 @@ rule recalibrate_info_phased_vcf:
     Re-calibrate INFO scores based on all samples present in the merged VCF. This is essential to properly filter for INFO score in a multi-imputed-sample VCF (when they are imputed individually) 
     """
     input:
-        merged_phased_vcf_maf="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz",
+        merged_phased_vcf_maf="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz",
     output:
-        merged_phased_vcf_maf_recalibrated="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz",
+        merged_phased_vcf_maf_recalibrated="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz.log",
     threads: 4
     shell:
         """
@@ -141,13 +141,13 @@ rule filter_recalibrated_INFO_phased_vcf:
     Filter for INFO after re-calibrating INFO score for all samples together
     """
     input:
-        merged_phased_vcf_maf_recalibrated="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz",
+        merged_phased_vcf_maf_recalibrated="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO.vcf.gz",
     output:
-        merged_phased_vcf_maf_recalibrated_info="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
+        merged_phased_vcf_maf_recalibrated_info="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
     params:
         info=config["info_cutoff"],
     log:
-        "{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz.log",
     threads: 4
     shell:
         """

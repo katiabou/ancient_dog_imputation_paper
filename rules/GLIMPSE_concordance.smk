@@ -12,8 +12,8 @@ rule extract_chrom_ref_fast_concordance:
     input:
         ref_fasta=config["ref_fasta_file"],
     output:
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
-        ref_fasta_chr_fai="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta.fai",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        ref_fasta_chr_fai="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta.fai",
     shell:
         """
         samtools faidx {input.ref_fasta} {wildcards.chrom} > {output.ref_fasta_chr}
@@ -26,11 +26,11 @@ rule extract_chr_target_bams:
     Extract chromosomes from target bam files 
     """
     input:
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
         target_bams=lambda wildcards: samples_df.loc[wildcards.sample, "bam_path"],
     output:
-        target_bams_chr="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
-        target_bams_chr_bai="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam.bai",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        target_bams_chr_bai="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam.bai",
     shell:
         """
         samtools view -T {input.ref_fasta_chr} \
@@ -48,11 +48,11 @@ rule estimate_coverage_fraction:
     Based on here: https://davemcg.github.io/post/easy-bam-downsampling/
     """
     input:
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
-        target_bams_chr="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
     output:
         seed_frac=temp(
-            "{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.txt"
+            "output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.txt"
         ),
     params:
         coverage_val="{coverage_val}",
@@ -74,16 +74,16 @@ rule downsample_target_bam:
     Downsample target bams to lower coverages
     """
     input:
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
-        target_bams_chr="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
-        seed_frac="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.txt",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        seed_frac="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.txt",
     output:
-        downsampled_bam="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam",
-        downsampled_bam_bai="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam.bai",
+        downsampled_bam="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam",
+        downsampled_bam_bai="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam.bai",
     log:
-        "{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.log",
+        "output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}.log",
     benchmark:
-        "{path}/benchmarks/target_bams/{sample}_{chrom}_{coverage_val}.tsv"
+        "benchmarks/target_bams/{sample}_{chrom}_{coverage_val}.tsv"
     shell:
         """
         s=$(cat {input.seed_frac}) 
@@ -105,7 +105,7 @@ rule prepare_list_validation_reference_removal:
     input:
         ref_val_samples="sample_lists/target_names_reference_remove_published.tsv",
     output:
-        ref_val_sample_file="{path}/output/GLIMPSE_concordance/reference_panel/ref_val_sample.txt",
+        ref_val_sample_file="output/GLIMPSE_concordance/reference_panel/ref_val_sample.txt",
     shell:
         """
         cat {input.ref_val_samples} | awk -F '\t' '{{print $2}}' >> {output.ref_val_sample_file}
@@ -117,17 +117,17 @@ rule prepare_ref_panel:
     Remove samples, trim-alt alleles created, normalise indels, only keep biallelic snps
     """
     input:
-        ref_panel_phased="{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
-        ref_val_sample_file="{path}/output/GLIMPSE_concordance/reference_panel/ref_val_sample.txt",
+        ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
+        ref_val_sample_file="output/GLIMPSE_concordance/reference_panel/ref_val_sample.txt",
     output:
         ref_concordance_sample_excl=temp(
-            "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz"
+            "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz"
         ),
     log:
-        "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.log",
+        "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/reference_panel/{chrom}_ref_panel.tsv"
+        "benchmarks/reference_panel/{chrom}_ref_panel.tsv"
     shell:
         """
         (
@@ -148,16 +148,16 @@ rule fill_tags_ref_sample_excl:
     Fill tags to re-estimate fields after sample removal (have to specify F_MISSING, which is the fraction of missing genotypes)
     """
     input:
-        ref_concordance_sample_excl="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz",
+        ref_concordance_sample_excl="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel.phased.vcf.gz",
     output:
         ref_concordance_sample_excl_filltags=temp(
-            "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.vcf.gz"
+            "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.vcf.gz"
         ),
     log:
-        "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.log",
+        "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/reference_panel/{chrom}_ref_panel_filltags.phased.tsv"
+        "benchmarks/reference_panel/{chrom}_ref_panel_filltags.phased.tsv"
     shell:
         """
         bcftools +fill-tags {input.ref_concordance_sample_excl} \
@@ -172,17 +172,17 @@ rule filter_sites_ref_sample_excl:
     Filter for missingness (F_MISSING) again, since we removed individuals
     """
     input:
-        ref_concordance_sample_excl_filltags="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.vcf.gz",
+        ref_concordance_sample_excl_filltags="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags.phased.vcf.gz",
     output:
-        ref_concordance_sample_excl_filltags_filter="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
-        ref_concordance_sample_excl_filltags_filter_csi="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf.csi",
+        ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+        ref_concordance_sample_excl_filltags_filter_csi="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf.csi",
     params:
         f_missing=config["F_MISSING"],
     log:
-        "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.log",
+        "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/reference_panel/{chrom}_ref_panel_filltags_filter.phased.tsv"
+        "benchmarks/reference_panel/{chrom}_ref_panel_filltags_filter.phased.tsv"
     shell:
         """
         bcftools view -i 'F_MISSING<{params.f_missing}' \
@@ -200,12 +200,12 @@ rule prepare_merged_chr_list_ref:
     """
     input:
         ref_concordance_sample_excl_filltags_filter=expand(
-            "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+            "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list_ref="{path}/output/GLIMPSE_concordance/reference_panel/chr_list.ref_panel_filltags_filter.phased.txt",
+        chr_list_ref="output/GLIMPSE_concordance/reference_panel/chr_list.ref_panel_filltags_filter.phased.txt",
     shell:
         """
         ls -v {input.ref_concordance_sample_excl_filltags_filter} >> {output.chr_list_ref}
@@ -217,12 +217,12 @@ rule merge_chr_ref:
     Merge chromosomes of filtered reference panel
     """
     input:
-        chr_list_ref="{path}/output/GLIMPSE_concordance/reference_panel/chr_list.ref_panel_filltags_filter.phased.txt",
+        chr_list_ref="output/GLIMPSE_concordance/reference_panel/chr_list.ref_panel_filltags_filter.phased.txt",
     output:
-        ref_concordance_sample_excl_filltags_filter_allchrom="{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
-        ref_concordance_sample_excl_filltags_filter_allchrom_csi="{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.csi",
+        ref_concordance_sample_excl_filltags_filter_allchrom="output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
+        ref_concordance_sample_excl_filltags_filter_allchrom_csi="output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.log",
+        "output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf.log",
     threads: 4
     shell:
         """
@@ -240,15 +240,15 @@ rule extract_var_pos_concordance:
     Extract sites from reference panel to use for GLs estimation from bams afterwards
     """
     input:
-        ref_concordance_sample_excl_filltags_filter="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+        ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
     output:
-        ref_panel_sites_vcf="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
-        ref_panel_sites_tsv="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
+        ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
+        ref_panel_sites_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
     log:
-        "{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.log",
+        "output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/reference_panel/{chrom}_ref_panel_sites.phased.tsv"
+        "benchmarks/reference_panel/{chrom}_ref_panel_sites.phased.tsv"
     shell:
         """
         bcftools view -G -m 2 -M 2 -v snps \
@@ -270,18 +270,18 @@ rule compute_GLs_downsampled_samples_concordance:
     Compute GLs of target bams 
     """
     input:
-        downsampled_bam="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam",
-        ref_panel_sites_vcf="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
-        ref_panel_sites_tsv="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        downsampled_bam="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}_{coverage_val}x.bam",
+        ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
+        ref_panel_sites_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        GL_vcf_target_bams="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz",
-        GL_vcf_target_bams_csi="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz.csi",
+        GL_vcf_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz",
+        GL_vcf_target_bams_csi="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.log",
+        "output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.tsv"
+        "benchmarks/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
         bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.downsampled_bam} -Ou | \
@@ -296,17 +296,17 @@ rule chunk_spliting_concordance:
     Split chromosome into chunks for imputation
     """
     input:
-        ref_panel_sites_vcf="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
+        ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
     output:
-        chunks="{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
     params:
         window_size=config["window_size"],
         buffer_size=config["buffer_size"],
     log:
-        "{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.log",
+        "output/GLIMPSE_concordance/chunks/{chrom}_chunks.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/chunks/{chrom}_chunks.tsv"
+        "benchmarks/chunks/{chrom}_chunks.tsv"
     shell:
         """
         GLIMPSE_chunk \
@@ -323,21 +323,21 @@ rule impute_concordance:
     Impute each sample seperately
     """
     input:
-        GL_vcf_target_bams="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz",
-        ref_concordance_sample_excl_filltags_filter="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
-        chunks="{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        GL_vcf_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz",
+        ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+        chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
     output:
-        imputed="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf",
-        imputed_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf.csi",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf",
+        imputed_csi="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf.csi",
     params:
         gen_map_path=config["gen_map_path"],
         gen_map_files=config["gen_map_files"],
-        prefix="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x",
     threads: 2
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.log",
+        "output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.log",
     benchmark:
-        "{path}/benchmarks/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.tsv"
+        "benchmarks/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -361,12 +361,12 @@ rule ligate_list_concordance:
     Create list of imputed output files for each chunk to merge later
     """
     input:
-        chunks="{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
-        imputed="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf",
+        chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.00.bcf",
     output:
-        ligated_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}_{coverage_val}x.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}_{coverage_val}x.txt",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x",
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -382,15 +382,15 @@ rule ligate_concordance:
     Merge all imputed chunks
     """
     input:
-        ligated_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}_{coverage_val}x.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}_{coverage_val}x.txt",
     output:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
-        ligated_bcf_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf.csi",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
+        ligated_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.tsv"
+        "benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
         GLIMPSE_ligate \
@@ -407,15 +407,15 @@ rule phase_concordance:
     Phase!!!
     """
     input:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
     output:
-        phased_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
-        phased_bcf_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf.csi",
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
+        phased_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.log",
     threads: 4
     benchmark:
-        "{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.tsv"
+        "benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
         GLIMPSE_sample \
@@ -434,14 +434,14 @@ rule annotate_fields_concordance:
     GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
     """
     input:
-        phased_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
     output:
-        phased_vcf_annotate="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.{chrom}.vcf.gz.log",
     benchmark:
-        "{path}/benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.tsv"
+        "benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
         """
         bcftools annotate \
@@ -465,9 +465,9 @@ rule estimate_coverage_target_sample:
     input:
         target_bams=lambda wildcards: samples_df.loc[wildcards.sample, "bam_path"],
     output:
-        cov_depth_cutoff="{path}/output/GLIMPSE_concordance/target_bams/{sample}_cov_depth_cutoff.txt",
+        cov_depth_cutoff="output/GLIMPSE_concordance/target_bams/{sample}_cov_depth_cutoff.txt",
     log:
-        "{path}/output/GLIMPSE_concordance/target_bams/{sample}_genome_coverage.txt.log",
+        "output/GLIMPSE_concordance/target_bams/{sample}_genome_coverage.txt.log",
     shell:
         """
         #estimate the length of the regions within the bam file 
@@ -493,19 +493,19 @@ rule prepare_validation_samples_filt:
     Take target bams (initial coverage) and call genotypes on the same site as the filtered reference panel, then filter sites based on Sousa da Mota 2022
     """
     input:
-        target_bams_chr="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
-        ref_panel_sites_vcf="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
-        ref_panel_sites_tsv="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
-        cov_depth_cutoff="{path}/output/GLIMPSE_concordance/target_bams/{sample}_cov_depth_cutoff.txt",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
+        ref_panel_sites_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        cov_depth_cutoff="output/GLIMPSE_concordance/target_bams/{sample}_cov_depth_cutoff.txt",
     output:
-        validation_sample_filt="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf",
-        validation_sample_filt_csi="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf.csi",
+        validation_sample_filt="output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf",
+        validation_sample_filt_csi="output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.log",
+        "output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.log",
     threads: 10
     benchmark:
-        "{path}/benchmarks/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.tsv"
+        "benchmarks/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.tsv"
     shell:
         """
         min=$(sed -n '1p' {input.cov_depth_cutoff})
@@ -530,10 +530,10 @@ rule prepare_validation_samples_filt:
 
 # rule plot_ad_dp_prep:
 #     input:
-#         validation_sample_filt = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt.bcf'
+#         validation_sample_filt = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt.bcf'
 #     output:
-#         validation_sample_filt_het = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.bcf',
-#         validation_sample_filt_het_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.txt'
+#         validation_sample_filt_het = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.bcf',
+#         validation_sample_filt_het_sites = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.txt'
 #     shell:
 #         '''
 #         bcftools view --include 'GT="het"' {input.validation_sample_filt} -Ob -o {output.validation_sample_filt_het}
@@ -542,9 +542,9 @@ rule prepare_validation_samples_filt:
 
 # rule plot_ad_dp:
 #     input:
-#         validation_sample_filt_het_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.txt'
+#         validation_sample_filt_het_sites = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.txt'
 #     output:
-#         validation_sample_filt_het_plot = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.png'
+#         validation_sample_filt_het_plot = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_het.png'
 #     script:
 #         "../scripts/allelic_depth_read_depth_plot.R"
 
@@ -554,13 +554,13 @@ rule prepare_validation_samples_filt_allelic:
     Filter sites for allelic imbalance
     """
     input:
-        validation_sample_filt="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf",
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        validation_sample_filt="output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp.bcf",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        validation_sample_filt_allelic="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf",
-        validation_sample_filt_csi_allelic="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf.csi",
+        validation_sample_filt_allelic="output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf",
+        validation_sample_filt_csi_allelic="output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.log",
+        "output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.log",
     threads: 10
     shell:
         """
@@ -579,12 +579,12 @@ rule prepare_merged_chr_list_validation:
     """
     input:
         validation_sample_filt_allelic=expand(
-            "{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf",
+            "output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list_validation="{path}/output/GLIMPSE_concordance/validation_bams/chr_list.{sample}_validation_filt_qual_dp_ab.txt",
+        chr_list_validation="output/GLIMPSE_concordance/validation_bams/chr_list.{sample}_validation_filt_qual_dp_ab.txt",
     shell:
         """
         ls -v {input.validation_sample_filt_allelic} >> {output.chr_list_validation}
@@ -596,12 +596,12 @@ rule merge_chr_validation:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        chr_list_validation="{path}/output/GLIMPSE_concordance/validation_bams/chr_list.{sample}_validation_filt_qual_dp_ab.txt",
+        chr_list_validation="output/GLIMPSE_concordance/validation_bams/chr_list.{sample}_validation_filt_qual_dp_ab.txt",
     output:
-        validation_sample_filt_allelic_allchrom="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf",
-        validation_sample_filt_allelic_allchrom_csi="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf.csi",
+        validation_sample_filt_allelic_allchrom="output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf",
+        validation_sample_filt_allelic_allchrom_csi="output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf.log",
+        "output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf.log",
     threads: 8
     shell:
         """
@@ -626,14 +626,14 @@ rule filter_info_score:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf",
     output:
-        info_imputed_info="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
-        info_imputed_info_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf.csi",
+        info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
+        info_imputed_info_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf.csi",
     params:
         info_val="{info_cutoff}",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.log",
     threads: 8
     shell:
         """
@@ -648,9 +648,9 @@ rule filter_info_score:
 
 # rule get_ID_for_targets:
 #     input:
-#         ligated_bcf = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf',
+#         ligated_bcf = 'output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf',
 #     output:
-#         sm_samples = '{path}/output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt'
+#         sm_samples = 'output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt'
 #     shell:
 #         '''
 #         bcftools query -l {input.ligated_bcf} > {output.sm_samples}
@@ -661,11 +661,11 @@ rule filter_info_score:
 #     Prepare the lst files required to run GLIMPSE_concordance
 #     """
 #     input:
-#         ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf',
-#         validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf',
-#         info_imputed_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf',
+#         ref_concordance_sample_excl_filltags_filter = 'output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf',
+#         validation_sample_filt_allelic = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom}_validation_filt_qual_dp_ab.bcf',
+#         info_imputed_info = 'output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf',
 #     output:
-#         concordance_lst_info_score_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.lst'
+#         concordance_lst_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.lst'
 #     shell:
 #         '''
 #         echo {wildcards.chrom} {input.ref_concordance_sample_excl_filltags_filter} {input.validation_sample_filt_allelic} {input.info_imputed_info} > {output.concordance_lst_info_score_filtered}
@@ -676,15 +676,15 @@ rule filter_info_score:
 #     Run GLIMPSE concordance specifying the target sample we want
 #     """
 #     input:
-#         concordance_lst_info_score_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.lst',
-#         sm_samples = '{path}/output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt'
+#         concordance_lst_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.lst',
+#         sm_samples = 'output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt'
 #     output:
-#         concordance_output_info_score_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz',
-#         concordance_output_discordance_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz'
+#         concordance_output_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz',
+#         concordance_output_discordance_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz'
 #     params:
-#         prefix = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered'
+#         prefix = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered'
 #     log:
-#         '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.log'
+#         'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.log'
 #     threads: 8
 #     shell:
 #         '''
@@ -704,12 +704,12 @@ rule filter_info_score:
 #     Plot accuracy
 #     """
 #     input:
-#         concordance_output_info_score_1 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.8_filtered.rsquare.grp.txt.gz',
-#         concordance_output_info_score_2 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.9_filtered.rsquare.grp.txt.gz',
-#         concordance_output_info_score_3 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.95_filtered.rsquare.grp.txt.gz',
-#         concordance_output_info_score_4 = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.0_filtered.rsquare.grp.txt.gz'
+#         concordance_output_info_score_1 = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.8_filtered.rsquare.grp.txt.gz',
+#         concordance_output_info_score_2 = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.9_filtered.rsquare.grp.txt.gz',
+#         concordance_output_info_score_3 = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.95_filtered.rsquare.grp.txt.gz',
+#         concordance_output_info_score_4 = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.0_filtered.rsquare.grp.txt.gz'
 #     output:
-#         plot = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_{sample}_{chrom}_{coverage_val}x_filtered.png'
+#         plot = 'output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_{sample}_{chrom}_{coverage_val}x_filtered.png'
 #     params:
 #         chr = '{chrom}',
 #         name = '{sample}',
@@ -723,10 +723,10 @@ rule filter_info_score:
 #     Prepare files for genotype discordance plot
 #     """
 #     input:
-#         concordance_output_discordance_filtered = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz'
+#         concordance_output_discordance_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz'
 #     output:
-#         concordance_output_discordance_filtered_temp = temp('{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/temp_concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt'),
-#         concordance_output_discordance_filtered_prep = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt'
+#         concordance_output_discordance_filtered_temp = temp('output/GLIMPSE_concordance/concordance_INFO_filtered/temp_concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt'),
+#         concordance_output_discordance_filtered_prep = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt'
 #     shell:
 #         '''
 #         zcat {input.concordance_output_discordance_filtered} | sed -n '3p' >> {output.concordance_output_discordance_filtered_temp}
@@ -738,9 +738,9 @@ rule filter_info_score:
 #     Merge all coverages and INFO per sample
 #     """
 #     input:
-#         concordance_output_discordance_filtered_prep = expand('{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt', coverage_val=COVERAGE_VAL, info_cutoff=INFO_CUTOFF, allow_missing=True)
+#         concordance_output_discordance_filtered_prep = expand('output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered.txt', coverage_val=COVERAGE_VAL, info_cutoff=INFO_CUTOFF, allow_missing=True)
 #     output:
-#         concordance_output_discordance_filtered_per_sample = '{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt'
+#         concordance_output_discordance_filtered_per_sample = 'output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt'
 #     shell:
 #         '''
 #         cat {input.concordance_output_discordance_filtered_prep} > {output.concordance_output_discordance_filtered_per_sample}
@@ -751,16 +751,16 @@ rule filter_info_score:
 #     Plot genotype discordances
 #     """
 #     input:
-#         concordance_output_discordance_filtered_per_sample = expand('{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt', sample=SAMPLE, allow_missing=True),
+#         concordance_output_discordance_filtered_per_sample = expand('output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt', sample=SAMPLE, allow_missing=True),
 #         concordance_metadata = "sample_lists/concordance_bams_published.tsv"
 #     params:
-#         path_script = '{path}/scripts',
+#         path_script = 'scripts',
 #         discordance_phased=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample),
 #     output:
-#         discordance_dogs_full = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_dogs_full.png',
-#         discordance_dogs = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_dogs.png',
-#         discordance_wolves_full = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_wolves_full.png',
-#         discordance_wolves = '{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_wolves.png',
+#         discordance_dogs_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_dogs_full.png',
+#         discordance_dogs = 'output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_dogs.png',
+#         discordance_wolves_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_wolves_full.png',
+#         discordance_wolves = 'output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_{chrom}_filtered_wolves.png',
 #     shell:
 #         '''
 #         Rscript {params.path_script}/genotype_discordance.R \
@@ -786,12 +786,12 @@ rule prepare_merged_chr_list_concordance:
     """
     input:
         info_imputed_info=expand(
-            "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
+            "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}.txt",
     shell:
         """
         ls -v {input.info_imputed_info} >> {output.chr_list}
@@ -803,12 +803,12 @@ rule merge_chr_concordance:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        chr_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}.txt",
     output:
-        info_imputed_info_allchrom="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
-        info_imputed_info_allchrom_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf.csi",
+        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
+        info_imputed_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.log",
     threads: 8
     shell:
         """
@@ -823,9 +823,9 @@ rule merge_chr_concordance:
 
 rule get_ID_for_targets_allchrom:
     input:
-        info_imputed_info_allchrom="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
+        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
-        sm_samples="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.txt",
+        sm_samples="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.txt",
     shell:
         """
         bcftools query -l {input.info_imputed_info_allchrom} > {output.sm_samples}
@@ -837,11 +837,11 @@ rule prepare_concordance_lst_info_score_filtered_allchrom:
     Prepare the lst files required to run GLIMPSE_concordance
     """
     input:
-        ref_concordance_sample_excl_filltags_filter_allchrom="{path}/output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
-        validation_sample_filt_allelic_allchrom="{path}/output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf",
-        info_imputed_info_allchrom="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
+        ref_concordance_sample_excl_filltags_filter_allchrom="output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
+        validation_sample_filt_allelic_allchrom="output/GLIMPSE_concordance/validation_bams/{sample}_allchrom_validation_filt_qual_dp_ab.bcf",
+        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
-        concordance_lst_info_score_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.lst",
+        concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.lst",
     shell:
         """
         echo "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chr23,chr24,chr25,chr26,chr27,chr28,chr29,chr30,chr31,chr32,chr33,chr34,chr35,chr36,chr37,chr38" {input.ref_concordance_sample_excl_filltags_filter_allchrom} {input.validation_sample_filt_allelic_allchrom} {input.info_imputed_info_allchrom} > {output.concordance_lst_info_score_filtered}
@@ -853,15 +853,15 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom:
     Run GLIMPSE concordance specifying the target sample we want
     """
     input:
-        concordance_lst_info_score_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.lst",
-        sm_samples="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.txt",
+        concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.lst",
+        sm_samples="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.txt",
     output:
-        concordance_output_info_score_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz",
-        concordance_output_discordance_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz",
+        concordance_output_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz",
+        concordance_output_discordance_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered",
+        prefix="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered",
     log:
-        "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.log",
+        "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.log",
     threads: 8
     shell:
         """
@@ -882,12 +882,12 @@ rule plot_rsquare_accuracy_filtered_allchrom:
     Plot accuracy 
     """
     input:
-        concordance_output_info_score_1="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.8_filtered.rsquare.grp.txt.gz",
-        concordance_output_info_score_2="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.9_filtered.rsquare.grp.txt.gz",
-        concordance_output_info_score_3="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.95_filtered.rsquare.grp.txt.gz",
-        concordance_output_info_score_4="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.0_filtered.rsquare.grp.txt.gz",
+        concordance_output_info_score_1="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.8_filtered.rsquare.grp.txt.gz",
+        concordance_output_info_score_2="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.9_filtered.rsquare.grp.txt.gz",
+        concordance_output_info_score_3="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.95_filtered.rsquare.grp.txt.gz",
+        concordance_output_info_score_4="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_0.0_filtered.rsquare.grp.txt.gz",
     output:
-        plot="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_{sample}_allchrom_{coverage_val}x_filtered.png",
+        plot="output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_{sample}_allchrom_{coverage_val}x_filtered.png",
     params:
         chr="all autosomes",
         name="{sample}",
@@ -901,9 +901,9 @@ rule plot_rsquare_accuracy_filtered_allchrom2_prep:
     Prepare files for main plot
     """
     input:
-        concordance_output_info_score_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz",
+        concordance_output_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare.grp.txt.gz",
     output:
-        concordance_output_info_score_filtered_mod="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
+        concordance_output_info_score_filtered_mod="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
     shell:
         """
         zcat {input.concordance_output_info_score_filtered} | awk -v FS=' ' -v OFS=' ' '{{$7={wildcards.coverage_val}}} {{$8={wildcards.info_cutoff}}} {{$9="{wildcards.sample}"}} 1' > {output.concordance_output_info_score_filtered_mod}
@@ -916,14 +916,14 @@ rule plot_rsquare_accuracy_filtered_allchrom2:
     """
     input:
         concordance_output=expand(
-            "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
+            "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
             sample=["NGDG", "PortauChoix", "TRF.05.05", "CGG33"],
             coverage_val=["0.5", "1", "2"],
             info_cutoff=INFO_CUTOFF,
             allow_missing=True,
         ),
     output:
-        plot="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-main.png",
+        plot="output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-main.png",
     params:
         files=lambda wildcards, input: ",".join(input.concordance_output),
     shell:
@@ -937,13 +937,13 @@ rule plot_rsquare_accuracy_filtered_allchrom2:
 rule plot_accuray_per_sample:
     input:
         concordance_output=expand(
-            "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
+            "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
             coverage_val=COVERAGE_VAL,
             info_cutoff=INFO_CUTOFF,
             allow_missing=True,
         ),
     output:
-        plot="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-{sample}.png",
+        plot="output/GLIMPSE_concordance/plots/glimpse_concordance/rsquare_accuracy_allchrom_filtered-{sample}.png",
     params:
         files=lambda wildcards, input: ",".join(input.concordance_output),
         name="{sample}",
@@ -963,12 +963,12 @@ rule prepare_concordance_output_filt_allchrom:
     Prepare files for genotype discordance plot
     """
     input:
-        concordance_output_discordance_filtered="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz",
+        concordance_output_discordance_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.error.spl.txt.gz",
     output:
         concordance_output_discordance_filtered_temp=temp(
-            "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/temp_concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt"
+            "output/GLIMPSE_concordance/concordance_INFO_filtered/temp_concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt"
         ),
-        concordance_output_discordance_filtered_prep="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt",
+        concordance_output_discordance_filtered_prep="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt",
     shell:
         """
         zcat {input.concordance_output_discordance_filtered} | sed -n '3p' >> {output.concordance_output_discordance_filtered_temp}
@@ -982,13 +982,13 @@ rule merge_concordance_output_filt_allchrom:
     """
     input:
         concordance_output_discordance_filtered_prep=expand(
-            "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt",
+            "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.txt",
             coverage_val=COVERAGE_VAL,
             info_cutoff=INFO_CUTOFF,
             allow_missing=True,
         ),
     output:
-        concordance_output_discordance_filtered_per_sample="{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_filtered.txt",
+        concordance_output_discordance_filtered_per_sample="output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_filtered.txt",
     shell:
         """
         cat {input.concordance_output_discordance_filtered_prep} > {output.concordance_output_discordance_filtered_per_sample}
@@ -1001,21 +1001,21 @@ rule plot_discordance_filt_allchrom:
     """
     input:
         concordance_output_discordance_filtered_per_sample=expand(
-            "{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_filtered.txt",
+            "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_filtered.txt",
             sample=SAMPLE,
             allow_missing=True,
         ),
         concordance_metadata="sample_lists/concordance_bams_published.tsv",
     params:
-        path_script="{path}/scripts",
+        path_script="scripts",
         discordance_phased=lambda wildcards, input: ",".join(
             input.concordance_output_discordance_filtered_per_sample
         ),
     output:
-        discordance_dogs_full="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_dogs_full.png",
-        discordance_dogs="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_dogs.png",
-        discordance_wolves_full="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_wolves_full.png",
-        discordance_wolves="{path}/output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_wolves.png",
+        discordance_dogs_full="output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_dogs_full.png",
+        discordance_dogs="output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_dogs.png",
+        discordance_wolves_full="output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_wolves_full.png",
+        discordance_wolves="output/GLIMPSE_concordance/plots/glimpse_concordance/concordance_allchrom_filtered_wolves.png",
     shell:
         """
         Rscript {params.path_script}/genotype_discordance.R \

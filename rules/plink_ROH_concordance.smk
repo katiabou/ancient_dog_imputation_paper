@@ -13,12 +13,12 @@ rule transversions_phased_concordance:
     Only take transversions from filtered phased concordance data
     """
     input:
-        phased_maf_info="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
-        tranversion_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.tsv.gz",
-        phased_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
+        tranversion_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.tsv.gz",
+        phased_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz.log",
     threads: 10
     shell:
         """
@@ -41,15 +41,15 @@ rule make_plink_transversions_phased_concordance:
     Prepare file format for plink
     """
     input:
-        phased_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
+        phased_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
     output:
         expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.{doc}",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions",
+        prefix="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions",
     shell:
         """
         plink \
@@ -66,14 +66,14 @@ rule roh_transversions_phased_concordance:
     Run ROH estimation with plink
     """
     input:
-        bim="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.bim",
+        bim="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions.bim",
     output:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
     params:
-        prefix_in="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions",
-        prefix_out="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}",
+        prefix_in="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions",
+        prefix_out="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom.log",
     shell:
         """
         plink \
@@ -97,12 +97,12 @@ rule merge_roh_transversions_phased_concordance_prep:
     Prepare ROH output files for plot
     """
     input:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
     output:
         temp1_roh_phased=temp(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp1.hom"
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp1.hom"
         ),
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         scp {input.phased_roh} {output.temp1_roh_phased}
@@ -117,9 +117,9 @@ rule estimate_chr_size:
     Estimate chromosome size for plotting x axis 
     """
     input:
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        ref_fasta_chr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome",
+        ref_fasta_chr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome",
     shell:
         """
         faidx {input.ref_fasta_chr} -i chromsizes > {output.ref_fasta_chr_size}
@@ -134,12 +134,12 @@ rule transversions_phased_HC:
     Only take transversions from phased data
     """
     input:
-        phased_maf_info="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
-        tranversion_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.tsv.gz",
-        phased_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
+        tranversion_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.tsv.gz",
+        phased_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz.log",
     threads: 10
     shell:
         """
@@ -162,17 +162,17 @@ rule make_plink_transversions_phased_HC:
     Prepare file format for plink
     """
     input:
-        phased_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
+        phased_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.vcf.gz",
     output:
         expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.{doc}",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions",
+        prefix="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.log",
     shell:
         """
         plink \
@@ -189,14 +189,14 @@ rule roh_transversions_phased_HC:
     Run ROH estimation with plink
     """
     input:
-        bim="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.bim",
+        bim="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions.bim",
     output:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
     params:
-        prefix_in="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions",
-        prefix_out="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}",
+        prefix_in="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions",
+        prefix_out="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom.log",
     shell:
         """
         plink \
@@ -220,12 +220,12 @@ rule merge_roh_transversions_phased_prep_HC:
     Prepare ROH output files for plot
     """
     input:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}.hom",
     output:
         temp1_roh_phased=temp(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp1.hom"
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp1.hom"
         ),
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         scp {input.phased_roh} {output.temp1_roh_phased}
@@ -245,17 +245,17 @@ rule make_plink_all_sites_phased_concordance:
     Prepare file format for plink
     """
     input:
-        phased_maf_info="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
         expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.{doc}",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites",
+        prefix="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.log",
     shell:
         """
         plink \
@@ -272,14 +272,14 @@ rule roh_all_sites_phased_concordance:
     Run ROH estimation with plink
     """
     input:
-        bim="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.bim",
+        bim="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites.bim",
     output:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
     params:
-        prefix_in="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites",
-        prefix_out="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}",
+        prefix_in="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites",
+        prefix_out="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom.log",
     shell:
         """
         plink \
@@ -303,12 +303,12 @@ rule merge_roh_all_sites_phased_concordance_prep:
     Prepare ROH output files for plot
     """
     input:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
     output:
         temp1_roh_phased=temp(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp1.hom"
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp1.hom"
         ),
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         scp {input.phased_roh} {output.temp1_roh_phased}
@@ -326,17 +326,17 @@ rule make_plink_all_sites_phased_HC:
     Prepare file format for plink
     """
     input:
-        phased_maf_info="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
         expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.{doc}",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites",
+        prefix="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.log",
     shell:
         """
         plink \
@@ -353,14 +353,14 @@ rule roh_all_sites_phased_HC:
     Run ROH estimation with plink
     """
     input:
-        bim="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.bim",
+        bim="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites.bim",
     output:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
     params:
-        prefix_in="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites",
-        prefix_out="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}",
+        prefix_in="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites",
+        prefix_out="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}",
     log:
-        "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom.log",
+        "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom.log",
     shell:
         """
         plink \
@@ -384,12 +384,12 @@ rule merge_roh_all_sites_phased_prep_HC:
     Prepare ROH output files for plot
     """
     input:
-        phased_roh="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
+        phased_roh="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}.hom",
     output:
         temp1_roh_phased=temp(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp1.hom"
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp1.hom"
         ),
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         scp {input.phased_roh} {output.temp1_roh_phased}
@@ -408,18 +408,18 @@ rule merge_roh_all_sites_phased_prep_HC:
 #     Plot ROH transversions for imputed concordance, imputed HC, and validation
 #     """
 #     input:
-#         temp_roh_phased = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom',
-#         temp_roh_concordance_phased = expand('{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
-#         temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom',
-#         ref_fasta_chr_size = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome'
+#         temp_roh_phased = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom',
+#         temp_roh_concordance_phased = expand('output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         temp_roh_validation = 'output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom',
+#         ref_fasta_chr_size = 'output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome'
 #     output:
-#         plot = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_ROH.png'
+#         plot = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_ROH.png'
 #     params:
 #         files_concordance_phased=lambda wildcards, input: ','.join(input.temp_roh_concordance_phased),
 #         files_validation=lambda wildcards, input: input.temp_roh_validation,
 #         files_phased=lambda wildcards, input: input.temp_roh_phased,
 #         name = '{sample}',
-#         path_script = '{path}/scripts',
+#         path_script = 'scripts',
 #         chrom = '{chrom}',
 #         cov_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
 #         info_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
@@ -433,18 +433,18 @@ rule merge_roh_all_sites_phased_prep_HC:
 #     Plot ROH all sites for imputed concordance, imputed HC, and validation
 #     """
 #     input:
-#         temp_roh_phased = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom',
-#         temp_roh_concordance_phased = expand('{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
-#         temp_roh_validation = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom',
-#         ref_fasta_chr_size = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome',
+#         temp_roh_phased = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom',
+#         temp_roh_concordance_phased = expand('output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         temp_roh_validation = 'output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom',
+#         ref_fasta_chr_size = 'output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome',
 #     output:
-#         plot = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_ROH.png'
+#         plot = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_ROH.png'
 #     params:
 #         files_concordance_phased=lambda wildcards, input: ','.join(input.temp_roh_concordance_phased),
 #         files_validation=lambda wildcards, input: input.temp_roh_validation,
 #         files_phased=lambda wildcards, input: input.temp_roh_phased,
 #         name = '{sample}',
-#         path_script = '{path}/scripts',
+#         path_script = 'scripts',
 #         chrom = '{chrom}',
 #         cov_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
 #         info_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
@@ -464,12 +464,12 @@ rule estimate_allchr_size:
     """
     input:
         ref_fasta_chr_size=expand(
-            "{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome",
+            "output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}_size.genome",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        ref_fasta_allchr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
+        ref_fasta_allchr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
     shell:
         """
         cat {input.ref_fasta_chr_size} | awk '{{Total=Total+$2}} END{{print "allchrom " Total}}' > {output.ref_fasta_allchr_size}
@@ -482,18 +482,18 @@ rule merge_all_chrom_ROHs_HC_phased:
     """
     input:
         temp_roh_phased_transversions=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
         temp_roh_phased_all_sites=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        temp_roh_phased_allchrom_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
-        temp_roh_phased_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased_allchrom_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased_allchrom_all_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         awk 'FNR>1 || NR==1' {input.temp_roh_phased_transversions} > {output.temp_roh_phased_allchrom_transversions}
@@ -507,18 +507,18 @@ rule merge_all_chrom_ROHs_downsampled_phased:
     """
     input:
         temp_roh_concordance_phased_transversions=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
         temp_roh_concordance_phased_all_sites=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        temp_roh_concordance_phased_allchrom_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
-        temp_roh_concordance_phased_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_concordance_phased_allchrom_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_concordance_phased_allchrom_all_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
     shell:
         """
         awk 'FNR>1 || NR==1' {input.temp_roh_concordance_phased_transversions} > {output.temp_roh_concordance_phased_allchrom_transversions}
@@ -532,18 +532,18 @@ rule merge_all_chrom_ROHs_validation:
     """
     input:
         temp_roh_validation_transversions=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
+            "output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
         temp_roh_validation_all_sites=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+            "output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        temp_roh_validation_allchrom_transversions="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
-        temp_roh_validation_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+        temp_roh_validation_allchrom_transversions="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
+        temp_roh_validation_allchrom_all_sites="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
     shell:
         """
         awk 'FNR>1 || NR==1' {input.temp_roh_validation_transversions} > {output.temp_roh_validation_allchrom_transversions}
@@ -556,22 +556,22 @@ rule merge_all_chrom_ROHs_validation:
 #     Estimate accuracy metrics for downsampled imputed against the validation HC for transversions
 #     """
 #     input:
-#         temp_roh_phased_allchrom_transversions = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom',
-#         temp_roh_concordance_phased_allchrom_transversions = expand('{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
-#         temp_roh_validation_allchrom_transversions = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom',
-#         ref_fasta_allchr_size = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome'
+#         temp_roh_phased_allchrom_transversions = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom',
+#         temp_roh_concordance_phased_allchrom_transversions = expand('output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         temp_roh_validation_allchrom_transversions = 'output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom',
+#         ref_fasta_allchr_size = 'output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome'
 #     output:
-#         accuracy_seg = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_segment.tsv',
-#         accuracy_len = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_length.tsv',
-#         accuracy_plot = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy.png',
-#         accuracy_plot2 = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_FDR_sensitivity_specificity.png',
-#         accuracy_plot3 = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_sensitivity_specificity.png'
+#         accuracy_seg = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_segment.tsv',
+#         accuracy_len = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_length.tsv',
+#         accuracy_plot = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy.png',
+#         accuracy_plot2 = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_FDR_sensitivity_specificity.png',
+#         accuracy_plot3 = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_sensitivity_specificity.png'
 #     params:
 #         files_concordance_phased=lambda wildcards, input: ','.join(input.temp_roh_concordance_phased_allchrom_transversions),
 #         files_validation=lambda wildcards, input: input.temp_roh_validation_allchrom_transversions,
 #         files_phased=lambda wildcards, input: input.temp_roh_phased_allchrom_transversions,
 #         name = '{sample}',
-#         path_script = '{path}/scripts',
+#         path_script = 'scripts',
 #         cov_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
 #         info_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
 #         site_type = 'Transversions'
@@ -599,22 +599,22 @@ rule merge_all_chrom_ROHs_validation:
 #     Estimate accuracy metrics for downsampled imputed against the validation HC for all sites
 #     """
 #     input:
-#         temp_roh_phased_allchrom_all_sites = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom',
-#         temp_roh_concordance_phased_allchrom_all_sites = expand('{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
-#         temp_roh_validation_allchrom_all_sites = '{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom',
-#         ref_fasta_allchr_size = '{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome'
+#         temp_roh_phased_allchrom_all_sites = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom',
+#         temp_roh_concordance_phased_allchrom_all_sites = expand('output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         temp_roh_validation_allchrom_all_sites = 'output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom',
+#         ref_fasta_allchr_size = 'output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome'
 #     output:
-#         accuracy_seg = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment.tsv',
-#         accuracy_len = '{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length.tsv',
-#         accuracy_plot = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy.png',
-#         accuracy_plot2 = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_FDR_sensitivity_specificity.png',
-#         accuracy_plot3 = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_sensitivity_specificity.png'
+#         accuracy_seg = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment.tsv',
+#         accuracy_len = 'output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length.tsv',
+#         accuracy_plot = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy.png',
+#         accuracy_plot2 = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_FDR_sensitivity_specificity.png',
+#         accuracy_plot3 = 'output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_sensitivity_specificity.png'
 #     params:
 #         files_concordance_phased=lambda wildcards, input: ','.join(input.temp_roh_concordance_phased_allchrom_all_sites),
 #         files_validation=lambda wildcards, input: input.temp_roh_validation_allchrom_all_sites,
 #         files_phased=lambda wildcards, input: input.temp_roh_phased_allchrom_all_sites,
 #         name = '{sample}',
-#         path_script = '{path}/scripts',
+#         path_script = 'scripts',
 #         cov_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
 #         info_sample = lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
 #         site_type = 'Transversions+transitions'
@@ -649,28 +649,28 @@ rule roh_bands_accuracy_downsampled_imputed_all_sites:
     Plot bands and estimate accuracy metrics for downsampled imputed against the validation HC for all sites
     """
     input:
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_chr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
-        temp_roh_phased_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_validation="output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_chr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
+        temp_roh_phased_allchrom_all_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased_allchrom_all_sites=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_allchr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
+        temp_roh_validation_allchrom_all_sites="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_allchr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
     output:
-        accuracy_seg="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment.tsv",
-        accuracy_len="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length.tsv",
-        band_accuracy_plot="{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_band_accuracy.png",
+        accuracy_seg="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment.tsv",
+        accuracy_len="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length.tsv",
+        band_accuracy_plot="output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_band_accuracy.png",
     params:
-        path_script="{path}/scripts",
+        path_script="scripts",
         files_concordance_phased_chr1=lambda wildcards, input: ",".join(
             input.temp_roh_concordance_phased
         ),
@@ -713,28 +713,28 @@ rule roh_bands_accuracy_downsampled_imputed_transversions:
     Plot bands and estimate accuracy metrics for downsampled imputed against the validation HC for transversions
     """
     input:
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_chr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
-        temp_roh_phased_allchrom_transversions="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_validation="output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_chr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
+        temp_roh_phased_allchrom_transversions="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased_allchrom_transversions=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation_allchrom_transversions="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_allchr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
+        temp_roh_validation_allchrom_transversions="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_allchr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
     output:
-        accuracy_seg="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_segment.tsv",
-        accuracy_len="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_length.tsv",
-        band_accuracy_plot="{path}/output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_band_accuracy.png",
+        accuracy_seg="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_segment.tsv",
+        accuracy_len="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_accuracy_length.tsv",
+        band_accuracy_plot="output/GLIMPSE_concordance/plots/ROH_concordance/{sample}_allchrom_INFO_{info}_MAF_{maf}_transversions_hom_win_het_{hom_win_het}_band_accuracy.png",
     params:
-        path_script="{path}/scripts",
+        path_script="scripts",
         files_concordance_phased_chr1=lambda wildcards, input: ",".join(
             input.temp_roh_concordance_phased
         ),
@@ -780,30 +780,30 @@ rule roh_bands_accuracy_downsampled_imputed_all_sites_rohan:
     Plot bands and estimate accuracy metrics for downsampled imputed against the validation HC for all sites, including ROHan results
     """
     input:
-        temp_roh_phased="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_phased="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_chr1_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_chr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
-        temp_roh_phased_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+        temp_roh_validation="output/GLIMPSE_concordance/ROH_validation/{sample}_chr1_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_chr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_chr1_size.genome",
+        temp_roh_phased_allchrom_all_sites="output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
         temp_roh_concordance_phased_allchrom_all_sites=expand(
-            "{path}/output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
+            "output/GLIMPSE_concordance/ROH_phased/phased.{sample}_allchrom_{coverage_val}x_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}-temp.hom",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        temp_roh_validation_allchrom_all_sites="{path}/output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
-        ref_fasta_allchr_size="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
+        temp_roh_validation_allchrom_all_sites="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
+        ref_fasta_allchr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
         rohan=config["rohan"],
     output:
-        accuracy_seg="{path}/output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment_ROHan.tsv",
-        accuracy_len="{path}/output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length_ROHan.tsv",
-        #band_accuracy_plot = '{path}/output/GLIMPSE_concordance/plots/ROH_concordance_ROHan/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_band_accuracy_ROHan.png',
-        rohan_imputed_plots="{path}/output/GLIMPSE_concordance/plots/ROH_concordance_ROHan/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_imputed_ROHan.png",
+        accuracy_seg="output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment_ROHan.tsv",
+        accuracy_len="output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length_ROHan.tsv",
+        #band_accuracy_plot = 'output/GLIMPSE_concordance/plots/ROH_concordance_ROHan/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_band_accuracy_ROHan.png',
+        rohan_imputed_plots="output/GLIMPSE_concordance/plots/ROH_concordance_ROHan/{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_imputed_ROHan.png",
     params:
-        path_script="{path}/scripts",
+        path_script="scripts",
         files_concordance_phased_chr1=lambda wildcards, input: ",".join(
             input.temp_roh_concordance_phased
         ),

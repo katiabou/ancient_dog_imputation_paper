@@ -13,15 +13,15 @@ DOCS = ["bed", "bim", "fam"]
 
 # rule merge_reference_HC_genotyped:
 #     input:
-#         ref_concordance_sample_excl_filltags_filter = '{path}/output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.phased.bcf',
-#         validation_sample_filt_allelic = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation_filt_qual_dp_ab.bcf',
+#         ref_concordance_sample_excl_filltags_filter = 'output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.phased.bcf',
+#         validation_sample_filt_allelic = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_validation_filt_qual_dp_ab.bcf',
 #     output:
-#         ref_panel_HC_gen = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf'
+#         ref_panel_HC_gen = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf'
 #     log:
-#         '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.log'
+#         'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.log'
 #     threads: 10
 #     benchmark:
-#         '{path}/benchmarks/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.tsv'
+#         'benchmarks/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.tsv'
 #     shell:
 #         '''
 #         bcftools merge \
@@ -38,11 +38,11 @@ DOCS = ["bed", "bim", "fam"]
 #     Take merged reference and HC genotyped and create plink format
 #     """
 #     input:
-#         ref_panel_HC_gen = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf'
+#         ref_panel_HC_gen = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf'
 #     output:
-#         expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.{doc}', doc=DOCS, allow_missing=True)
+#         expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.{doc}', doc=DOCS, allow_missing=True)
 #     params:
-#         prefix = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab'
+#         prefix = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab'
 #     shell:
 #         '''
 #         plink \
@@ -59,13 +59,13 @@ DOCS = ["bed", "bim", "fam"]
 #     Fix bim and fam file columns
 #     """
 #     input:
-#         ref_bim = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bim',
-#         ref_bed = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bed',
-#         ref_fam = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.fam'
+#         ref_bim = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bim',
+#         ref_bed = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.bed',
+#         ref_fam = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab.fam'
 #     output:
-#         ref_bim_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bim',
-#         ref_fam_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.fam',
-#         ref_bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed'
+#         ref_bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bim',
+#         ref_fam_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.fam',
+#         ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed'
 #     shell:
 #         '''
 #         awk 'BEGIN{{OFS="\t"}}$1="chr"$1' {input.ref_bim} | awk 'BEGIN{{OFS="\t"}}$2=$1"_"$4' > {output.ref_bim_corr}
@@ -81,11 +81,11 @@ DOCS = ["bed", "bim", "fam"]
 #     Convert the pseudohaploid sites from angsd to plink (tped and tfam)
 #     """
 #     input:
-#         validation_sample_filt_pseudohaploid_sites = '{path}/output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_{coverage_val}x_validation.haplo.gz',
+#         validation_sample_filt_pseudohaploid_sites = 'output/GLIMPSE_concordance/validation_bams/{sample}_{chrom_con}_{coverage_val}x_validation.haplo.gz',
 #     output:
-#         expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.{doc_hc}', doc_hc=DOCS_hc, allow_missing=True),
+#         expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.{doc_hc}', doc_hc=DOCS_hc, allow_missing=True),
 #     params:
-#         prefix = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation',
+#         prefix = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation',
 #     shell:
 #         '''
 #         haploToPlink {input.validation_sample_filt_pseudohaploid_sites} {params.prefix}
@@ -96,14 +96,14 @@ DOCS = ["bed", "bim", "fam"]
 #     Turn into bed, bim, fam for reference panel sites
 #     """
 #     input:
-#         tped = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.tped',
-#         tfam = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.tfam',
-#         ref_bim_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bim',
-#         #ref_bim_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bim'
+#         tped = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.tped',
+#         tfam = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation.tfam',
+#         ref_bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bim',
+#         #ref_bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bim'
 #     output:
-#         expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.{doc}', doc=DOCS, allow_missing=True)
+#         expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.{doc}', doc=DOCS, allow_missing=True)
 #     params:
-#         prefix = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink'
+#         prefix = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink'
 #     shell:
 #         '''
 #         plink \
@@ -122,13 +122,13 @@ DOCS = ["bed", "bim", "fam"]
 #     Fix bim and fam columns
 #     """
 #     input:
-#         bim = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.bim',
-#         fam = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.fam',
-#         bed = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.bed'
+#         bim = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.bim',
+#         fam = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.fam',
+#         bed = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink.bed'
 #     output:
-#         bim_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bim',
-#         fam_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.fam',
-#         bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
+#         bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bim',
+#         fam_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.fam',
+#         bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
 #     shell:
 #         '''
 #         awk 'BEGIN{{OFS="\t"}}$1="chr"$1' {input.bim} > {output.bim_corr}
@@ -143,11 +143,11 @@ DOCS = ["bed", "bim", "fam"]
 #     Create list containing downsampled prefixes for following merge step
 #     """
 #     input:
-#         bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
+#         bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
 #     output:
-#         HC_prefix_list = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.txt'
+#         HC_prefix_list = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.txt'
 #     params:
-#         prefix = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr'
+#         prefix = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr'
 #     shell:
 #         '''
 #         echo {params.prefix} > {output.HC_prefix_list}
@@ -159,13 +159,13 @@ DOCS = ["bed", "bim", "fam"]
 #     The touch option makes sure that there is a missnp file produced even if all the sites are ok within that sample
 #     """
 #     input:
-#         ref_bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed',
-#         HC_prefix_list = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.txt'
+#         ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed',
+#         HC_prefix_list = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.txt'
 #     output:
-#         missnps = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp'
+#         missnps = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp'
 #     params:
-#         prefix_ref = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr',
-#         prefix_output = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation'
+#         prefix_ref = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr',
+#         prefix_output = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation'
 #     shell:
 #         '''
 #         plink \
@@ -182,13 +182,13 @@ DOCS = ["bed", "bim", "fam"]
 #     Exclude the missnp sites
 #     """
 #     input:
-#         missnp = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp',
-#         bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
+#         missnp = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp',
+#         bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bed'
 #     output:
-#         expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp.{doc}', doc=DOCS, allow_missing=True)
+#         expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp.{doc}', doc=DOCS, allow_missing=True)
 #     params:
-#         prefix_input = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr',
-#         prefix_output = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp'
+#         prefix_input = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr',
+#         prefix_output = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp'
 #     shell:
 #         '''
 #         plink \
@@ -200,10 +200,10 @@ DOCS = ["bed", "bim", "fam"]
 
 # rule check_percentage_of_dropped_sites:
 #     input:
-#         missnp = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp',
-#         bim_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bim'
+#         missnp = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp',
+#         bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom_con}_{coverage_val}x_validation_ref_sites_plink_corr.bim'
 #     output:
-#         perc = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/percentage_missnp/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp'
+#         perc = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/percentage_missnp/merged_ph_called_modern-{sample}_{chrom_con}_{coverage_val}x_validation.missnp'
 #     shell:
 #         '''
 #         test=$(wc -l < {input.missnp})
@@ -217,11 +217,11 @@ DOCS = ["bed", "bim", "fam"]
 #     Create list containing downsampled prefixes without missnps for following merge step
 #     """
 #     input:
-#         bed_downsampled = expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp.bed', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         bed_downsampled = expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp.bed', coverage_val=COVERAGE_VAL, allow_missing=True),
 #     output:
-#         HC_prefix_list = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp.txt'
+#         HC_prefix_list = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp.txt'
 #     params:
-#         prefix = expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp', coverage_val=COVERAGE_VAL, allow_missing=True),
+#         prefix = expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{sample}_{chrom_con}_{coverage_val}x_validation_no_missnp', coverage_val=COVERAGE_VAL, allow_missing=True),
 #     shell:
 #         '''
 #         echo "{params.prefix}" | tr " " "\n" >> {output.HC_prefix_list}
@@ -234,7 +234,7 @@ DOCS = ["bed", "bim", "fam"]
 #     input:
 #         modern_canid_subset ="sample_lists/ref_panel_filt_{canid_subset}.tsv",
 #     output:
-#         modern_canid_subset_plink = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt'
+#         modern_canid_subset_plink = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt'
 #     shell:
 #         '''
 #         awk -F'\t' '{{ print $1 "  " $1 }}' {input.modern_canid_subset} > {output.modern_canid_subset_plink}
@@ -242,10 +242,10 @@ DOCS = ["bed", "bim", "fam"]
 
 # rule prepare_canid_subset_fileb:
 #     input:
-#         modern_canid_subset_plink = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt'
+#         modern_canid_subset_plink = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt'
 #     output:
-#         sample_temp = temp('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink-temp.txt'),
-#         modern_canid_subset_plink_sample = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt'
+#         sample_temp = temp('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink-temp.txt'),
+#         modern_canid_subset_plink_sample = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt'
 #     params:
 #         sample_name =  '{sample}'
 #     shell:
@@ -259,16 +259,16 @@ DOCS = ["bed", "bim", "fam"]
 #     Extract selected samples from FILTERED/FILLTAGS reference panel
 #     """
 #     input:
-#         modern_canid_subset_plink_sample = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt',
-#         ref_bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed',
-#         #ref_bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bed'
+#         modern_canid_subset_plink_sample = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt',
+#         ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed',
+#         #ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bed'
 #     output:
-#         ref_bed_corr_subset = expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.{doc}', doc=DOCS, allow_missing=True)
+#         ref_bed_corr_subset = expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.{doc}', doc=DOCS, allow_missing=True)
 #     params:
-#         prefix_input = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr',
-#         prefix_output = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}'
+#         prefix_input = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom_con}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr',
+#         prefix_output = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}'
 #     log:
-#         '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.log'
+#         'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.log'
 #     shell:
 #         '''
 #         plink \
@@ -284,14 +284,14 @@ DOCS = ["bed", "bim", "fam"]
 #     Merge reference panel subsets with the downsampled PH validation files
 #     """
 #     input:
-#         ref_bed_corr_subset = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.bed',
-#         HC_prefix_list = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp.txt'
-#         #HC_prefix_list_all = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp_all.txt'
+#         ref_bed_corr_subset = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.bed',
+#         HC_prefix_list = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp.txt'
+#         #HC_prefix_list_all = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp_all.txt'
 #     output:
-#         merged = expand('{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}.{doc}', doc=DOCS, allow_missing=True)
+#         merged = expand('output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}.{doc}', doc=DOCS, allow_missing=True)
 #     params:
-#         prefix_ref = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}',
-#         prefix_output = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}'
+#         prefix_ref = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}',
+#         prefix_output = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}'
 #     shell:
 #         '''
 #         plink \
@@ -315,15 +315,15 @@ rule rename_sample_concordance_PH_no_filt:
     Rename sample in VCF header, to include coverage info
     """
     input:
-        #phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
-        phased_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
+        #phased_maf_info = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz'
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
     output:
         new_name_file=temp(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_names.txt"
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_names.txt"
         ),
-        sample_imputed_new_name="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
+        sample_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
     log:
-        "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
     shell:
         """
         echo '{wildcards.sample} {wildcards.sample}_{wildcards.coverage_val}x_imputed' > {output.new_name_file}
@@ -342,15 +342,15 @@ rule rename_HC_imputed_sample_PH_no_filt:
     Rename sample in VCF header of HC_imputed, to include info
     """
     input:
-        #phased_maf_info = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz'
-        phased_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
+        #phased_maf_info = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom_con}_INFO_{info}_MAF_{maf}.vcf.gz'
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
     output:
         new_name_file_HC=temp(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.txt"
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.txt"
         ),
-        sample_imputed_new_name_HC="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf",
+        sample_imputed_new_name_HC="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf",
     log:
-        "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf.log",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf.log",
     shell:
         """
         echo '{wildcards.sample} {wildcards.sample}_HC_imputed' > {output.new_name_file_HC}
@@ -370,13 +370,13 @@ rule prepare_merge_imputed_genotyped_sample_PH_no_filt:
     """
     input:
         sample_imputed_new_name=expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
             coverage_val=COVERAGE_VAL,
             allow_missing=True,
         ),
-        sample_imputed_new_name_HC="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf",
+        sample_imputed_new_name_HC="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.bcf",
     output:
-        vcf_list="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample_list.{sample}_{chrom}.txt",
+        vcf_list="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample_list.{sample}_{chrom}.txt",
     shell:
         """
         ls -v {input.sample_imputed_new_name} {input.sample_imputed_new_name_HC} >> {output.vcf_list}
@@ -388,11 +388,11 @@ rule merge_renamed_imputed_genotyped_sample_PH_no_filt:
     Merge all downsampled and HC version of a target sample into the same VCF
     """
     input:
-        vcf_list="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample_list.{sample}_{chrom}.txt",
+        vcf_list="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample_list.{sample}_{chrom}.txt",
     output:
-        merged_imputed_new_name="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf",
+        merged_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf",
     log:
-        "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf.log",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf.log",
     threads: 10
     shell:
         """
@@ -410,15 +410,15 @@ rule imputed_to_plink_no_filt:
     Take imputed merged VCF and create plink format
     """
     input:
-        merged_imputed_new_name="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf",
+        merged_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf",
     output:
         expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.{doc}",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}",
+        prefix="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}",
     shell:
         """
         plink \
@@ -435,13 +435,13 @@ rule imputed_prepare_correct_format_no_filt:
     Fix bim and fam file columns
     """
     input:
-        imputed_bim="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bim",
-        imputed_bed="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bed",
-        imputed_fam="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.fam",
+        imputed_bim="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bim",
+        imputed_bed="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bed",
+        imputed_fam="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.fam",
     output:
-        imputed_bim_corr="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bim",
-        imputed_fam_corr="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.fam",
-        imputed_bed_corr="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bed",
+        imputed_bim_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bim",
+        imputed_fam_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.fam",
+        imputed_bed_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bed",
     shell:
         """
         awk 'BEGIN{{OFS="\t"}}$1="chr"$1' {input.imputed_bim} | awk 'BEGIN{{OFS="\t"}}$2=$1"_"$4' > {output.imputed_bim_corr}
@@ -457,11 +457,11 @@ rule create_sample_list_imputed_no_filt:
     Create list of imputed files to merge with reference and PH validation files from above
     """
     input:
-        imputed_bed_corr="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bed",
+        imputed_bed_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.bed",
     output:
-        HC_prefix_list_imputed="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.txt",
+        HC_prefix_list_imputed="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.txt",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr",
+        prefix="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr",
     shell:
         """
         echo "{params.prefix}" >> {output.HC_prefix_list_imputed}
@@ -473,18 +473,18 @@ rule merge_downsampled_reference_imputed_no_filt:
     Merge reference and PH validation files with imputed files
     """
     input:
-        #ref_bed_corr = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}.bed',
-        merged="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}.bed",
-        HC_prefix_list_imputed="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.txt",
+        #ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}.bed',
+        merged="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}.bed",
+        HC_prefix_list_imputed="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_corr.txt",
     output:
         merged=expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.{doc}",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix_ref="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}",
-        prefix_output="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}",
+        prefix_ref="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}",
+        prefix_output="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}",
     shell:
         """
         plink \
@@ -503,20 +503,20 @@ rule merge_allchrom_downsampled_reference_imputed_list_no_filt:
     """
     input:
         bed=expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.bed",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.bed",
             chrom=CHROM,
             allow_missing=True,
         ),
-        #bim_mod = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.bim',
-        #fam_mod = '{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.fam'
+        #bim_mod = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.bim',
+        #fam_mod = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.fam'
     params:
         prefix_in=expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_list.txt",
+        chr_list="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_list.txt",
     shell:
         """
         echo -e {params.prefix_in} | tr " " "\n" | sed '1d' >> {output.chr_list}
@@ -528,16 +528,16 @@ rule merge_allchrom_downsampled_reference_imputed_no_filt:
     Merge all chromosomes
     """
     input:
-        chr_list="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_list.txt",
+        chr_list="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_list.txt",
     output:
         merged=expand(
-            "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.{doc}",
+            "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix_chr1="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_chr1_corr_{canid_subset}",
-        prefix_output="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
+        prefix_chr1="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_chr1_corr_{canid_subset}",
+        prefix_output="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
     shell:
         """
         plink \
@@ -558,13 +558,13 @@ rule prepare_convertf_parfile_con_PH_no_filt:
     Prepare convertf file to convert to eigenstrat format
     """
     input:
-        bed="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.bed",
-        bim_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.bim",
-        fam_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.fam",
+        bed="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.bed",
+        bim_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.bim",
+        fam_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.fam",
     output:
-        convertf_file="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_convertf_parfile",
+        convertf_file="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_convertf_parfile",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
+        prefix="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
     shell:
         """
         echo "
@@ -585,13 +585,13 @@ rule convertf_con_PH_no_filt:
     Convert to eigenstrat format
     """
     input:
-        convertf_file="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_convertf_parfile",
+        convertf_file="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_convertf_parfile",
     output:
-        geno="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.eigenstratgeno",
-        ind="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.ind",
-        snp="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.snp",
+        geno="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.eigenstratgeno",
+        ind="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.ind",
+        snp="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.snp",
     log:
-        "{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.log",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.log",
     shell:
         """
         convertf \
@@ -604,10 +604,10 @@ rule set_high_low_coverage_no_filt:
     Set high and low coverage categories for projection
     """
     input:
-        ind="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.ind",
+        ind="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.ind",
     output:
-        ind_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
-        poplist="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_poplist.txt",
+        ind_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
+        poplist="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_poplist.txt",
     shell:
         """
         awk 'BEGIN {{IFS = OFS = "\t"}} {{
@@ -627,14 +627,14 @@ rule prepare_smartpca_parfile_con_PH_no_filt:
     Prepare input file for smartpca
     """
     input:
-        geno="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.eigenstratgeno",
-        ind_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
-        snp="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.snp",
-        poplist="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_poplist.txt",
+        geno="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.eigenstratgeno",
+        ind_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
+        snp="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.snp",
+        poplist="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_poplist.txt",
     output:
-        smartpca_parfile="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile",
+        smartpca_parfile="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
+        prefix="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}",
     shell:
         """
         echo "
@@ -656,11 +656,11 @@ rule smartpca_con_PH_no_filt:
     Run smartpca
     """
     input:
-        smartpca_parfile="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile",
+        smartpca_parfile="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile",
     output:
-        smartpca_log="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile.log",
-        smartpca_eigenvalue="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
-        smartpca_eigenvector="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
+        smartpca_log="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_smartpca_parfile.log",
+        smartpca_eigenvalue="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
+        smartpca_eigenvector="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
     shell:
         """
         smartpca \
@@ -673,13 +673,13 @@ rule plot_pca_concordance_ph_no_filt:
     Plot downsampled/HC imputed and non imputed samples PCA
     """
     input:
-        ind_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
-        smartpca_eigenvalue="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
-        smartpca_eigenvector="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
+        ind_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
+        smartpca_eigenvalue="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
+        smartpca_eigenvector="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         concordance_metadata="sample_lists/concordance_bams_published.tsv",
     output:
-        smartpca_plot="{path}/output/GLIMPSE_concordance/plots/smartpca_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.png",
+        smartpca_plot="output/GLIMPSE_concordance/plots/smartpca_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}.png",
     params:
         sample="{sample}",
         cov_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
@@ -698,12 +698,12 @@ rule pca_accuracy_downsampled_imputed_no_filt:
     Estimate pca distances for downsampled imputed against the validation HC 
     """
     input:
-        ind_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
-        smartpca_eigenvalue="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
-        smartpca_eigenvector="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
+        ind_mod="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_mod.ind",
+        smartpca_eigenvalue="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenval_output",
+        smartpca_eigenvector="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_eigenvec_output",
     output:
-        accuracy_plot_HC="{path}/output/GLIMPSE_concordance/plots/smartpca_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_accuracy_HC.png",
-        accuracy_ratio="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ratio_pseudohaploid_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_accuracy_HC.tsv",
+        accuracy_plot_HC="output/GLIMPSE_concordance/plots/smartpca_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_accuracy_HC.png",
+        accuracy_ratio="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ratio_pseudohaploid_imputed/merged_ph_called_modern_imputed.{sample}_allchrom_corr_{canid_subset}_accuracy_HC.tsv",
     params:
         name="{sample}",
         cov_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],

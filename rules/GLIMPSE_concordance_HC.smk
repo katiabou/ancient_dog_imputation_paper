@@ -10,18 +10,18 @@ rule compute_GLs_HC_samples_concordance:
     Compute GLs of HC target bams 
     """
     input:
-        target_bams_chr="{path}/output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
-        ref_panel_sites_vcf="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
-        ref_panel_sites_tsv="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
-        ref_fasta_chr="{path}/output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
+        ref_panel_sites_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
+        ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        GL_vcf_HC_target_bams="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
-        GL_vcf_HC_target_bams_csi="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz.csi",
+        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
+        GL_vcf_HC_target_bams_csi="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.log",
     threads: 8
     benchmark:
-        "{path}/benchmarks/GLs_target_bams/{sample}_{chrom}.tsv"
+        "benchmarks/GLs_target_bams/{sample}_{chrom}.tsv"
     shell:
         """
         bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.target_bams_chr} -Ou | \
@@ -36,21 +36,21 @@ rule impute_HC_concordance:
     Impute each sample seperately
     """
     input:
-        GL_vcf_HC_target_bams="{path}/output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
-        ref_concordance_sample_excl_filltags_filter="{path}/output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
-        chunks="{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
+        ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+        chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
     output:
-        imputed="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
-        imputed_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf.csi",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
+        imputed_csi="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf.csi",
     params:
         gen_map_path=config["gen_map_path"],
         gen_map_files=config["gen_map_files"],
-        prefix="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
     threads: 2
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.log",
     benchmark:
-        "{path}/benchmarks/GLIMPSE_imputed/{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputed/{sample}_{chrom}.tsv"
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -74,12 +74,12 @@ rule ligate_HC_list_concordance:
     Create list of imputed output files for each chunk to merge later
     """
     input:
-        chunks="{path}/output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
-        imputed="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
+        chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
     output:
-        ligated_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
     params:
-        prefix="{path}/output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -95,15 +95,15 @@ rule ligate_HC_concordance:
     Merge all imputed chunks
     """
     input:
-        ligated_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
     output:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
-        ligated_bcf_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf.csi",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
+        ligated_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.log",
     threads: 8
     benchmark:
-        "{path}/benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_ligate \
@@ -120,15 +120,15 @@ rule phase_HC_concordance:
     Phase!!!
     """
     input:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
     output:
-        phased_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
-        phased_bcf_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf.csi",
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
+        phased_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.log",
     threads: 8
     benchmark:
-        "{path}/benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_sample \
@@ -144,14 +144,14 @@ rule filter_info_score_HC:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        ligated_bcf="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
     output:
-        info_imputed_info="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
-        info_imputed_info_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf.csi",
+        info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
+        info_imputed_info_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf.csi",
     params:
         info_val="{info_cutoff}",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.log",
     threads: 8
     shell:
         """
@@ -177,12 +177,12 @@ rule prepare_merged_chr_list_HC_concordance:
     """
     input:
         info_imputed_info=expand(
-            "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
+            "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
     shell:
         """
         ls -v {input.info_imputed_info} >> {output.chr_list}
@@ -194,12 +194,12 @@ rule merge_chr_HC_concordance:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        chr_list="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
     output:
-        info_imputed_info_allchrom="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf",
-        info_imputed_info_allchrom_csi="{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf.csi",
+        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf",
+        info_imputed_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf.csi",
     log:
-        "{path}/output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.log",
     threads: 8
     shell:
         """

@@ -13,11 +13,11 @@ rule sites_phased:
     Extract sites from the filtered recalibrated phased data
     """
     input:
-        merged_phased_vcf_maf_recalibrated_info="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
+        merged_phased_vcf_maf_recalibrated_info="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
     output:
-        merged_phased_vcf_maf_recalibrated_info_sites="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz",
+        merged_phased_vcf_maf_recalibrated_info_sites="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz",
     log:
-        "{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz.log",
     shell:
         """
         bcftools query -f'%CHROM\t%POS\t%REF,%ALT\n' {input.merged_phased_vcf_maf_recalibrated_info} 2> {log} | \
@@ -32,12 +32,12 @@ rule extract_sites_phased_ref_panel:
     Extract filtered phased sites from ref panel
     """
     input:
-        merged_phased_vcf_maf_recalibrated_info_sites="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz",
-        ref_panel_phased="{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
+        merged_phased_vcf_maf_recalibrated_info_sites="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.tsv.gz",
+        ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
     output:
-        ref_panel_imputed_sites="{path}/output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz",
+        ref_panel_imputed_sites="output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz",
     log:
-        "{path}/output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz.log",
+        "output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz.log",
     threads: 4
     shell:
         """
@@ -55,10 +55,10 @@ rule merge_maf_ref_panel_imputed:
     Merge phased filt ref panel with filtered imputed
     """
     input:
-        merged_phased_vcf_maf_recalibrated_info="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
-        ref_panel_imputed_sites="{path}/output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz",
+        merged_phased_vcf_maf_recalibrated_info="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
+        ref_panel_imputed_sites="output/GLIMPSE_imputation/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter-imputed_sites_MAF_{maf_cutoff}_recalibrated_INFO_{info}.phased.vcf.gz",
     output:
-        modern_imputed="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
+        modern_imputed="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
     shell:
         """
         bcftools merge \
@@ -79,7 +79,7 @@ rule prep_canid_list:
         modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
         imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
     output:
-        modern_imputed_canid_subset="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
+        modern_imputed_canid_subset="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
     shell:
         """
         cat {input.modern_canid_subset} {input.imputed_canid_subset} > {output.modern_imputed_canid_subset}
@@ -91,10 +91,10 @@ rule canid_subset_merged_vcf:
     Make canid specific groups
     """
     input:
-        modern_imputed="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
-        modern_imputed_canid_subset="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
+        modern_imputed="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
+        modern_imputed_canid_subset="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
     output:
-        modern_imputed_subset="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
+        modern_imputed_subset="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
     threads: 4
     shell:
         """
@@ -112,9 +112,9 @@ rule canid_subset_merged_vcf:
 #     Re-calculate fields
 #     """
 #     input:
-#         modern_imputed_subset = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz',
+#         modern_imputed_subset = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
 #     output:
-#         modern_imputed_subset_filltags = temp('{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz'),
+#         modern_imputed_subset_filltags = temp("output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz"),
 #     threads: 10
 #     shell:
 #         '''
@@ -129,9 +129,9 @@ rule canid_subset_merged_vcf:
 #     Filter for no missing sites (F_MISSING<0.01)
 #     """
 #     input:
-#         modern_imputed_subset_filltags = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz',
+#         modern_imputed_subset_filltags = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz",
 #     output:
-#         modern_imputed_subset_no_missing = '{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_no-missing.vcf.gz',
+#         modern_imputed_subset_no_missing = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_no-missing.vcf.gz",
 #     threads: 10
 #     shell:
 #         '''
@@ -149,12 +149,12 @@ rule canid_subset_prepare_merged_chr_list:
     """
     input:
         modern_imputed_subset=expand(
-            "{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
+            "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/chr_list.MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.txt",
+        chr_list="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/chr_list.MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.txt",
     shell:
         """
         ls -v {input.modern_imputed_subset} >> {output.chr_list}
@@ -166,9 +166,9 @@ rule merge_chrom:
     Merge all chromosomes
     """
     input:
-        chr_list="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/chr_list.MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.txt",
+        chr_list="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/chr_list.MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.txt",
     output:
-        merged_vcf="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
+        merged_vcf="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
     threads: 4
     shell:
         """
@@ -186,17 +186,17 @@ rule make_plink:
     Create plink files
     """
     input:
-        merged_vcf="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
+        merged_vcf="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
     output:
         expand(
-            "{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.{doc}",
+            "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.{doc}",
             doc=DOCS,
             allow_missing=True,
         ),
     params:
-        prefix="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
+        prefix="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
     log:
-        "{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.log",
+        "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.log",
     shell:
         """
         plink \
@@ -213,12 +213,12 @@ rule fix_chr_column:
     Fix chromosome and snps columns
     """
     input:
-        bim="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.bim",
+        bim="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.bim",
     output:
         temp_mod_bim=temp(
-            "{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod-temp.bim"
+            "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod-temp.bim"
         ),
-        mod_bim="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.bim",
+        mod_bim="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.bim",
     shell:
         """
         awk 'BEGIN{{OFS="\t"}}$1="chr"$1' {input.bim} > {output.temp_mod_bim}
@@ -232,9 +232,9 @@ rule fix_fam_file:
     If the sample names are the path to the file, I have to add the fix_fam_file rule from before
     """
     input:
-        fam="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.fam",
+        fam="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.fam",
     output:
-        fam_mod="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
+        fam_mod="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
     shell:
         """
         awk '{{$6=2 ; print ; }}' {input.fam} > {output.fam_mod}
@@ -246,13 +246,13 @@ rule prepare_convertf_parfile:
     Prepare convertf file to convert to eigenstrat format
     """
     input:
-        bed="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.bed",
-        bim_mod="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.bim",
-        fam_mod="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
+        bed="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.bed",
+        bim_mod="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.bim",
+        fam_mod="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
     output:
-        convertf_file="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_convertf_parfile",
+        convertf_file="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_convertf_parfile",
     params:
-        prefix="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
+        prefix="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
     shell:
         """
         echo "
@@ -273,13 +273,13 @@ rule convertf:
     Convert to eigenstrat format
     """
     input:
-        convertf_file="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_convertf_parfile",
+        convertf_file="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_convertf_parfile",
     output:
-        geno="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.eigenstratgeno",
-        ind="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.ind",
-        snp="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.snp",
+        geno="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.eigenstratgeno",
+        ind="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.ind",
+        snp="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.snp",
     log:
-        "{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.log",
+        "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.log",
     shell:
         """
         convertf \
@@ -292,13 +292,13 @@ rule prepare_smartpca_parfile:
     Prepare input file for smartpca
     """
     input:
-        geno="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.eigenstratgeno",
-        ind="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.ind",
-        snp="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.snp",
+        geno="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.eigenstratgeno",
+        ind="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.ind",
+        snp="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.snp",
     output:
-        smartpca_parfile="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_parfile",
+        smartpca_parfile="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_parfile",
     params:
-        prefix="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
+        prefix="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}",
     shell:
         """
         echo "
@@ -318,11 +318,11 @@ rule smartpca:
     Run smartpca
     """
     input:
-        smartpca_parfile="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_parfile",
+        smartpca_parfile="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_parfile",
     output:
-        smartpca_log="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca.log",
-        smartpca_eigenvec="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenvec_output",
-        smartpca_eigenval="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenval_output",
+        smartpca_log="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca.log",
+        smartpca_eigenvec="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenvec_output",
+        smartpca_eigenval="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenval_output",
     shell:
         """
         smartpca \
@@ -335,15 +335,15 @@ rule plot_smartpca:
     Plot smartpca 
     """
     input:
-        smartpca_eigenval="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenval_output",
-        smartpca_eigenvec="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenvec_output",
-        fam_mod="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
+        smartpca_eigenval="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenval_output",
+        smartpca_eigenvec="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenvec_output",
+        fam_mod="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
     params:
         canid_group="{canid_subset}",
     output:
-        smartpca_P1P2="{path}/output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2.png",
-        smartpca_P1P2_labelled="{path}/output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2_labelled.png",
+        smartpca_P1P2="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2.png",
+        smartpca_P1P2_labelled="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2_labelled.png",
     script:
         "../scripts/smartpca_phased_dataset.R"

@@ -1,31 +1,28 @@
 # chr number
 chromosome_number: '38'
 
-#specify output folder/path
-path: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper_v4'
-
-#path to reference panel
-#reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/1715g_WildSled.SNP.INDEL.chrAll.vcf.gz'
+# path to reference panel
+# reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/1715g_WildSled.SNP.INDEL.chrAll.vcf.gz'
 reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/PUBLISHABLE_VERSION/1701g_WildSled.SNP.INDEL.chrAll.vcf.gz'
 
-#reference fasta file
-#ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
+# reference fasta file
+# ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
 ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/canFam3_withY.fa'
 
-#genetic maps for concordance ### should check that this is actually accurate
+# genetic maps for concordance ### should check that this is actually accurate
 gen_map_path: '/maps/projects/racimolab/people/qcj125/Siberian_dogs/Reference/dog_recombination/GLIMPSE_formated_gen_maps/'
 gen_map_files: '{chrom}_average_canFam3.1_modified.tsv'
 
 #genetic maps for full imputation
 gen_map_files_impute: '{chrom}_average_canFam3.1_modified.tsv'
 
-#depth cutoff for individuals in reference panel
+# depth cutoff for individuals in reference panel
 depth_cutoff: '8'
 
-#F_missing cutoff to filter sites from reference panel
+# F_missing cutoff to filter sites from reference panel
 F_MISSING: '0.05'
 
-#GLIMPSE_chunk parameters
+# GLIMPSE_chunk parameters
 window_size: '2000000'
 buffer_size: '200000'
 
@@ -34,7 +31,7 @@ buffer_size: '200000'
 maf_cutoff: '0.01'
 info_cutoff: '0.8' 
 
-#ROH plink parameters:
+# ROH plink parameters:
 roh:
   homozyg_density: '50' 
   homozyg_gap: '500'
@@ -46,13 +43,13 @@ roh:
   homozyg_window_threshold: '0.05'
 
 
-#Canfam3.1 annotation file
+# Canfam3.1 annotation file
 canfam31_annotation: 'data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf'
 
 
-#ROHan results from Sabhrina (have to adjust if I use min, mid, max):
+# ROHan results from Sabhrina (have to adjust if I use min, mid, max):
 
-#rohan with 1 Mbp window size:
+# rohan with 1 Mbp window size:
 rohan: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper_v2/GLIMPSE/GITHUB_SCRIPTS/DOG_IMPUTATION_PAPER/data/ROHan/ROHan_4e-5_KatiaPipeline.tsv'
 
 
