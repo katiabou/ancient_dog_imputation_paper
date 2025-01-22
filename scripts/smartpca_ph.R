@@ -1,3 +1,10 @@
+#!/usr/bin/env Rscript
+
+# Author:    Katia Bougiouri
+# Copyright: Copyright 2025, University of Copenhagen
+# Email:     katia.bougiouri@gmail.com
+# License:   MIT
+
 library(dplyr)
 library(ggplot2)
 library(ggrepel)

@@ -1,4 +1,11 @@
-#! /usr/bin/env Rscript
+#!/usr/bin/env Rscript
+
+# Author:    Katia Bougiouri
+# Copyright: Copyright 2025, University of Copenhagen
+# Email:     katia.bougiouri@gmail.com
+# License:   MIT
+
+# ! /usr/bin/env Rscript
 
 # import libraries
 library(stringr)

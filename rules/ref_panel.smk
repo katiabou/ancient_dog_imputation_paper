@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+__author__ = "Katia Bougiouri"
+__copyright__ = "Copyright 2025, University of Copenhagen"
+__email__ = "katia.bougiouri@gmail.com"
+__license__ = "MIT"
+
 ######################################################
 # Prepare reference panel for concordance imputation #
 ######################################################

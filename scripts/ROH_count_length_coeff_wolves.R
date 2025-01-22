@@ -1,3 +1,10 @@
+#!/usr/bin/env Rscript
+
+# Author:    Katia Bougiouri
+# Copyright: Copyright 2025, University of Copenhagen
+# Email:     katia.bougiouri@gmail.com
+# License:   MIT
+
 #############################################################
 # ROH counts and length on imputed and modern dogs and wolves#
 #############################################################
