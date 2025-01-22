@@ -32,8 +32,8 @@ rule make_vcf_sample_list:
     """
     input:
         ref_depth="{path}/output/reference_panel/reference_panel_depth.idepth",
-        reseq_names="sample_lists/reseq_samples.txt",
-        boxer_names="sample_lists/boxer_samples.txt",
+        reseq_names="sample_lists/reseq_samples.tsv",
+        boxer_names="sample_lists/boxer_samples.tsv",
     output:
         sample_list_exclude="{path}/output/reference_panel/remove_samples.txt",
     params:

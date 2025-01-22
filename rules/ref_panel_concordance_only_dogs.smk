@@ -9,7 +9,7 @@ rule remove_sample_indels_multiallelic_snps_concordance_only_dogs:
     """
     input:
         ref_panel_phased="{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
-        non_dog_names="sample_lists/non_dog_samples.txt",
+        non_dog_names="sample_lists/non_dog_samples.tsv",
     output:
         ref_sample_snp=temp(
             "{path}/output/reference_panel_only_dogs/ref-panel_{chrom}_sample-snp.phased.vcf.gz"
