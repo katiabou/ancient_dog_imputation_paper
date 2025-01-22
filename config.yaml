@@ -8,7 +8,7 @@ reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNIC
 
 # reference fasta file
 # ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
-# TODO make this a relative path
+# TODO check where this came from and make a rule to download and/or create this fasta file
 ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/canFam3_withY.fa'
 
 # depth cutoff for individuals in reference panel
