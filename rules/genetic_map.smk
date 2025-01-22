@@ -41,3 +41,12 @@ rule glimpse_genetic_map:
         """
         awk '{{ print $2" "$1" "$4 }}' {input} > {output}
         """
+
+
+rule canfam31_annotation:
+    output:
+        "data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf",
+    shell:
+        """
+        wget --quiet  -O - https://ftp.ensembl.org/pub/release-104/gtf/canis_lupus_familiaris/Canis_lupus_familiaris.CanFam3.1.104.gtf.gz | gunzip -c > {output}
+        """

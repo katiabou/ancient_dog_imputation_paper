@@ -38,10 +38,6 @@ roh:
   homozyg_window_threshold: '0.05'
 
 
-# Canfam3.1 annotation file
-canfam31_annotation: 'data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf'
-
-
 # ROHan results from Sabhrina (have to adjust if I use min, mid, max):
 
 # rohan with 1 Mbp window size:

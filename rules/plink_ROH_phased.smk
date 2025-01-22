@@ -1020,7 +1020,7 @@ rule plot_ROH_window_prevelance_depth:
 #     Get gene annotations for ROH islands and deserts in common between modern and ancient samples
 #     """
 #     input:
-#         cf31_ann=config["canfam31_annotation"],
+#         cf31_ann="data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf",
 #         imputed_windows_bed_islands="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed",
 #         imputed_windows_bed_deserts="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed",
 #         modern_windows_bed_islands="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed",
