@@ -16,7 +16,7 @@ rule transversions_phased_subset:
     input:
         #merged_phased_vcf_maf_info = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz',
         merged_phased_vcf_maf_recalibrated_info="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
-        imputed_canid_subset=config["imputed_canid_subset"],
+        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
     output:
         #tranversion_sites = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_transversions_{canid_subset}.tsv.gz',
         #phased_transversions = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_transversions_{canid_subset}.vcf.gz'
@@ -152,7 +152,7 @@ rule all_sites_phased_subset:
     input:
         #merged_phased_vcf_maf_info = '{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz',
         merged_phased_vcf_maf_recalibrated_info="{path}/output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}.vcf.gz",
-        imputed_canid_subset=config["imputed_canid_subset"],
+        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
     output:
         #phased_all_sites_subset = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_all_sites_{canid_subset}.vcf.gz'
         phased_all_sites_subset="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_{canid_subset}.vcf.gz",
@@ -281,7 +281,7 @@ rule transversions_ref_panel_subset:
     input:
         #ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
         ref_sample_snp_filltags_filter_maf_vcf="{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.gz",
-        modern_canid_subset=config["modern_canid_subset"],
+        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
     output:
         tranversion_sites="{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_{chrom}_sample-snp_filltags_filter_transversions_MAF_{maf_cutoff}_{canid_subset}.tsv.gz",
         ref_panel_transversions="{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_{chrom}_sample-snp_filltags_filter_transversions_MAF_{maf_cutoff}_{canid_subset}.vcf.gz",
@@ -392,7 +392,7 @@ rule all_sites_ref_panel_subset:
     input:
         #ref_sample_snp_filltags_filter = '{path}/output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
         ref_sample_snp_filltags_filter_maf_vcf="{path}/output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf_cutoff}.phased.vcf.gz",
-        modern_canid_subset=config["modern_canid_subset"],
+        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
     output:
         ref_panel_all_sites_subset="{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_{chrom}_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_{canid_subset}.vcf.gz",
     log:
@@ -715,8 +715,8 @@ rule plot_transversions_ROH_all_chr:
     Using only the dogwolf files for these plots (contains all imputed samples)
     """
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_tranversions_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_sum_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_transversions_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -737,8 +737,8 @@ rule plot_all_sites_ROH_all_chr:
     Using only the dogwolf files for these plots (contains all imputed samples)
     """
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -754,8 +754,8 @@ rule plot_all_sites_ROH_all_chr:
 
 rule plot_all_sites_ROH_count_length_dogs:
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -786,8 +786,8 @@ rule plot_all_sites_ROH_count_length_dogs:
 
 rule plot_transversions_ROH_count_length_dogs:
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_sum_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -818,8 +818,8 @@ rule plot_transversions_ROH_count_length_dogs:
 
 rule plot_all_sites_ROH_count_length_wolves:
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -843,8 +843,8 @@ rule plot_all_sites_ROH_count_length_wolves:
 
 rule plot_transversions_ROH_count_length_wolves:
     input:
-        bam_metadata=config["bam_imputation_meta"],
-        ref_metadata=config["reference_panel_metadata"],
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
         #phased_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
         phased_roh_sum_allchrom="{path}/output/GLIMPSE_imputation/ROH_phased/merged_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogwolf.hom",
         #ref_panel_roh_allchrom_all_sites_merged = '{path}/output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}_dogwolf.hom',
@@ -889,8 +889,8 @@ rule bamlist_subset:
     Create bam list for either dogs or wolves or dogs/wolves
     """
     input:
-        bam_meta=config["bam_imputation"],
-        imputed_canid_subset=config["imputed_canid_subset"],
+        bam_meta="sample_lists/bams_published_imputation_metadata_cutoff.tsv",
+        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
     output:
         bam_list_subset="{path}/output/GLIMPSE_imputation/ROH_islands_deserts/window_depth/bam_list_{canid_subset}_window_cov.txt",
     shell:
@@ -1048,7 +1048,6 @@ rule plot_ROH_window_prevelance_depth:
 #         -wa -wb >> {output.imputed_modern_genes_island}
 
 #         awk -F ';' '{{print $1}}' {output.imputed_modern_genes_island} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.imputed_modern_genes_unique_island}
-
 #         bedtools intersect \
 #         -b {input.imputed_modern_windows_bed_deserts} \
 #         -a {output.genes_temp} \

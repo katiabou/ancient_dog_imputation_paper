@@ -76,8 +76,8 @@ rule prep_canid_list:
     Prepare canid group list of samples (both modern and ancient)
     """
     input:
-        modern_canid_subset=config["modern_canid_subset"],
-        imputed_canid_subset=config["imputed_canid_subset"],
+        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
+        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
     output:
         modern_imputed_canid_subset="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
     shell:
@@ -338,8 +338,8 @@ rule plot_smartpca:
         smartpca_eigenval="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenval_output",
         smartpca_eigenvec="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_eigenvec_output",
         fam_mod="{path}/output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-mod.fam",
-        ref_metadata=config["reference_panel_metadata"],
-        bam_metadata=config["bam_imputation_meta"],
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
+        bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
     params:
         canid_group="{canid_subset}",
     output:

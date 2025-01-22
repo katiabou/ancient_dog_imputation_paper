@@ -103,7 +103,7 @@ rule prepare_list_validation_reference_removal:
     Only needed if samples overlap in target bams and VCF panel
     """
     input:
-        ref_val_samples=config["ref_validation_list"],
+        ref_val_samples="sample_lists/target_names_reference_remove_published.tsv",
     output:
         ref_val_sample_file="{path}/output/GLIMPSE_concordance/reference_panel/ref_val_sample.txt",
     shell:
@@ -752,7 +752,7 @@ rule filter_info_score:
 #     """
 #     input:
 #         concordance_output_discordance_filtered_per_sample = expand('{path}/output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt', sample=SAMPLE, allow_missing=True),
-#         concordance_metadata = config['bam_targets']
+#         concordance_metadata = "sample_lists/concordance_bams_published.tsv"
 #     params:
 #         path_script = '{path}/scripts',
 #         discordance_phased=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample),
@@ -1005,7 +1005,7 @@ rule plot_discordance_filt_allchrom:
             sample=SAMPLE,
             allow_missing=True,
         ),
-        concordance_metadata=config["bam_targets"],
+        concordance_metadata="sample_lists/concordance_bams_published.tsv",
     params:
         path_script="{path}/scripts",
         discordance_phased=lambda wildcards, input: ",".join(

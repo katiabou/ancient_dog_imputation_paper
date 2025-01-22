@@ -95,7 +95,7 @@ rule maf_INFO_sites_concordance_phased:
 #    Have to have a "Mean_Depth" column in metadata, along with the "Sample" column which as the bam name
 #    """
 #    input:
-#        bams_meta = config['bam_imputation']
+#        bams_meta ="sample_lists/bams_published_imputation_metadata_cutoff.tsv",
 #    output:
 #        remove_samples_imputed = '{path}/output/GLIMPSE_concordance/GLIMPSE_phased/remove_samples_imputed_no_low_cov_{cov_cutoff}.txt'
 #    params:

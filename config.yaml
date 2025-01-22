@@ -12,9 +12,6 @@ reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNIC
 #ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
 ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/canFam3_withY.fa'
 
-#list of validation samples with their VCF name in the reference panel 
-ref_validation_list: 'sample_lists/target_names_reference_remove_published.tsv'
-
 #genetic maps for concordance ### should check that this is actually accurate
 gen_map_path: '/maps/projects/racimolab/people/qcj125/Siberian_dogs/Reference/dog_recombination/GLIMPSE_formated_gen_maps/'
 gen_map_files: '{chrom}_average_canFam3.1_modified.tsv'
@@ -27,13 +24,6 @@ depth_cutoff: '8'
 
 #F_missing cutoff to filter sites from reference panel
 F_MISSING: '0.05'
-
-#Bam files for concordance
-bam_targets: 'sample_lists/concordance_bams_published.tsv'
-
-#Bam files to impute 
-bam_imputation: 'sample_lists/bams_published_imputation_metadata_cutoff.tsv'
-bam_imputation_meta: 'sample_lists/Dog_Wolf_aDNA_WG-Master.tsv'
 
 #Paths to GLIMPSE modules
 glimpse_chunk: '/maps/projects/racimolab/people/qcj125/programmes/GLIMPSE/chunk/bin/GLIMPSE_chunk'
@@ -62,13 +52,6 @@ roh:
   homozyg_window_snp: '50' 
   homozyg_window_threshold: '0.05'
 
-
-##### FILES USED FOR PCA #####
-modern_canid_subset: 'sample_lists/ref_panel_filt_{canid_subset}.tsv'
-imputed_canid_subset: 'sample_lists/names_imputed_{canid_subset}.tsv'
-
-#Reference panel metadata
-reference_panel_metadata: 'sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv'
 
 #Canfam3.1 annotation file
 canfam31_annotation: 'data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf'

@@ -456,7 +456,7 @@ rule filter_info_score_only_dogs:
 #     """
 #     input:
 #         concordance_output_discordance_filtered_per_sample = expand('{path}/output/GLIMPSE_concordance_only_dogs/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt', sample=SAMPLE, allow_missing=True),
-#         concordance_metadata = config['bam_targets']
+#         concordance_metadata = "sample_lists/concordance_bams_published.tsv"
 #     params:
 #         path_script = '{path}/scripts',
 #         discordance_phased=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample),
@@ -647,7 +647,7 @@ rule plot_discordance_filt_allchrom_only_dogs:
             sample=SAMPLE,
             allow_missing=True,
         ),
-        concordance_metadata=config["bam_targets"],
+        concordance_metadata="sample_lists/concordance_bams_published.tsv",
     params:
         path_script="{path}/scripts",
         discordance_phased=lambda wildcards, input: ",".join(
@@ -700,7 +700,7 @@ rule plot_concordance_filt_allsites_only_dogs_0_5x_1x:
             coverage_val=["0.5", "1"],
             allow_missing=True,
         ),
-        concordance_metadata=config["bam_targets"],
+        concordance_metadata="sample_lists/concordance_bams_published.tsv",
     output:
         concordance_all_sites_only_dogs="{path}/output/GLIMPSE_concordance_only_dogs/plots/glimpse_concordance/concordance_allchrom_0.5x_1x_filtered-all_sites_only_dogs.png",
     params:

@@ -23,15 +23,17 @@ wildcard_constraints:
 
 
 # Bams used for the validation
-samples_df = pd.read_table(config["bam_targets"], dtype=str, delimiter="\t").set_index(
-    "Original_ID", drop=False
-)
+samples_df = pd.read_table(
+    "sample_lists/concordance_bams_published.tsv", dtype=str, delimiter="\t"
+).set_index("Original_ID", drop=False)
 SAMPLE = list(samples_df["Original_ID"])
 
 # Bams which will be imputed (might need to be updated from the online spreadsheet)
-bams_df = pd.read_table(config["bam_imputation"], dtype=str, delimiter="\t").set_index(
-    "Sample", drop=False
-)
+bams_df = pd.read_table(
+    "sample_lists/bams_published_imputation_metadata_cutoff.tsv",
+    dtype=str,
+    delimiter="\t",
+).set_index("Sample", drop=False)
 BAM = list(bams_df["Sample"])
 
 # Define chromosome for accuracy check

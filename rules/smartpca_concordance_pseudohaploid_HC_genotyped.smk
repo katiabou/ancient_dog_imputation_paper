@@ -267,7 +267,7 @@ rule create_sample_list_no_missnp:
 
 rule prepare_canid_subset_file:
     input:
-        modern_canid_subset=config["modern_canid_subset"],
+        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
     output:
         modern_canid_subset_plink="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt",
     shell:
@@ -725,8 +725,8 @@ rule plot_pca_concordance_ph:
         ind_mod="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_INFO_{info}_MAF_{maf}_corr_{canid_subset}_mod.ind",
         smartpca_eigenvalue="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_INFO_{info}_MAF_{maf}_corr_{canid_subset}_eigenval_output",
         smartpca_eigenvector="{path}/output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/smartpca/merged_ph_called_modern_imputed.{sample}_allchrom_INFO_{info}_MAF_{maf}_corr_{canid_subset}_eigenvec_output",
-        ref_metadata=config["reference_panel_metadata"],
-        concordance_metadata=config["bam_targets"],
+        ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
+        concordance_metadata="sample_lists/concordance_bams_published.tsv",
     output:
         smartpca_plot="{path}/output/GLIMPSE_concordance/plots/smartpca_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed.{sample}_allchrom_INFO_{info}_MAF_{maf}_corr_{canid_subset}.png",
     params:
