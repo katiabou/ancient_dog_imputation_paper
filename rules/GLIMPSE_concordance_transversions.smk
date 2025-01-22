@@ -25,7 +25,6 @@ rule transversions_validation_concordance:
 
         bcftools view {input.validation_sample_filt_allelic} \
         --regions-file {output.tranversion_sites_allelic} \
-        --threads {threads} \
         -Ob -o {output.validation_transversions_allelic} 2> {log}
 
         bcftools index -f {output.validation_transversions_allelic}
@@ -103,33 +102,34 @@ rule filter_transversions_imputed:
 #     Prepare the lst files required to run GLIMPSE_concordance
 #     """
 #     input:
-#         ref_concordance_sample_excl_filltags_filter = 'output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf',
-#         validation_transversions_allelic = 'output/GLIMPSE_concordance/validation_bams_transversions/{sample}_{chrom}_validation_filt_transversions.bcf',
-#         imputed_transversions = 'output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf'
+#         ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
+#         validation_transversions_allelic="output/GLIMPSE_concordance/validation_bams_transversions/{sample}_{chrom}_validation_filt_transversions.bcf",
+#         imputed_transversions="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
 #     output:
-#         concordance_lst_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst'
+#         concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst",
 #     shell:
-#         '''
+#         """
 #         echo {wildcards.chrom_con} {input.ref_concordance_sample_excl_filltags_filter} {input.validation_transversions_allelic} {input.imputed_transversions} > {output.concordance_lst_info_score_filtered}
-#         '''
-
+#         """
+#
+#
 # rule GLIMPSE_concordance_info_score_filtered_transversions:
 #     """
 #     Run GLIMPSE concordance specifying the target sample we want
 #     """
 #     input:
-#         concordance_lst_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst',
-#         sm_samples = 'output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt'
+#         concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst",
+#         sm_samples="output/GLIMPSE_concordance/validation_bams/sm_{sample}_{chrom}_{coverage_val}x.txt",
 #     output:
-#         concordance_output_info_score_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.rsquare.grp.txt.gz',
-#         concordance_output_discordance_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.error.spl.txt.gz'
+#         concordance_output_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.rsquare.grp.txt.gz",
+#         concordance_output_discordance_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.error.spl.txt.gz",
 #     params:
-#         prefix = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions'
+#         prefix="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions",
 #     log:
-#         'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.log'
+#         "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.log",
 #     threads: 8
 #     shell:
-#         '''
+#         """
 #         GLIMPSE_concordance \
 #         --input {input.concordance_lst_info_score_filtered} \
 #         --minDP 8 \
@@ -139,72 +139,88 @@ rule filter_transversions_imputed:
 #         --sample {input.sm_samples} \
 #         --af-tag AF \
 #         --thread {threads} 2> {log}
-#         '''
-
+#         """
+#
+#
 # rule plot_rsquare_accuracy_filtered_transversions:
 #     """
 #     Plot accuracy
 #     """
 #     input:
-#         concordance_output_info_score_1 = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.8_filtered_transversions.rsquare.grp.txt.gz',
-#         concordance_output_info_score_2 = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.9_filtered_transversions.rsquare.grp.txt.gz',
-#         concordance_output_info_score_3 = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.95_filtered_transversions.rsquare.grp.txt.gz',
-#         concordance_output_info_score_4 = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.0_filtered_transversions.rsquare.grp.txt.gz'
+#         concordance_output_info_score_1="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.8_filtered_transversions.rsquare.grp.txt.gz",
+#         concordance_output_info_score_2="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.9_filtered_transversions.rsquare.grp.txt.gz",
+#         concordance_output_info_score_3="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.95_filtered_transversions.rsquare.grp.txt.gz",
+#         concordance_output_info_score_4="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_0.0_filtered_transversions.rsquare.grp.txt.gz",
 #     output:
-#         plot = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/rsquare_accuracy_{sample}_{chrom}_{coverage_val}x_filtered_transversions.png'
+#         plot="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/rsquare_accuracy_{sample}_{chrom}_{coverage_val}x_filtered_transversions.png",
 #     params:
-#         chr = '{chrom}',
-#         name = '{sample}',
-#         cov = '{coverage_val}'
+#         chr="{chrom}",
+#         name="{sample}",
+#         cov="{coverage_val}",
 #     script:
 #         "../scripts/rsquare_accuracy.R"
-
-
+#
+#
 # rule prepare_concordance_output_filt_transversions:
 #     """
 #     Prepare files for genotype discordance plot
 #     """
 #     input:
-#         concordance_output_discordance_filtered = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.error.spl.txt.gz'
+#         concordance_output_discordance_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.error.spl.txt.gz",
 #     output:
-#         concordance_output_discordance_filtered_temp = temp('output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/temp_concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt'),
-#         concordance_output_discordance_filtered_prep = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt'
+#         concordance_output_discordance_filtered_temp=temp(
+#             "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/temp_concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt"
+#         ),
+#         concordance_output_discordance_filtered_prep="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt",
 #     shell:
-#         '''
+#         """
 #         zcat {input.concordance_output_discordance_filtered} | sed -n '3p' >> {output.concordance_output_discordance_filtered_temp}
 #         awk '{{print "{wildcards.coverage_val}  {wildcards.info_cutoff}   "$0}}' {output.concordance_output_discordance_filtered_temp} > {output.concordance_output_discordance_filtered_prep}
-#         '''
-
+#         """
+#
+#
 # rule merge_concordance_output_filt_transversions:
 #     """
 #     Merge all coverages and INFO per sample
 #     """
 #     input:
-#         concordance_output_discordance_filtered_prep = expand('output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt', coverage_val=COVERAGE_VAL, info_cutoff=INFO_CUTOFF, allow_missing=True)
+#         concordance_output_discordance_filtered_prep=expand(
+#             "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.txt",
+#             coverage_val=COVERAGE_VAL,
+#             info_cutoff=INFO_CUTOFF,
+#             allow_missing=True,
+#         ),
 #     output:
-#         concordance_output_discordance_filtered_per_sample_trans = 'output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt'
+#         concordance_output_discordance_filtered_per_sample_trans="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt",
 #     shell:
-#         '''
+#         """
 #         cat {input.concordance_output_discordance_filtered_prep} > {output.concordance_output_discordance_filtered_per_sample}
-#         '''
-
+#         """
+#
+#
 # rule plot_discordance_filt_transversions:
 #     """
 #     Plot genotype discordances
 #     """
 #     input:
-#         concordance_output_discordance_filtered_per_sample_trans = expand('output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt', sample=SAMPLE, allow_missing=True),
-#         concordance_metadata = "sample_lists/concordance_bams_published.tsv"
+#         concordance_output_discordance_filtered_per_sample_trans=expand(
+#             "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt",
+#             sample=SAMPLE,
+#             allow_missing=True,
+#         ),
+#         concordance_metadata="sample_lists/concordance_bams_published.tsv",
 #     params:
-#         path_script = 'scripts',
-#         discordance_phased=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample),
+#         path_script="scripts",
+#         discordance_phased=lambda wildcards, input: ",".join(
+#             input.concordance_output_discordance_filtered_per_sample_trans
+#         ),
 #     output:
-#         discordance_dogs_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_full_transversions.png',
-#         discordance_dogs = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_transversions.png',
-#         discordance_wolves_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_full_transversions.png',
-#         discordance_wolves = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_transversions.png',
+#         discordance_dogs_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_full_transversions.png",
+#         discordance_dogs="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_transversions.png",
+#         discordance_wolves_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_full_transversions.png",
+#         discordance_wolves="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_transversions.png",
 #     shell:
-#         '''
+#         """
 #         Rscript {params.path_script}/genotype_discordance.R \
 #         {params.discordance_phased} \
 #         {input.concordance_metadata} \
@@ -212,32 +228,45 @@ rule filter_transversions_imputed:
 #         {output.discordance_dogs} \
 #         {output.discordance_wolves_full} \
 #         {output.discordance_wolves}
-#         '''
-
+#         """
+#
+#
 # rule plot_discordance_filt_allsites_transversions_comparison:
 #     """
 #     Plot genotype discordances of all sites against transversions
 #     """
 #     input:
-#         concordance_output_discordance_filtered_per_sample = expand('output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt', sample=SAMPLE, allow_missing=True),
-#         concordance_output_discordance_filtered_per_sample_trans = expand('output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt', sample=SAMPLE, allow_missing=True),
-#         concordance_metadata = "sample_lists/concordance_bams_published.tsv"
+#         concordance_output_discordance_filtered_per_sample=expand(
+#             "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_{chrom}_filtered.txt",
+#             sample=SAMPLE,
+#             allow_missing=True,
+#         ),
+#         concordance_output_discordance_filtered_per_sample_trans=expand(
+#             "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_{chrom}_filtered_transversions.txt",
+#             sample=SAMPLE,
+#             allow_missing=True,
+#         ),
+#         concordance_metadata="sample_lists/concordance_bams_published.tsv",
 #     params:
-#         path_script = 'scripts',
-#         discordance_phased=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample),
-#         discordance_phased_trans=lambda wildcards, input: ','.join(input.concordance_output_discordance_filtered_per_sample_trans),
+#         path_script="scripts",
+#         discordance_phased=lambda wildcards, input: ",".join(
+#             input.concordance_output_discordance_filtered_per_sample
+#         ),
+#         discordance_phased_trans=lambda wildcards, input: ",".join(
+#             input.concordance_output_discordance_filtered_per_sample_trans
+#         ),
 #     output:
-#         discordance_dogs_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_full_all_sites_transversions_comparison.png',
-#         discordance_wolves_full = 'output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_full_transversions_comparison.png',
+#         discordance_dogs_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_dogs_full_all_sites_transversions_comparison.png",
+#         discordance_wolves_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_{chrom}_filtered_wolves_full_transversions_comparison.png",
 #     shell:
-#         '''
+#         """
 #         Rscript {params.path_script}/genotype_discordance_allsites_transversions.R \
 #         {params.discordance_phased} \
 #         {params.discordance_phased_trans} \
 #         {input.concordance_metadata} \
 #         {output.discordance_dogs_full} \
 #         {output.discordance_wolves_full}
-#         '''
+#         """
 
 
 #######################################

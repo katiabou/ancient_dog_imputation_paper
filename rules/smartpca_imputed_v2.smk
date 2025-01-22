@@ -112,35 +112,38 @@ rule canid_subset_merged_vcf:
 #     Re-calculate fields
 #     """
 #     input:
-#         modern_imputed_subset = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
+#         modern_imputed_subset="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}.vcf.gz",
 #     output:
-#         modern_imputed_subset_filltags = temp("output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz"),
+#         modern_imputed_subset_filltags=temp(
+#             "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz"
+#         ),
 #     threads: 10
 #     shell:
-#         '''
+#         """
 #         bcftools +fill-tags {input.modern_imputed_subset} \
 #         --threads {threads} \
 #         -Oz -o {output.modern_imputed_subset_filltags} \
 #         -- -t all,F_MISSING
-#         '''
-
+#         """
+#
+#
 # rule canid_subset_merged_vcf_filter_no_missing:
 #     """
 #     Filter for no missing sites (F_MISSING<0.01)
 #     """
 #     input:
-#         modern_imputed_subset_filltags = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz",
+#         modern_imputed_subset_filltags="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}-filltags.vcf.gz",
 #     output:
-#         modern_imputed_subset_no_missing = "output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_no-missing.vcf.gz",
+#         modern_imputed_subset_no_missing="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/merged_modern_phased_annotated.{chrom}_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_no-missing.vcf.gz",
 #     threads: 10
 #     shell:
-#         '''
+#         """
 #         bcftools view -i 'F_MISSING<0.01' {input.modern_imputed_subset_filltags} \
 #         --threads {threads} \
 #         -Oz -o {output.modern_imputed_subset_no_missing}
-
+#
 #         tabix -p vcf {output.modern_imputed_subset_no_missing}
-#         '''
+#         """
 
 
 rule canid_subset_prepare_merged_chr_list:

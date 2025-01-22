@@ -2,7 +2,7 @@
 #  Plink ROH for full imputed dataset #
 #######################################
 
-global CHROM
+global CHROM, CANID_SUBSET
 
 # define output files of make plink
 DOCS = ["bed", "bim", "fam"]
@@ -630,18 +630,19 @@ rule merge_chrom_ROH_phased_ref_panel:
 #### Steps for plotting all ROH for imputed and selected modern for all sites ####
 ##################################################################################
 
+
 # rule estimate_chrom_size:  # this is wrong because it has unassigned contigs
 #     """
 #     Estimate chromosome sizes for plotting x-axis
 #     """
 #     input:
-#         ref_fasta = config['ref_fasta_file']
+#         ref_fasta=config["ref_fasta_file"],
 #     output:
-#         ref_fasta_size = 'output/GLIMPSE_imputation/reference_genome/CanFam31_allchr_size.genome'
+#         ref_fasta_size="output/GLIMPSE_imputation/reference_genome/CanFam31_allchr_size.genome",
 #     shell:
-#         '''
+#         """
 #         faidx {input.ref_fasta} -i chromsizes > {output.ref_fasta_size}
-#         '''
+#         """
 
 
 rule estimate_chrom_size_per_chr:
@@ -678,36 +679,61 @@ rule estimate_allchrom_size:
 
 # rule merge_all_imputed_ROH:
 #     input:
-#         phased_roh_allchrom_transverions = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom', canid_subset=CANID_SUBSET, allow_missing=True),
-#         phased_roh_allchrom_transverions_ind = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom.indiv', canid_subset=CANID_SUBSET, allow_missing=True),
-#         phased_roh_allchrom_all_sites = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom', canid_subset=CANID_SUBSET, allow_missing=True),
-#         phased_roh_allchrom_all_sites_ind = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom.indiv', canid_subset=CANID_SUBSET, allow_missing=True)
+#         phased_roh_allchrom_transverions=expand(
+#             "output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
+#         phased_roh_allchrom_transverions_ind=expand(
+#             "output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom.indiv",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
+#         phased_roh_allchrom_all_sites=expand(
+#             "output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
+#         phased_roh_allchrom_all_sites_ind=expand(
+#             "output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom.indiv",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
 #     output:
-#         phased_roh_allchrom_tranversions_merged = 'output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}.hom',
-#         phased_roh_allchrom_tranversions_merged_ind = 'output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}.hom.indiv',
-#         phased_roh_allchrom_all_sites_merged = 'output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}.hom',
-#         phased_roh_allchrom_all_sites_merged_ind = 'output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}.hom.indiv',
+#         phased_roh_allchrom_tranversions_merged="output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}.hom",
+#         phased_roh_allchrom_tranversions_merged_ind="output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}.hom.indiv",
+#         phased_roh_allchrom_all_sites_merged="output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}.hom",
+#         phased_roh_allchrom_all_sites_merged_ind="output/GLIMPSE_imputation/ROH_phased/merged_phased.allchrom_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}.hom.indiv",
 #     shell:
-#         '''
+#         """
 #         awk 'NR == 1 || FNR > 1'  {input.phased_roh_allchrom_transverions} > {output.phased_roh_allchrom_tranversions_merged}
 #         awk 'NR == 1 || FNR > 1'  {input.phased_roh_allchrom_transverions_ind} > {output.phased_roh_allchrom_tranversions_merged_ind}
-
+#
 #         awk 'NR == 1 || FNR > 1'  {input.phased_roh_allchrom_all_sites} > {output.phased_roh_allchrom_all_sites_merged}
 #         awk 'NR == 1 || FNR > 1'  {input.phased_roh_allchrom_all_sites_ind} > {output.phased_roh_allchrom_all_sites_merged_ind}
-#         '''
-
+#         """
+#
+#
 # rule merge_all_modern_ROH:
 #     input:
-#         ref_panel_roh_allchrom_transversions = expand('output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom', canid_subset=CANID_SUBSET, allow_missing=True),
-#         ref_panel_roh_allchrom_all_sites = expand('output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom', canid_subset=CANID_SUBSET, allow_missing=True),
+#         ref_panel_roh_allchrom_transversions=expand(
+#             "output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
+#         ref_panel_roh_allchrom_all_sites=expand(
+#             "output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom",
+#             canid_subset=CANID_SUBSET,
+#             allow_missing=True,
+#         ),
 #     output:
-#         ref_panel_roh_allchrom_transversions_merged = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}.hom',
-#         ref_panel_roh_allchrom_all_sites_merged = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}.hom',
+#         ref_panel_roh_allchrom_transversions_merged="output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_transversions_hom_win_het_{hom_win_het}.hom",
+#         ref_panel_roh_allchrom_all_sites_merged="output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_{hom_win_het}.hom",
 #     shell:
-#         '''
+#         """
 #         awk 'NR == 1 || FNR > 1'  {input.ref_panel_roh_allchrom_transversions} > {output.ref_panel_roh_allchrom_transversions_merged}
 #         awk 'NR == 1 || FNR > 1'  {input.ref_panel_roh_allchrom_all_sites} > {output.ref_panel_roh_allchrom_all_sites_merged}
-#         '''
+#         """
 
 
 rule plot_transversions_ROH_all_chr:
@@ -986,60 +1012,61 @@ rule plot_ROH_window_prevelance_depth:
 #     Get gene annotations for ROH islands and deserts in common between modern and ancient samples
 #     """
 #     input:
-#         cf31_ann = config['canfam31_annotation'],
-#         imputed_windows_bed_islands = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed',
-#         imputed_windows_bed_deserts = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed',
-#         modern_windows_bed_islands = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed',
-#         modern_windows_bed_deserts = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed',
-#         imputed_modern_windows_bed_islands = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed',
-#         imputed_modern_windows_bed_deserts = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed',
+#         cf31_ann=config["canfam31_annotation"],
+#         imputed_windows_bed_islands="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed",
+#         imputed_windows_bed_deserts="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed",
+#         modern_windows_bed_islands="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed",
+#         modern_windows_bed_deserts="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed",
+#         imputed_modern_windows_bed_islands="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_islands.bed",
+#         imputed_modern_windows_bed_deserts="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts.bed",
 #     output:
-#         genes_temp = 'output/GLIMPSE_imputation/ROH_islands_deserts/cf31_annotation_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-temp.bed',
-#         imputed_genes_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed',
-#         imputed_genes_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed',
-#         imputed_genes_unique_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed',
-#         imputed_genes_unique_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed',
-#         modern_genes_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed',
-#         modern_genes_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed',
-#         modern_genes_unique_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed',
-#         modern_genes_unique_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed',
-#         imputed_modern_genes_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed',
-#         imputed_modern_genes_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed',
-#         imputed_modern_genes_unique_desert = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed',
-#         imputed_modern_genes_unique_island = 'output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed',
+#         genes_temp="output/GLIMPSE_imputation/ROH_islands_deserts/cf31_annotation_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-temp.bed",
+#         imputed_genes_desert="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed",
+#         imputed_genes_island="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed",
+#         imputed_genes_unique_desert="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed",
+#         imputed_genes_unique_island="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed",
+#         modern_genes_desert="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed",
+#         modern_genes_island="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed",
+#         modern_genes_unique_desert="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed",
+#         modern_genes_unique_island="output/GLIMPSE_imputation/ROH_islands_deserts/modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed",
+#         imputed_modern_genes_desert="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_deserts.bed",
+#         imputed_modern_genes_island="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes_islands.bed",
+#         imputed_modern_genes_unique_desert="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_deserts.bed",
+#         imputed_modern_genes_unique_island="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique_islands.bed",
 #     log:
-#         'output/GLIMPSE_imputation/ROH_islands_deserts/modern_imputed_overlap_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique.log'
+#         "output/GLIMPSE_imputation/ROH_islands_deserts/modern_imputed_overlap_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}-genes-unique.log",
 #     threads: 4
 #     shell:
-#         '''
+#         """
+#         (
 #         awk '$3=="gene"' {input.cf31_ann} > {output.genes_temp}
-
+#
 #         bedtools intersect \
 #         -b {input.imputed_windows_bed_islands} \
 #         -a {output.genes_temp} \
 #         -wa -wb >> {output.imputed_genes_island}
-
+#
 #         awk -F ';' '{{print $1}}' {output.imputed_genes_island} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.imputed_genes_unique_island}
-
+#
 #         bedtools intersect \
 #         -b {input.imputed_windows_bed_deserts} \
 #         -a {output.genes_temp} \
 #         -wa -wb >> {output.imputed_genes_desert}
-
+#
 #         awk -F ';' '{{print $1}}' {output.imputed_genes_desert} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.imputed_genes_unique_desert}
-
+#
 #         bedtools intersect \
 #         -b {input.modern_windows_bed_islands} \
 #         -a {output.genes_temp} \
 #         -wa -wb >> {output.modern_genes_island}
-
+#
 #         awk -F ';' '{{print $1}}' {output.modern_genes_island} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.modern_genes_unique_island}
-
+#
 #         bedtools intersect \
 #         -b {input.modern_windows_bed_deserts} \
 #         -a {output.genes_temp} \
 #         -wa -wb >> {output.modern_genes_desert}
-
+#
 #         awk -F ';' '{{print $1}}' {output.modern_genes_desert} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.modern_genes_unique_desert}
 #         bedtools intersect \
 #         -b {input.imputed_modern_windows_bed_islands} \
@@ -1051,4 +1078,5 @@ rule plot_ROH_window_prevelance_depth:
 #         -a {output.genes_temp} \
 #         -wa -wb >> {output.imputed_modern_genes_desert}
 #         awk -F ';' '{{print $1}}' {output.imputed_modern_genes_desert} | uniq | awk '{{ print $10 }}' | tr -d '"' >> {output.imputed_modern_genes_unique_desert}
-#         '''
+#         ) 2> {log}
+#         """

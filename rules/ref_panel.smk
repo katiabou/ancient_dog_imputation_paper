@@ -2,6 +2,8 @@
 # Prepare reference panel for concordance imputation #
 ######################################################
 
+global CHROM
+
 
 rule vcf_coverage:
     """
@@ -104,26 +106,31 @@ rule fill_tags:
 
 
 # rule get_F_missing_hist:
-#    input:
-#        ref_sample_snp_filltags = "output/reference_panel/ref-panel_{chrom}_sample-snp_filltags.vcf.gz"
-#    output:
-#        ref_panel_f_missing_hist = temp("output/reference_panel/ref-panel_{chrom}_f_missing.txt")
-#    #conda:
-#        #"../envs/environment.yaml"
-#    shell:
-#        '''
+#     input:
+#         ref_sample_snp_filltags="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags.vcf.gz",
+#     output:
+#         ref_panel_f_missing_hist=temp(
+#             "output/reference_panel/ref-panel_{chrom}_f_missing.txt"
+#         ),
+#     # conda:
+#     # "../envs/environment.yaml"
+#     shell:
+#         """
 #        bcftools query -f '%INFO/F_MISSING\n' {input.ref_sample_snp_filltags} > {output.ref_panel_f_missing_hist}
-#        '''
+#        """
+
 
 # rule merge_F_missing:
-#    input:
-#        ref_panel_f_missing_hist = expand("output/reference_panel/ref-panel_{chrom}_f_missing.txt", chrom=CHROM)
-#    output:
-#        ref_panel_f_missing_hist_merged = "output/reference_panel/ref-panel_allchrom_f_missing.txt"
-#    shell:
-#        '''
+#     input:
+#         ref_panel_f_missing_hist=expand(
+#             "output/reference_panel/ref-panel_{chrom}_f_missing.txt", chrom=CHROM
+#         ),
+#     output:
+#         ref_panel_f_missing_hist_merged="output/reference_panel/ref-panel_allchrom_f_missing.txt",
+#     shell:
+#         """
 #        cat {input.ref_panel_f_missing_hist} > {output.ref_panel_f_missing_hist_merged}
-#        '''
+#        """
 
 
 rule filter_sites:
@@ -157,22 +164,22 @@ rule filter_sites:
 #     Phase filtered reference panel with shapeit
 #     """
 #     input:
-#         ref_sample_snp_filltags_filter = 'output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz',
+#         ref_sample_snp_filltags_filter="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
 #     output:
-#         ref_panel_phased = 'output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz',
-#         ref_panel_phased_tbi = 'output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi'
+#         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
+#         ref_panel_phased_tbi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi",
 #     params:
-#         gen_map_path = config['gen_map_path'],
-#         gen_map_files = config['gen_map_files_impute']
+#         gen_map_path=config["gen_map_path"],
+#         gen_map_files=config["gen_map_files_impute"],
 #     log:
-#         log_shapeit = 'output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log'
+#         log_shapeit="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log",
 #     resources:
-#         mem_mb=720*1024
+#         mem_mb=720 * 1024,
 #     threads: 96
 #     benchmark:
-#         'benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tsv'
+#         "benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tsv"
 #     shell:
-#         '''
+#         """
 #         /projects/racimolab/people/qcj125/programmes/shapeit4/bin/shapeit4.2 \
 #         --input {input.ref_sample_snp_filltags_filter} \
 #         --map {params.gen_map_path}{params.gen_map_files} \
@@ -180,9 +187,9 @@ rule filter_sites:
 #         --output {output.ref_panel_phased} \
 #         --thread {threads} \
 #         --sequencing &> {log.log_shapeit}
-
+#
 #         bcftools index --tbi {output.ref_panel_phased}
-#         '''
+#         """
 
 
 rule phase_modern_data_shapeit5:
