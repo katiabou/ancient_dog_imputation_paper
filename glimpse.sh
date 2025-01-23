@@ -18,7 +18,7 @@ eval "$(conda shell.bash hook)"
 conda activate imputation_project
 
 # maximum number of concurrent FTP requests (prevents overloading the FTP server)
-#MAX_FTP=10
+MAX_FTP=10
 
 #if ! command -v free &>/dev/null; then
   # MacOS does not have the free command
@@ -41,7 +41,7 @@ flags+="--keep-going "
 flags+="--rerun-incomplete "
 #flags+="--reason "
 flags+="--use-conda "
-flags+="--resources mem_mb=${MAX_MEM} "
+flags+="--resources mem_mb=${MAX_MEM} ftp=${MAX_FTP} "
 
 snakemake ${flags} -- "${args[@]}" &>>${logfile}
 

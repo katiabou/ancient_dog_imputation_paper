@@ -10,7 +10,7 @@ __license__ = "MIT"
 #  Filter imputed dataset based on MAF of reference panel and INFO score #
 ##########################################################################
 
-global BAM
+global SAMPLES
 
 # define output files of make plink
 DOCS = ["bed", "bim", "fam"]
@@ -23,7 +23,7 @@ rule merge_phased_bcfs:
     input:
         phased_vcf_annotate=expand(
             "output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased_annotated.{chrom}.vcf.gz",
-            bam_imputation=BAM,
+            sample=SAMPLES,
             allow_missing=True,
         ),
     output:

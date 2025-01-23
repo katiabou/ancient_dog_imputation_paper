@@ -35,14 +35,14 @@ samples_df = pd.read_table(
 ).set_index("Original_ID", drop=False)
 SAMPLE = list(samples_df["Original_ID"])
 
-# TODO add column with the name of the source publication for all published BAM files
+# TODO add column with the name of the source publication and the ENA PRJ code for all published BAM files
 # Bams which will be imputed (might need to be updated from the online spreadsheet)
-bams_df = pd.read_table(
+samples = pd.read_table(
     "sample_lists/bams_published_imputation_metadata_cutoff.tsv",
     dtype=str,
     delimiter="\t",
 ).set_index("Sample", drop=False)
-BAM = list(bams_df["Sample"])
+SAMPLES = list(samples["Sample"])
 
 # Define chromosome for accuracy check
 CHROM_CON = ["chr1"]
@@ -59,6 +59,7 @@ CANID_SUBSET = ["dogs", "wolves", "dogwolf"]
 
 ##### Rules to include #####
 include: "rules/genetic_map.smk"
+include: "rules/fetch_published_bams.smk"
 include: "rules/ref_panel.smk"
 include: "rules/ref_panel_concordance_only_dogs.smk"
 include: "rules/GLIMPSE_concordance.smk"

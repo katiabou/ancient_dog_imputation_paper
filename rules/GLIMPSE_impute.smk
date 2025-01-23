@@ -10,8 +10,6 @@ __license__ = "MIT"
 # Impute and phase bam files #
 ##############################
 
-global bams_df
-
 ### Make sure bamfile list is correct !!!!
 
 
@@ -66,7 +64,7 @@ rule compute_GLs_imputed_samples:
     Compute GLs of bams (do not need to extract exact chrom from bams)
     """
     input:
-        imputation_bams=lambda wildcards: bams_df.loc[wildcards.bam_imputation, "Bam"],
+        imputation_bams="samples/bam/{sample}_merged.bam",
         ref_panel_sites_vcf="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.vcf.gz",
         ref_panel_sites_tsv="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv.gz",
         ref_fasta_chr="output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta",
