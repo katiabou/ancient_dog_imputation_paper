@@ -56,29 +56,22 @@ INFO_CUTOFF = ["0.0", "0.8", "0.9", "0.95"]
 # datasets to use
 CANID_SUBSET = ["dogs", "wolves", "dogwolf"]
 
+
 ##### Rules to include #####
-
-
-# Rule for benchmarking
 include: "rules/genetic_map.smk"
 include: "rules/ref_panel.smk"
-
-
-# include: "rules/ref_panel_concordance_only_dogs.smk"
-# include: "rules/GLIMPSE_concordance.smk"
-# include: "rules/GLIMPSE_concordance_only_dogs.smk"
-# include: "rules/GLIMPSE_concordance_HC.smk"
-# include: "rules/GLIMPSE_concordance_transversions.smk"
-# include: "rules/GLIMPSE_concordance_estimate_sites_per_MAF_bin.smk"
-# include: "rules/filter_MAF_INFO_concordance.smk"
-# include: "rules/validation_filtering_pseudohaploid.smk"
-# include: "rules/smartpca_concordance_pseudohaploid_HC_genotyped.smk"
-# include: "rules/smartpca_concordance_pseudohaploid_no_filters.smk"
-# include: "rules/plink_ROH_validation.smk"
-# include: "rules/plink_ROH_concordance.smk"
-
-
-# Full imputation rules
+include: "rules/ref_panel_concordance_only_dogs.smk"
+include: "rules/GLIMPSE_concordance.smk"
+include: "rules/GLIMPSE_concordance_only_dogs.smk"
+include: "rules/GLIMPSE_concordance_HC.smk"
+include: "rules/GLIMPSE_concordance_transversions.smk"
+include: "rules/GLIMPSE_concordance_estimate_sites_per_MAF_bin.smk"
+include: "rules/filter_MAF_INFO_concordance.smk"
+include: "rules/validation_filtering_pseudohaploid.smk"
+include: "rules/smartpca_concordance_pseudohaploid_HC_genotyped.smk"
+include: "rules/smartpca_concordance_pseudohaploid_no_filters.smk"
+include: "rules/plink_ROH_validation.smk"
+include: "rules/plink_ROH_concordance.smk"
 include: "rules/GLIMPSE_impute.smk"
 include: "rules/filter_MAF_INFO_imputation.smk"
 include: "rules/smartpca_imputed_v2.smk"
