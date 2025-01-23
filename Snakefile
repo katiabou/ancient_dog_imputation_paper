@@ -36,6 +36,7 @@ samples_df = pd.read_table(
 ).set_index("Original_ID", drop=False)
 SAMPLE = list(samples_df["Original_ID"])
 
+# TODO add column with the name of the source publication for all published BAM files
 # Bams which will be imputed (might need to be updated from the online spreadsheet)
 bams_df = pd.read_table(
     "sample_lists/bams_published_imputation_metadata_cutoff.tsv",
