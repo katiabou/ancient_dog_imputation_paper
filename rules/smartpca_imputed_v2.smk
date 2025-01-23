@@ -72,9 +72,7 @@ rule merge_maf_ref_panel_imputed:
         bcftools merge \
         {input.ref_panel_imputed_sites} \
         {input.merged_phased_vcf_maf_recalibrated_info} \
-        -Oz -o {output.modern_imputed} \
-        --threads {threads}
-
+        -Oz -o {output.modern_imputed}
         bcftools index -f {output.modern_imputed}
         """
 

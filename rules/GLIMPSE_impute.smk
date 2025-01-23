@@ -120,10 +120,7 @@ rule imput_phase:
         chunks="output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt",
         gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
     output:
-        imputed=expand(
-            "output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf",
-            allow_missing=True,
-        ),
+        imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf",
     params:
         prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}",
     threads: 2
