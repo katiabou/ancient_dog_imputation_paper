@@ -20,7 +20,6 @@ CHROM = [f"chr{i}" for i in range(1, config["chromosome_number"] + 1)]
 ##### set wildcard constraints #####
 wildcard_constraints:
     chrom="chr\d+",
-    chrom_con="chr\d+",
     info_cutoff="\d+.\d+",
     maf="\d+.\d+",
     maf_cutoff="\d+.\d+",
@@ -101,6 +100,7 @@ rule all:
             info=config["info_cutoff"],
             maf_cutoff=config["maf_cutoff"],
             canid_subset=CANID_SUBSET,
+            hom_win_het=config["roh"]["homozyg_window_het"],
         ),
         #### output files for imputation benchmarking
         ### ROHs with ROHan

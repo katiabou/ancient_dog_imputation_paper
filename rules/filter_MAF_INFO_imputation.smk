@@ -22,7 +22,7 @@ rule merge_phased_bcfs:
     """
     input:
         phased_vcf_annotate=expand(
-            "output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz",
+            "output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased_annotated.{chrom}.vcf.gz",
             bam_imputation=BAM,
             allow_missing=True,
         ),

@@ -71,12 +71,12 @@ rule compute_GLs_imputed_samples:
         ref_panel_sites_tsv="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv.gz",
         ref_fasta_chr="output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        GL_imputed_bams="output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz",
+        GL_imputed_bams="output/GLIMPSE_imputation/GLs_imputed_bams/{sample}_{chrom}.vcf.gz",
     log:
-        "output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.log",
+        "output/GLIMPSE_imputation/GLs_imputed_bams/{sample}_{chrom}.log",
     threads: 4
     benchmark:
-        "benchmarks/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputation/GLs_imputed_bams/{sample}_{chrom}.tsv"
     shell:
         """
         bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.imputation_bams} -Ou | \
@@ -114,20 +114,20 @@ rule imput_phase:
     Impute all samples individually
     """
     input:
-        GL_imputed_bams="output/GLIMPSE_imputation/GLs_imputed_bams/{bam_imputation}_{chrom}.vcf.gz",
+        GL_imputed_bams="output/GLIMPSE_imputation/GLs_imputed_bams/{sample}_{chrom}.vcf.gz",
         #ref_sample_snp_filltags_filter = "output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
         chunks="output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt",
         gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
     output:
-        imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf",
+        imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}.00.bcf",
     params:
-        prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}",
+        prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}",
     threads: 2
     log:
-        "output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.log",
+        "output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}.log",
     benchmark:
-        "benchmarks/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}.tsv"
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -152,11 +152,11 @@ rule ligate_list:
     """
     input:
         chunks="output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt",
-        imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}.00.bcf",
+        imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}.00.bcf",
     output:
-        ligated_list="output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated_list.{chrom}.txt",
+        ligated_list="output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated_list.{chrom}.txt",
     params:
-        prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{bam_imputation}_imputed.{chrom}",
+        prefix="output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}",
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -172,14 +172,14 @@ rule ligate:
     Merge all imputed chunks
     """
     input:
-        ligated_list="output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated_list.{chrom}.txt",
+        ligated_list="output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated_list.{chrom}.txt",
     output:
-        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated.{chrom}.bcf",
     log:
-        "output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.log",
+        "output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated.{chrom}.log",
     threads: 8
     benchmark:
-        "benchmarks/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated.{chrom}.tsv"
     shell:
         """
         GLIMPSE_ligate \
@@ -196,14 +196,14 @@ rule sample_haplotype:
     Phase!!!
     """
     input:
-        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated.{chrom}.bcf",
     output:
-        phased_bcf="output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf",
+        phased_bcf="output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased.{chrom}.bcf",
     log:
-        "output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased.{chrom}.log",
     threads: 8
     benchmark:
-        "benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased.{chrom}.tsv"
     shell:
         """
         GLIMPSE_sample \
@@ -222,14 +222,14 @@ rule annotate_fields:
     GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
     """
     input:
-        phased_bcf="output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased.{chrom}.bcf",
-        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{bam_imputation}_ligated.{chrom}.bcf",
+        phased_bcf="output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased.{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_imputation/GLIMPSE_ligated/{sample}_ligated.{chrom}.bcf",
     output:
-        phased_vcf_annotate="output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.vcf.gz",
+        phased_vcf_annotate="output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased_annotated.{chrom}.vcf.gz",
     log:
-        "output/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.bcf.log",
+        "output/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased_annotated.{chrom}.bcf.log",
     benchmark:
-        "benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{bam_imputation}_phased_annotated.{chrom}.bcf.tsv"
+        "benchmarks/GLIMPSE_imputation/GLIMPSE_phased/{sample}_phased_annotated.{chrom}.bcf.tsv"
     shell:
         """
         bcftools annotate \

@@ -379,7 +379,6 @@ rule rename_sample_concordance_PH:
     Rename sample in VCF header, to include coverage info
     """
     input:
-        # imputed_maf_info = 'output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom_con}_{coverage_val}x-only_sample_INFO_{info}_MAF_{maf}.vcf.gz'
         phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
         new_name_file=temp(
@@ -536,7 +535,6 @@ rule merge_downsampled_reference_imputed:
     Merge reference and PH validation files with imputed files
     """
     input:
-        #ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom_con}_validation_no_missnp_all_{canid_subset}.bed',
         merged="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}.bed",
         HC_prefix_list_imputed="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_INFO_{info}_MAF_{maf}_corr.txt",
     output:

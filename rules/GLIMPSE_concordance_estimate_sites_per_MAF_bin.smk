@@ -18,7 +18,6 @@ rule MAF_bins_sites_ref_pan:
     Extract sites per MAF bin for the reference panel
     """
     input:
-        #ref_concordance_sample_excl_filltags_filter = 'output/GLIMPSE_concordance/reference_panel/{chrom_con}_ref_panel_filltags_filter.phased.bcf'
         ref_concordance_sample_excl_filltags_filter_allchrom="output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
     output:
         ref_concordance_sample_excl_filltags_filter_maf_vcf_0_0_001="output/GLIMPSE_concordance/reference_panel_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_0_001.vcf.gz",
