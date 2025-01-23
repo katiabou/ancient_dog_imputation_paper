@@ -95,35 +95,6 @@ rule maf_sites_phased_vcf:
         """
 
 
-# rule filter_INFO_phased_vcf:
-#     """
-#     Filter for INFO based on concordance results WITHOUT re-calibrating INFO score for all samples together DON'T DO THIS, IT TAKE THE LAST SAMPLES INFO SCORE AND DOES NOT RECALIBRATE IT
-#     """
-#     input:
-#         merged_phased_vcf_maf="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}.vcf.gz",
-#     output:
-#         merged_phased_vcf_maf_info="output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz",
-#     params:
-#         info=config["info_cutoff"],
-#     log:
-#         "output/GLIMPSE_imputation/GLIMPSE_phased_merged/merged_phased_annotated.{chrom}_MAF_{maf_cutoff}_INFO_{info}.vcf.gz.log",
-#     threads: 10
-#     shell:
-#         """
-#         (
-#         bcftools view \
-#         {input.merged_phased_vcf_maf} \
-#         --trim-alt-alleles -Ou | \
-#         bcftools view \
-#         --include 'INFO/INFO >= {params.info}' \
-#         --threads {threads} \
-#         -Oz -o {output.merged_phased_vcf_maf_info}
-#
-#         tabix -p vcf {output.merged_phased_vcf_maf_info}
-#         ) 2> {log}
-#         """
-
-
 rule recalibrate_info_phased_vcf:
     """
     Re-calibrate INFO scores based on all samples present in the merged VCF. This is essential to properly filter for INFO score in a multi-imputed-sample VCF (when they are imputed individually) 

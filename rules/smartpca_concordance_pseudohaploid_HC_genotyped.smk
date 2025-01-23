@@ -270,9 +270,6 @@ rule create_sample_list_no_missnp:
         """
 
 
-#### rules for splitting reference into canid subset ###
-
-
 rule prepare_canid_subset_file:
     input:
         modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
