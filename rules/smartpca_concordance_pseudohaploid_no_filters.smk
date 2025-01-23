@@ -223,8 +223,6 @@ rule merge_allchrom_downsampled_reference_imputed_list_no_filt:
             chrom=CHROM,
             allow_missing=True,
         ),
-        #bim_mod = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.bim',
-        #fam_mod = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}.fam'
     params:
         prefix_in=expand(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ph_called_modern_imputed/merged_ph_called_modern_imputed.{sample}_{chrom}_corr_{canid_subset}",

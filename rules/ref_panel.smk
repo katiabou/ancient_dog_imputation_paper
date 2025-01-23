@@ -32,7 +32,7 @@ rule vcf_coverage:
         vcftools \
         --gzvcf {input.ref} \
         --depth \
-        --out {wildcards.path}/output/reference_panel/reference_panel_depth 2> {log}
+        --out output/reference_panel/reference_panel_depth 2> {log}
         """
 
 

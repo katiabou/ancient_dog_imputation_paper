@@ -120,7 +120,6 @@ rule tped_to_bed:
         tped="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom}_{coverage_val}x_validation.tped",
         tfam="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom}_{coverage_val}x_validation.tfam",
         ref_bim_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bim",
-        #ref_bim_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bim'
     output:
         expand(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/ph_called_plink/{sample}_{chrom}_{coverage_val}x_validation_ref_sites_plink.{doc}",
@@ -317,7 +316,6 @@ rule select_canid_subset_from_plink:
     input:
         modern_canid_subset_plink_sample="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt",
         ref_bed_corr="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom}_ref_panel_{sample}_validation_filt_qual_dp_ab_corr.bed",
-        #ref_bed_corr = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom_con}_ref_panel_filltags_filter_corr.bed'
     output:
         ref_bed_corr_subset=expand(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.{doc}",
@@ -348,7 +346,6 @@ rule merge_downsampled_reference:
     input:
         ref_bed_corr_subset="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/{chrom}_ref_panel_filltags_filter_corr_{sample}_{canid_subset}.bed",
         HC_prefix_list="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom}_validation_no_missnp.txt",
-        #HC_prefix_list_all = 'output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/list_{sample}_{chrom_con}_validation_no_missnp_all.txt'
     output:
         merged=expand(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_validation_no_missnp_all_{canid_subset}.{doc}",
