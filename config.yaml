@@ -2,37 +2,34 @@
 chromosome_number: 38
 
 # path to reference panel
-# reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/1715g_WildSled.SNP.INDEL.chrAll.vcf.gz'
 # TODO make this a relative path
 reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/PUBLISHABLE_VERSION/1701g_WildSled.SNP.INDEL.chrAll.vcf.gz'
 
 # reference fasta file
-# ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/IMPUTATION_2023/reference_genome/canFam3_withY.fa'
 # TODO check where this came from and make a rule to download and/or create this fasta file
 ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/canFam3_withY.fa'
 
 # depth cutoff for individuals in reference panel
-depth_cutoff: '8'
+depth_cutoff: 8
 
 # F_missing cutoff to filter sites from reference panel
-F_MISSING: '0.05'
+F_MISSING: 0.05
 
 # GLIMPSE_chunk parameters
-window_size: '2000000'
-buffer_size: '200000'
-
+window_size: 2000000'
+buffer_size: 200000
 
 ##### PARAMETERS TO BE CHOSEN AFTER IMPUTATION ACCURACY ASSESSMENT #####
-maf_cutoff: '0.01'
-info_cutoff: '0.8' 
+maf_cutoff: 0.01
+info_cutoff: 0.8
 
 # ROH plink parameters:
 roh:
-  homozyg_density: '50' 
-  homozyg_gap: '500'
-  homozyg_kb: '500' 
-  homozyg_snp: '50' 
-  homozyg_window_het: '1'
-  homozyg_window_missing: '5' 
-  homozyg_window_snp: '50' 
-  homozyg_window_threshold: '0.05'
+  homozyg_density: 50
+  homozyg_gap: 500
+  homozyg_kb: 500
+  homozyg_snp: 50
+  homozyg_window_het: 1
+  homozyg_window_missing: 5
+  homozyg_window_snp: 50
+  homozyg_window_threshold: 0.05
