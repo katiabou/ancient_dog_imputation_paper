@@ -16,7 +16,7 @@ depth_cutoff: 8
 F_MISSING: 0.05
 
 # GLIMPSE_chunk parameters
-window_size: 2000000'
+window_size: 2000000
 buffer_size: 200000
 
 ##### PARAMETERS TO BE CHOSEN AFTER IMPUTATION ACCURACY ASSESSMENT #####
