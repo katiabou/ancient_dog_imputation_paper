@@ -6,19 +6,32 @@
 # License:   MIT
 
 # import libraries
-library(devtools)
-library(MetBrewer)
-library(reshape2)
-library(dplyr)
-library(ggplot2)
-library(qdapRegex)
-library(stringr)
+quiet <- function(x) {
+    suppressMessages(suppressWarnings(x))
+}
+quiet(library(devtools))
+quiet(library(MetBrewer))
+quiet(library(reshape2))
+quiet(library(dplyr))
+quiet(library(ggplot2))
+quiet(library(qdapRegex))
+quiet(library(stringr))
+quiet(library(argparser))
 
+# get the command line arguments
+p <- arg_parser("Count number of sites per bin")
+p <- add_argument(p, "--sample-file-merge-1", help = "", default = "output/GLIMPSE_concordance/GLIMPSE_ligated_MAF_bins/merged_ligated.NGDG_allchrom_0.5x_INFO_all.txt")
+p <- add_argument(p, "--sample-file-merge-2", help = "", default = "output/GLIMPSE_concordance/GLIMPSE_ligated_MAF_bins/merged_ligated.CGG32_allchrom_1x_INFO_all.txt")
+p <- add_argument(p, "--sample-file-merge-3", help = "", default = "output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_MAF_bins/merged_ligated.NGDG_allchrom_0.5x_INFO_all.txt")
+p <- add_argument(p, "--sample-file-merge-4", help = "", default = "output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_MAF_bins/merged_ligated.CGG32_allchrom_1x_INFO_all.txt")
+p <- add_argument(p, "--output", help = "", default = "output/GLIMPSE_concordance/plots/glimpse_concordance_MAF_bins_reference_panel/merged_ligated.NGDG_CGG32_allchrom_INFO_all.png")
 
-input1 <- read.table(snakemake@input[[1]], quote = "\"", comment.char = "")
-input2 <- read.table(snakemake@input[[2]], quote = "\"", comment.char = "")
-input3 <- read.table(snakemake@input[[3]], quote = "\"", comment.char = "")
-input4 <- read.table(snakemake@input[[4]], quote = "\"", comment.char = "")
+argv <- parse_args(p)
+
+input1 <- read.table(argv$sample_file_merge_1, quote = "\"", comment.char = "")
+input2 <- read.table(argv$sample_file_merge_2, quote = "\"", comment.char = "")
+input3 <- read.table(argv$sample_file_merge_3, quote = "\"", comment.char = "")
+input4 <- read.table(argv$sample_file_merge_4, quote = "\"", comment.char = "")
 
 input1$ref_panel <- "all_canids"
 input2$ref_panel <- "all_canids"
@@ -91,4 +104,5 @@ ggplot(data = melt_data2, aes(x = INFO, y = value_2, fill = MAF_bins, label = ro
     theme(legend.spacing.y = unit(0.3, "cm")) +
     theme(panel.grid.major.x = element_blank()) +
     theme(legend.key.size = unit(0.8, "cm"))
-ggsave(snakemake@output[[1]], width = 14, height = 10)
+
+ggsave(argv$output, width = 14, height = 10)

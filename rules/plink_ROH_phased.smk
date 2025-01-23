@@ -702,6 +702,7 @@ rule plot_transversions_ROH_all_chr:
     params:
         sites="transversions",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_bands_all_chr.R"
 
 
@@ -722,6 +723,7 @@ rule plot_all_sites_ROH_all_chr:
     params:
         sites="all sites",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_bands_all_chr.R"
 
 
@@ -757,6 +759,7 @@ rule plot_all_sites_ROH_count_length_dogs:
         plot_dogs_coeff_long_short="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs_coeff_long_short_ROHs.png",
         plot_dogs_coeff_boxplot="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs_coeff_long_short_ROHs_boxplot.png",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_count_length_coeff_dogs.R"
 
 
@@ -792,6 +795,7 @@ rule plot_transversions_ROH_count_length_dogs:
         plot_dogs_coeff_long_short="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogs_coeff_long_short_ROHs.png",
         plot_dogs_coeff_boxplot="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_dogs_coeff_long_short_ROHs_boxplot.png",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_count_length_coeff_dogs.R"
 
 
@@ -820,6 +824,7 @@ rule plot_all_sites_ROH_count_length_wolves:
         plot_pleistocene_wolves_coeff_labelled="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_wolves_coeff_all_long_short_ROHs_pleistocene-labelled.png",
         roh_results_all="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_wolves_all_roh_results.tsv",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_count_length_coeff_wolves.R"
 
 
@@ -848,6 +853,7 @@ rule plot_transversions_ROH_count_length_wolves:
         plot_pleistocene_wolves_coeff_labelled="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_wolves_coeff_all_long_short_ROHs_pleistocene-labelled.png",
         roh_results_all="output/GLIMPSE_imputation/plots/ROHs/merged_phased_annotated_ref_panel.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_transversions_hom_win_het_{hom_win_het}_wolves_all_roh_results.tsv",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_count_length_coeff_wolves.R"
 
 
@@ -866,6 +872,7 @@ rule estimate_ROH_windows:
     output:
         ROH_500_kb_windows="output/GLIMPSE_imputation/ROH_islands_deserts/window_depth/CanFam31_{chrom}_500_kb_windows.txt",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_500_kb_window.R"
 
 
@@ -963,4 +970,5 @@ rule plot_ROH_window_prevelance_depth:
         top_go_terms="output/GLIMPSE_imputation/ROH_islands_deserts/imputed_modern_window_bed_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_deserts_GO_terms.txt",
         main_figure="output/GLIMPSE_imputation/plots/ROH_islands_deserts/modern_ancient_heatmap_ROH_500kb_windows_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}_main.png",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/ROH_deserts_islands.R"

@@ -316,4 +316,5 @@ rule plot_smartpca:
         smartpca_P1P2="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2.png",
         smartpca_P1P2_labelled="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2_labelled.png",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/smartpca_phased_dataset.R"

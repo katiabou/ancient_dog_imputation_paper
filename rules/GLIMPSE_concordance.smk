@@ -760,6 +760,7 @@ rule plot_rsquare_accuracy_filtered_allchrom:
         name="{sample}",
         cov="{coverage_val}",
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/rsquare_accuracy.R"
 
 

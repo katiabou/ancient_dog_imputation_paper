@@ -399,6 +399,7 @@ rule plot_pca_concordance_ph_no_filt:
         cov_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
         info_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/smartpca_ph.R"
 
 
@@ -423,4 +424,5 @@ rule pca_accuracy_downsampled_imputed_no_filt:
         cov_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Coverage"],
         info_sample=lambda wildcards: samples_df.loc[wildcards.sample, "Info"],
     script:
+        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/smartpca_ph_distances.R"

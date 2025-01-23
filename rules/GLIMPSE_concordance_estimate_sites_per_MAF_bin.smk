@@ -582,5 +582,12 @@ rule plot_sites_ref_panels:
         sample_file_merge_4="output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_MAF_bins/merged_ligated.CGG32_allchrom_1x_INFO_all.txt",
     output:
         plot_sites_ref_panels="output/GLIMPSE_concordance/plots/glimpse_concordance_MAF_bins_reference_panel/merged_ligated.NGDG_CGG32_allchrom_INFO_all.png",
-    script:
-        "../scripts/reference_panel_MAF_sites_comparison.R"
+    shell:
+        """
+        Rscript scripts/reference_panel_MAF_sites_comparison.R \
+          --sample-file-merge-1 {input.sample_file_merge_1} \
+          --sample-file-merge-2 {input.sample_file_merge_2} \
+          --sample-file-merge-3 {input.sample_file_merge_3} \
+          --sample-file-merge-4 {input.sample_file_merge_4} \
+          --output {output}
+        """

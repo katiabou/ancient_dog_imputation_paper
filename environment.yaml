@@ -13,6 +13,7 @@ dependencies:
   - glimpse-bio=1.1.1
   - plink=1.90b6.21
   - pyfaidx=0.7.2.1
+  - r-argparser=0.7.2
   - r-base=4.2.3
   - r-broom=1.0.5
   - r-cowplot=1.1.1
