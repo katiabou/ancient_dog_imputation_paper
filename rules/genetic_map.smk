@@ -44,6 +44,9 @@ rule glimpse_genetic_map:
 
 
 rule canfam31_annotation:
+    """
+    Download the CanFam3.1 GTF annotations files from Ensembl
+    """
     output:
         "data/annotation_file/Canis_lupus_familiaris.CanFam3.1.104.gtf",
     shell:

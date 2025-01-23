@@ -121,6 +121,9 @@ rule roh_transversions_phased:
 
 
 rule merge_chrom_ROH_phased_transversions:
+    """
+    TODO add block header
+    """
     input:
         #phased_roh = expand("output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom", chrom=CHROM, allow_missing=True),
         #phased_roh_sum = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom.summary', chrom=CHROM, allow_missing=True),
@@ -251,6 +254,9 @@ rule roh_all_sites_phased:
 
 
 rule merge_chrom_ROH_phased:
+    """
+    TODO add block header
+    """
     input:
         #phased_roh = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom', chrom=CHROM, allow_missing=True),
         #phased_roh_sum = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom.summary', chrom=CHROM, allow_missing=True),
@@ -374,6 +380,9 @@ rule roh_transversions_ref_panel:
 
 
 rule merge_chrom_ROH_transversions_ref_panel:
+    """
+    TODO add block header
+    """
     input:
         modern_roh=expand(
             "output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_{chrom}_sample-snp_filltags_filter_transversions_MAF_{maf_cutoff}_hom_win_het_{hom_win_het}_{canid_subset}.hom",
@@ -478,6 +487,9 @@ rule roh_all_sites_ref_panel:
 
 
 rule merge_chrom_ROH_ref_panel:
+    """
+    TODO add block header
+    """
     input:
         modern_roh=expand(
             "output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_{chrom}_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom",
@@ -714,6 +726,9 @@ rule plot_all_sites_ROH_all_chr:
 
 
 rule plot_all_sites_ROH_count_length_dogs:
+    """
+    TODO add block header
+    """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
@@ -746,6 +761,9 @@ rule plot_all_sites_ROH_count_length_dogs:
 
 
 rule plot_transversions_ROH_count_length_dogs:
+    """
+    TODO add block header
+    """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
@@ -778,6 +796,9 @@ rule plot_transversions_ROH_count_length_dogs:
 
 
 rule plot_all_sites_ROH_count_length_wolves:
+    """
+    TODO add block header
+    """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",
@@ -803,6 +824,9 @@ rule plot_all_sites_ROH_count_length_wolves:
 
 
 rule plot_transversions_ROH_count_length_wolves:
+    """
+    TODO add block header
+    """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
         ref_metadata="sample_lists/Dog_Wolf_aDNA_WG-Modern.tsv",

@@ -406,6 +406,9 @@ rule merge_chr_concordance_only_dogs:
 
 
 rule get_ID_for_targets_allchrom_only_dogs:
+    """
+    TODO add block header
+    """
     input:
         info_imputed_info_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
@@ -565,6 +568,9 @@ rule prepare_only_dogs_files:
 
 
 rule plot_concordance_filt_allsites_only_dogs_0_5x_1x:
+    """
+    TODO add block header
+    """
     input:
         concordance_output_info_score_filtered_mod=expand(
             "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",

@@ -469,6 +469,9 @@ rule annotate_fields_concordance:
 
 
 rule estimate_coverage_target_sample:
+    """
+    TODO add block header
+    """
     input:
         target_bams=lambda wildcards: samples_df.loc[wildcards.sample, "bam_path"],
     output:
@@ -683,6 +686,9 @@ rule merge_chr_concordance:
 
 
 rule get_ID_for_targets_allchrom:
+    """
+    TODO add block header
+    """
     input:
         info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
@@ -796,6 +802,9 @@ rule plot_rsquare_accuracy_filtered_allchrom2:
 
 
 rule plot_accuray_per_sample:
+    """
+    TODO add block header
+    """
     input:
         concordance_output=expand(
             "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",

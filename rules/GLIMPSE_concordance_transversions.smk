@@ -81,6 +81,9 @@ rule merge_chr_trans_validation:
 
 
 rule filter_transversions_imputed:
+    """
+    TODO add block header
+    """
     input:
         info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
@@ -154,6 +157,9 @@ rule merge_chr_trans_concordance:
 
 
 rule get_ID_for_targets_allchrom_trans:
+    """
+    TODO add block header
+    """
     input:
         info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
     output:
@@ -351,6 +357,9 @@ rule prepare_transversion_files:
 
 
 rule plot_concordance_filt_allsites_transversions_0_5x_1x:
+    """
+    TODO add block header
+    """
     input:
         concordance_output_info_score_filtered_mod=expand(
             "output/GLIMPSE_concordance/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.rsquare-mod.grp.txt.gz",
