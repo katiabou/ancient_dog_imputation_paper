@@ -36,10 +36,3 @@ roh:
   homozyg_window_missing: '5' 
   homozyg_window_snp: '50' 
   homozyg_window_threshold: '0.05'
-
-# TODO add this file to git and replace config["rohan"] with the relative path, then delete below
-# ROHan results from Sabhrina (have to adjust if I use min, mid, max):
-# rohan with 1 Mbp window size:
-rohan: '/projects/racimolab/people/qcj125/IMPUTATION_ROH_paper_v2/GLIMPSE/GITHUB_SCRIPTS/DOG_IMPUTATION_PAPER/data/ROHan/ROHan_4e-5_KatiaPipeline.tsv'
-
-

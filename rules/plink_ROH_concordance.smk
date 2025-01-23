@@ -829,7 +829,7 @@ rule roh_bands_accuracy_downsampled_imputed_all_sites_rohan:
         ),
         temp_roh_validation_allchrom_all_sites="output/GLIMPSE_concordance/ROH_validation/{sample}_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink-temp.hom",
         ref_fasta_allchr_size="output/GLIMPSE_concordance/reference_genome/CanFam31_allchrom_size.genome",
-        rohan=config["rohan"],
+        rohan="data/rohan_results.txt",
     output:
         accuracy_seg="output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_segment_ROHan.tsv",
         accuracy_len="output/GLIMPSE_concordance/ROH_phased_ROHan/phased.{sample}_allchrom_INFO_{info}_MAF_{maf}_all_sites_hom_win_het_{hom_win_het}_accuracy_length_ROHan.tsv",
