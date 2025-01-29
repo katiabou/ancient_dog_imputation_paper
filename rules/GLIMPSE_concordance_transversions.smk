@@ -68,7 +68,7 @@ rule merge_chr_trans_validation:
         validation_sample_filt_allelic_allchrom_csi="output/GLIMPSE_concordance/validation_bams_transversions/{sample}_allchrom_validation_filt_transversions.bcf.csi",
     log:
         "output/GLIMPSE_concordance/validation_bams_transversions/{sample}_allchrom_validation_filt_transversions.bcf.log",
-    threads: 8
+    threads: 4
     shell:
         """
         bcftools concat \
@@ -82,7 +82,7 @@ rule merge_chr_trans_validation:
 
 rule filter_transversions_imputed:
     """
-    TODO add block header
+    Filter for transversions only
     """
     input:
         info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
@@ -91,7 +91,7 @@ rule filter_transversions_imputed:
         imputed_transversions="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
     log:
         "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.log",
-    threads: 8
+    threads: 4
     shell:
         """
         bcftools query -e 'REF="A" && ALT="G" || REF="G" && ALT="A" || REF="C" && ALT="T" || REF="T" && ALT="C"' \
@@ -144,7 +144,7 @@ rule merge_chr_trans_concordance:
         info_imputed_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.csi",
     log:
         "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.log",
-    threads: 8
+    threads: 4
     shell:
         """
         bcftools concat \
@@ -158,7 +158,7 @@ rule merge_chr_trans_concordance:
 
 rule get_ID_for_targets_allchrom_trans:
     """
-    TODO add block header
+    Get sample ID
     """
     input:
         info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
@@ -200,7 +200,7 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom_trans:
         prefix="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions",
     log:
         "output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.log",
-    threads: 8
+    threads: 4
     shell:
         """
         GLIMPSE_concordance \
@@ -359,7 +359,7 @@ rule prepare_transversion_files:
 
 rule plot_concordance_filt_allsites_transversions_0_5x_1x:
     """
-    TODO add block header
+    Plot accuracy of full ref panel vs only dog ref panel
     """
     input:
         concordance_output_info_score_filtered_mod=expand(

@@ -101,7 +101,7 @@ rule roh_transversions_validation:
 
 rule merge_roh_transversions_validation:
     """
-    TODO add block header
+    Modify output validation
     """
     input:
         validation_roh="output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_qual_dp_ab_filt_transversions_hom_win_het_{hom_win_het}_plink.hom",
@@ -183,9 +183,9 @@ rule roh_all_sites_validation:
         """
 
 
-rule merge_roh_all_sites_validation:
+rule modify_roh_all_sites_validation:
     """
-    TODO add block header
+    Modify ROH output 
     """
     input:
         validation_roh="output/GLIMPSE_concordance/ROH_validation/{sample}_{chrom}_validation_filt_qual_dp_ab_all_sites_hom_win_het_{hom_win_het}_plink.hom",

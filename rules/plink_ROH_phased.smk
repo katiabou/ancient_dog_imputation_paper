@@ -122,7 +122,7 @@ rule roh_transversions_phased:
 
 rule merge_chrom_ROH_phased_transversions:
     """
-    TODO add block header
+    Merge chromosomes
     """
     input:
         #phased_roh = expand("output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_transversions_hom_win_het_{hom_win_het}_{canid_subset}.hom", chrom=CHROM, allow_missing=True),
@@ -255,7 +255,7 @@ rule roh_all_sites_phased:
 
 rule merge_chrom_ROH_phased:
     """
-    TODO add block header
+    Merge chromosomes
     """
     input:
         #phased_roh = expand('output/GLIMPSE_imputation/ROH_phased/merged_phased.{chrom}_MAF_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_{canid_subset}.hom', chrom=CHROM, allow_missing=True),
@@ -381,7 +381,7 @@ rule roh_transversions_ref_panel:
 
 rule merge_chrom_ROH_transversions_ref_panel:
     """
-    TODO add block header
+    Merge chromosomes
     """
     input:
         modern_roh=expand(
@@ -488,7 +488,7 @@ rule roh_all_sites_ref_panel:
 
 rule merge_chrom_ROH_ref_panel:
     """
-    TODO add block header
+    Merge chromosomes
     """
     input:
         modern_roh=expand(
@@ -729,7 +729,7 @@ rule plot_all_sites_ROH_all_chr:
 
 rule plot_all_sites_ROH_count_length_dogs:
     """
-    TODO add block header
+    Plot ROH results for dogs
     """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
@@ -765,7 +765,7 @@ rule plot_all_sites_ROH_count_length_dogs:
 
 rule plot_transversions_ROH_count_length_dogs:
     """
-    TODO add block header
+    Plot ROH results for dogs based on transversions
     """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
@@ -801,7 +801,7 @@ rule plot_transversions_ROH_count_length_dogs:
 
 rule plot_all_sites_ROH_count_length_wolves:
     """
-    TODO add block header
+    Plot ROH results for wolves
     """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",
@@ -830,7 +830,7 @@ rule plot_all_sites_ROH_count_length_wolves:
 
 rule plot_transversions_ROH_count_length_wolves:
     """
-    TODO add block header
+    Plot ROH results for wolves based on transversions
     """
     input:
         bam_metadata="sample_lists/Dog_Wolf_aDNA_WG-Master.tsv",

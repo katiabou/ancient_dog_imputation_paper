@@ -26,7 +26,7 @@ rule prepare_ref_panel_only_dogs:
         ),
     log:
         "output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/{chrom}_ref_panel.phased.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/reference_panel_only_dogs/{chrom}_ref_panel.phased.tsv"
     shell:
@@ -54,7 +54,7 @@ rule fill_tags_ref_sample_excl_only_dogs:
         ),
     log:
         "output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/{chrom}_ref_panel_filltags.phased.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/reference_panel_only_dogs/{chrom}_ref_panel_filltags.tsv"
     shell:
@@ -79,7 +79,7 @@ rule filter_sites_ref_sample_excl_only_dogs:
         f_missing=config["F_MISSING"],
     log:
         "output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/{chrom}_ref_panel_filltags_filter.phased.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/reference_panel_only_dogs/{chrom}_ref_panel_filltags_filter.phased.tsv"
     shell:
@@ -122,7 +122,7 @@ rule merge_chr_ref_only_dogs:
         ref_concordance_sample_excl_filltags_filter_allchrom_csi="output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/allchrom_ref_panel_filltags_filter.phased.bcf.csi",
     log:
         "output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/allchrom_ref_panel_filltags_filter.phased.bcf.log",
-    threads: 8
+    threads: 4
     shell:
         """
         bcftools concat \
@@ -145,7 +145,7 @@ rule extract_var_pos_concordance_only_dogs:
         ref_panel_sites_tsv="output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/{chrom}_ref_panel_sites.phased.tsv.gz",
     log:
         "output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs/{chrom}_ref_panel_sites.phased.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/reference_panel_only_dogs/{chrom}_ref_panel_sites.phased.tsv"
     shell:
@@ -178,7 +178,7 @@ rule compute_GLs_downsampled_samples_concordance_only_dogs:
         GL_vcf_target_bams_csi="output/GLIMPSE_concordance_only_dogs/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.vcf.gz.csi",
     log:
         "output/GLIMPSE_concordance_only_dogs/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/GLs_target_bams/{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
@@ -232,7 +232,7 @@ rule impute_concordance_only_dogs:
         prefix="output/GLIMPSE_concordance_only_dogs/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x",
     resources:
         mem_mb=1 * 1024,
-    threads: 10
+    threads: 2
     log:
         "output/GLIMPSE_concordance_only_dogs/GLIMPSE_imputed/{sample}_{chrom}_{coverage_val}x.log",
     benchmark:
@@ -287,7 +287,7 @@ rule ligate_concordance_only_dogs:
         ligated_bcf_csi="output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.bcf.csi",
     log:
         "output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
@@ -312,7 +312,7 @@ rule phase_concordance_only_dogs:
         phased_bcf_csi="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf.csi",
     log:
         "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.tsv"
     shell:
@@ -345,7 +345,7 @@ rule filter_info_score_only_dogs:
         info_val="{info_cutoff}",
     log:
         "output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.log",
-    threads: 10
+    threads: 4
     shell:
         """
         bcftools view {input.ligated_bcf} \
@@ -393,7 +393,7 @@ rule merge_chr_concordance_only_dogs:
         info_imputed_info_allchrom_csi="output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf.csi",
     log:
         "output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.log",
-    threads: 8
+    threads: 4
     shell:
         """
         bcftools concat \
@@ -407,7 +407,7 @@ rule merge_chr_concordance_only_dogs:
 
 rule get_ID_for_targets_allchrom_only_dogs:
     """
-    TODO add block header
+    Get sample ID
     """
     input:
         info_imputed_info_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}.bcf",
@@ -449,7 +449,7 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom_only_dogs:
         prefix="output/GLIMPSE_concordance_only_dogs/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered",
     log:
         "output/GLIMPSE_concordance_only_dogs/concordance_INFO_filtered/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered.log",
-    threads: 8
+    threads: 4
     shell:
         """
         GLIMPSE_concordance \
@@ -570,7 +570,7 @@ rule prepare_only_dogs_files:
 
 rule plot_concordance_filt_allsites_only_dogs_0_5x_1x:
     """
-    TODO add block header
+    Plot accuracy of full ref panel vs only dog ref panel
     """
     input:
         concordance_output_info_score_filtered_mod=expand(

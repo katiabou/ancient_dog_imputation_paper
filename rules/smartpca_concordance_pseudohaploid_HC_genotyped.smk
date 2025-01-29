@@ -21,7 +21,7 @@ DOCS = ["bed", "bim", "fam"]
 
 rule merge_reference_HC_genotyped:
     """
-    TODO add block header
+    Merge ref panel with HC sample
     """
     input:
         ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
@@ -235,7 +235,7 @@ rule plink_exclude_missnp:
 
 rule check_percentage_of_dropped_sites:
     """
-    TODO add block header
+    Check how many sites were dropped
     """
     input:
         missnp="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/merged_ph_called_modern-{sample}_{chrom}_{coverage_val}x_validation.missnp",
@@ -277,7 +277,7 @@ rule create_sample_list_no_missnp:
 
 rule prepare_canid_subset_file:
     """
-    TODO add block header
+    Prepare file to select specific subset
     """
     input:
         modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
@@ -291,7 +291,7 @@ rule prepare_canid_subset_file:
 
 rule prepare_canid_subset_fileb:
     """
-    TODO add block header
+    Add target sample to canid subset
     """
     input:
         modern_canid_subset_plink="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{canid_subset}_plink.txt",
@@ -311,7 +311,7 @@ rule prepare_canid_subset_fileb:
 
 rule select_canid_subset_from_plink:
     """
-    Extract selected samples from FILTERED/FILLTAGS reference panel 
+    Extract selected samples 
     """
     input:
         modern_canid_subset_plink_sample="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/modern_plink/ref_panel_filt_{sample}_{canid_subset}_plink.txt",
