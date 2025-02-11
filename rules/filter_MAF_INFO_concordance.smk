@@ -51,17 +51,17 @@ rule maf_INFO_sites_concordance_phased:
     """
     input:
         ref_concordance_sample_excl_filltags_filter_maf_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz",
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.vcf.gz",
     output:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     params:
         info=config["info_cutoff"],
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log",
-    threads: 8
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log",
+    threads: 4
     shell:
         """
-        bcftools view {input.phased_bcf} \
+        bcftools view {input.phased_vcf_annotate} \
         --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
         --include 'INFO/INFO >= {params.info}' \
         --threads {threads} \
@@ -77,17 +77,17 @@ rule maf_INFO_sites_concordance_HC_phased:
     """
     input:
         ref_concordance_sample_excl_filltags_filter_maf_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz",
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz",
     output:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
     params:
         info=config["info_cutoff"],
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz.log",
-    threads: 8
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz.log",
+    threads: 4
     shell:
         """
-        bcftools view {input.phased_bcf} \
+        bcftools view {input.phased_vcf_annotate} \
         --regions-file {input.ref_concordance_sample_excl_filltags_filter_maf_tsv} \
         --include 'INFO/INFO >= {params.info}' \
         --threads {threads} \

@@ -30,7 +30,7 @@ rule merge_reference_HC_genotyped:
         ref_panel_HC_gen="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf",
     log:
         "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.log",
-    threads: 10
+    threads: 4
     benchmark:
         "benchmarks/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/merged_ancient_modern/{chrom}_ref_panel_{sample}_validation_filt_qual_dp_ab.bcf.tsv"
     shell:
@@ -379,14 +379,14 @@ rule rename_sample_concordance_PH:
     Rename sample in VCF header, to include coverage info
     """
     input:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
         new_name_file=temp(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}_names.txt"
         ),
         sample_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.bcf",
     log:
-        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.bcf",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.bcf.log",
     shell:
         """
         echo '{wildcards.sample} {wildcards.sample}_{wildcards.coverage_val}x_imputed' > {output.new_name_file}
@@ -405,7 +405,7 @@ rule rename_HC_imputed_sample_PH:
     Rename sample in VCF header of HC_imputed, to include info
     """
     input:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
     output:
         new_name_file_HC=temp(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_INFO_{info}_MAF_{maf}.txt"
@@ -455,7 +455,7 @@ rule merge_renamed_imputed_genotyped_sample_PH:
         merged_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_INFO_{info}_MAF_{maf}.bcf",
     log:
         "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}_INFO_{info}_MAF_{maf}.bcf.log",
-    threads: 10
+    threads: 4
     shell:
         """
         bcftools merge \

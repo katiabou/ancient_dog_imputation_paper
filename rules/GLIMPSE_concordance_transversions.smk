@@ -59,7 +59,7 @@ rule prepare_merged_chr_list_trans_validation:
 
 rule merge_chr_trans_validation:
     """
-    Filter sites based on different INFO score cutoffs
+    Merge chromosomes
     """
     input:
         chr_list_validation="output/GLIMPSE_concordance/validation_bams_transversions/chr_list.{sample}_validation_filt_transversions.txt",
@@ -85,51 +85,44 @@ rule filter_transversions_imputed:
     Filter for transversions only
     """
     input:
-        info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
+        phased_vcf_info="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered/phased_annotated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}.bcf",
     output:
-        tranversion_sites="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.tsv.gz",
-        imputed_transversions="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
+        tranversion_sites="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.tsv.gz",
+        phased_transversions="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.log",
     threads: 4
     shell:
         """
         bcftools query -e 'REF="A" && ALT="G" || REF="G" && ALT="A" || REF="C" && ALT="T" || REF="T" && ALT="C"' \
-        -f'%CHROM\t%POS\n' {input.info_imputed_info} | bgzip -c > {output.tranversion_sites}
+        -f'%CHROM\t%POS\n' {input.phased_vcf_info} | bgzip -c > {output.tranversion_sites}
 
         tabix -s1 -b2 -e2 {output.tranversion_sites}
 
-        bcftools view {input.info_imputed_info} \
+        bcftools view {input.phased_vcf_info} \
         --regions-file {output.tranversion_sites} \
         --threads {threads} \
-        -Ob -o {output.imputed_transversions} 2> {log}
+        -Ob -o {output.phased_transversions} 2> {log}
 
-        bcftools index -f {output.imputed_transversions}
+        bcftools index -f {output.phased_transversions}
         """
-
-
-#######################################
-#                                     #
-#  Run GLIMPSE concordance all chrom  #
-#                                     #
-#######################################
 
 
 rule prepare_merged_chr_list_trans_concordance:
     """ 
-    Prepare list to merge chromosomes for reference, imputed and validation
+    Prepare list to merge chromosomes
     """
     input:
-        info_imputed_info=expand(
-            "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
+        phased_transversions=expand(
+            "output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_{chrom}_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
     shell:
         """
-        ls -v {input.info_imputed_info} >> {output.chr_list}
+        ls -v {input.phased_transversions} >> {output.chr_list}
         """
 
 
@@ -138,21 +131,21 @@ rule merge_chr_trans_concordance:
     Filter sites based on different INFO score cutoffs
     """
     input:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/chr_list.{sample}_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
     output:
-        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
-        info_imputed_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.csi",
+        phased_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
+        phased_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf.csi",
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.log",
     threads: 4
     shell:
         """
         bcftools concat \
         --file-list {input.chr_list} \
-        -Ob -o {output.info_imputed_info_allchrom} \
+        -Ob -o {output.phased_info_allchrom} \
         --threads {threads} 2> {log}
 
-        bcftools index -f {output.info_imputed_info_allchrom}
+        bcftools index -f {output.phased_info_allchrom}
         """
 
 
@@ -161,12 +154,12 @@ rule get_ID_for_targets_allchrom_trans:
     Get sample ID
     """
     input:
-        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
+        phased_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
     output:
-        sm_samples="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
+        sm_samples="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/sm_phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
     shell:
         """
-        bcftools query -l {input.info_imputed_info_allchrom} > {output.sm_samples}
+        bcftools query -l {input.phased_info_allchrom} > {output.sm_samples}
         """
 
 
@@ -177,12 +170,12 @@ rule prepare_concordance_lst_info_score_filtered_allchrom_trans:
     input:
         ref_concordance_sample_excl_filltags_filter_allchrom="output/GLIMPSE_concordance/reference_panel/allchrom_ref_panel_filltags_filter.phased.bcf",
         validation_sample_filt_allelic_allchrom="output/GLIMPSE_concordance/validation_bams_transversions/{sample}_allchrom_validation_filt_transversions.bcf",
-        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
+        phased_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.bcf",
     output:
         concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst",
     shell:
         """
-        echo "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chr23,chr24,chr25,chr26,chr27,chr28,chr29,chr30,chr31,chr32,chr33,chr34,chr35,chr36,chr37,chr38" {input.ref_concordance_sample_excl_filltags_filter_allchrom} {input.validation_sample_filt_allelic_allchrom} {input.info_imputed_info_allchrom} > {output.concordance_lst_info_score_filtered}
+        echo "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chr23,chr24,chr25,chr26,chr27,chr28,chr29,chr30,chr31,chr32,chr33,chr34,chr35,chr36,chr37,chr38" {input.ref_concordance_sample_excl_filltags_filter_allchrom} {input.validation_sample_filt_allelic_allchrom} {input.phased_info_allchrom} > {output.concordance_lst_info_score_filtered}
         """
 
 
@@ -192,7 +185,7 @@ rule GLIMPSE_concordance_info_score_filtered_allchrom_trans:
     """
     input:
         concordance_lst_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.lst",
-        sm_samples="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered_transversions/sm_merged_ligated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
+        sm_samples="output/GLIMPSE_concordance/GLIMPSE_phased_INFO_filtered_transversions/sm_phased_annotated.{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_transversions.txt",
     output:
         concordance_output_info_score_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.rsquare.grp.txt.gz",
         concordance_output_discordance_filtered="output/GLIMPSE_concordance/concordance_INFO_filtered_transversions/concordance_{sample}_allchrom_{coverage_val}x-INFO_{info_cutoff}_filtered_transversions.error.spl.txt.gz",
@@ -290,18 +283,14 @@ rule plot_discordance_filt_allchrom_trans:
         ),
     output:
         discordance_dogs_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_allchrom_filtered_dogs_full_transversions.png",
-        discordance_dogs="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_allchrom_filtered_dogs_transversions.png",
         discordance_wolves_full="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_allchrom_filtered_wolves_full_transversions.png",
-        discordance_wolves="output/GLIMPSE_concordance/plots/glimpse_concordance_tranversions/concordance_allchrom_filtered_wolves_transversions.png",
     shell:
         """
         Rscript {params.path_script}/genotype_discordance.R \
         {params.discordance_phased} \
         {input.concordance_metadata} \
         {output.discordance_dogs_full} \
-        {output.discordance_dogs} \
-        {output.discordance_wolves_full} \
-        {output.discordance_wolves}
+        {output.discordance_wolves_full}
         """
 
 

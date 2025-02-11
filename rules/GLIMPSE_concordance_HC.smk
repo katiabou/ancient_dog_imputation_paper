@@ -27,7 +27,7 @@ rule compute_GLs_HC_samples_concordance:
         GL_vcf_HC_target_bams_csi="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz.csi",
     log:
         "output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.log",
-    threads: 8
+    threads: 4
     benchmark:
         "benchmarks/GLs_target_bams/{sample}_{chrom}.tsv"
     shell:
@@ -57,7 +57,7 @@ rule impute_HC_concordance:
     log:
         "output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.log",
     benchmark:
-        "benchmarks/GLIMPSE_imputed/{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.tsv"
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -108,9 +108,9 @@ rule ligate_HC_concordance:
         ligated_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf.csi",
     log:
         "output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.log",
-    threads: 8
+    threads: 4
     benchmark:
-        "benchmarks/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_ligate \
@@ -133,87 +133,43 @@ rule phase_HC_concordance:
         phased_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf.csi",
     log:
         "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.log",
-    threads: 8
+    threads: 4
     benchmark:
-        "benchmarks/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_sample \
-        --input {input.ligated_bcf} --solve --output {output.phased_bcf} \
+        --input {input.ligated_bcf} \
+        --solve \
+        --output {output.phased_bcf} \
         --thread {threads} 2> {log}
 
         bcftools index -f {output.phased_bcf}
         """
 
 
-rule filter_info_score_HC:
+rule annotate_fields_concordance_HC:
     """
-    Filter sites based on different INFO score cutoffs
+    SOS: This step is essential to retain the fields from the ligated samples in the phased files (not automatically transferred)
+    GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
     """
     input:
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
         ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
     output:
-        info_imputed_info="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
-        info_imputed_info_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf.csi",
-    params:
-        info_val="{info_cutoff}",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz",
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.log",
-    threads: 8
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz.log",
+    threads: 4
+    benchmark:
+        "benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.tsv"
     shell:
         """
-        bcftools view {input.ligated_bcf} \
-        --include 'INFO/INFO >= {params.info_val}' \
-        --threads {threads} \
-        -Ob -o {output.info_imputed_info} 2> {log}
-
-        bcftools index -f {output.info_imputed_info}
-        """
-
-
-#######################################
-#                                     #
-#  Run GLIMPSE concordance all chrom  #
-#                                     #
-#######################################
-
-
-rule prepare_merged_chr_list_HC_concordance:
-    """ 
-    Prepare list to merge chromosomes for reference, imputed and validation
-    """
-    input:
-        info_imputed_info=expand(
-            "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_{chrom}-INFO_{info_cutoff}.bcf",
-            chrom=CHROM,
-            allow_missing=True,
-        ),
-    output:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
-    shell:
-        """
-        ls -v {input.info_imputed_info} >> {output.chr_list}
-        """
-
-
-rule merge_chr_HC_concordance:
-    """
-    Filter sites based on different INFO score cutoffs
-    """
-    input:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/chr_list.{sample}-INFO_{info_cutoff}.txt",
-    output:
-        info_imputed_info_allchrom="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf",
-        info_imputed_info_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.bcf.csi",
-    log:
-        "output/GLIMPSE_concordance/GLIMPSE_ligated_INFO_filtered/merged_ligated.{sample}_allchrom-INFO_{info_cutoff}.log",
-    threads: 8
-    shell:
-        """
-        bcftools concat \
-        --file-list {input.chr_list} \
-        -Ob -o {output.info_imputed_info_allchrom} \
-        --threads {threads} 2> {log}
-
-        bcftools index -f {output.info_imputed_info_allchrom}
+        bcftools annotate \
+        --annotations {input.ligated_bcf} \
+        --columns FORMAT/DS,FORMAT/GP,FORMAT/HS \
+        --output-type z \
+        --output {output.phased_vcf_annotate} {input.phased_bcf} 2> {log}
+        
+        bcftools index -f {output.phased_vcf_annotate}
         """

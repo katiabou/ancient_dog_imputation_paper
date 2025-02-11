@@ -31,21 +31,21 @@ rule rename_sample_concordance_PH_no_filt:
     Rename sample in VCF header, to include coverage info
     """
     input:
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}_{coverage_val}x.bcf",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.vcf.gz",
     output:
         new_name_file=temp(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x_names.txt"
         ),
         sample_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
     log:
-        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf",
+        "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}_{coverage_val}x.bcf.log",
     shell:
         """
         echo '{wildcards.sample} {wildcards.sample}_{wildcards.coverage_val}x_imputed' > {output.new_name_file}
 
         bcftools reheader \
         -s {output.new_name_file} \
-        {input.phased_bcf} \
+        {input.phased_vcf_annotate} \
         -o {output.sample_imputed_new_name} 2> {log}
 
         bcftools index -f {output.sample_imputed_new_name}
@@ -57,7 +57,7 @@ rule rename_HC_imputed_sample_PH_no_filt:
     Rename sample in VCF header of HC_imputed, to include info
     """
     input:
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
+        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz",
     output:
         new_name_file_HC=temp(
             "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_sample.{sample}_{chrom}.txt"
@@ -71,7 +71,7 @@ rule rename_HC_imputed_sample_PH_no_filt:
 
         bcftools reheader \
         -s {output.new_name_file_HC} \
-        {input.phased_bcf} \
+        {input.phased_vcf_annotate} \
         -o {output.sample_imputed_new_name_HC} 2> {log}
 
         bcftools index -f {output.sample_imputed_new_name_HC}
@@ -107,7 +107,7 @@ rule merge_renamed_imputed_genotyped_sample_PH_no_filt:
         merged_imputed_new_name="output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf",
     log:
         "output/GLIMPSE_concordance/PCA_concordance_PH_HC_genotyped/sample_VCFs/phased_renamed_merged.{sample}_{chrom}.bcf.log",
-    threads: 10
+    threads: 4
     shell:
         """
         bcftools merge \
