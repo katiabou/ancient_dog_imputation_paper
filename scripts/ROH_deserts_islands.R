@@ -403,7 +403,9 @@ p4 <- ggplot(data.frame(x = y$x, y = y$y), aes(x, y)) +
         breaks = c(0.1, 0.3, 0.5),
         labels = c(10, 30, 50)
     ) +
-    scale_y_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0),
+        breaks = c(2,4,6,8,10,12)
+    ) +
     scale_color_gradientn(
         colors = rev(fill_cols),
         # values = qn,
