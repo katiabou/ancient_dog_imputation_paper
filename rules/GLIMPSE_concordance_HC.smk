@@ -18,18 +18,18 @@ rule compute_GLs_HC_samples_concordance:
     Compute GLs of HC target bams 
     """
     input:
-        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample}_{chrom}.bam",
+        target_bams_chr="output/GLIMPSE_concordance/target_bams/{sample_con}_{chrom}.bam",
         ref_panel_sites_vcf="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.vcf.gz",
         ref_panel_sites_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_sites.phased.tsv.gz",
         ref_fasta_chr="output/GLIMPSE_concordance/reference_genome/CanFam31_{chrom}.fasta",
     output:
-        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
-        GL_vcf_HC_target_bams_csi="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz.csi",
+        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample_con}_{chrom}.vcf.gz",
+        GL_vcf_HC_target_bams_csi="output/GLIMPSE_concordance/GLs_target_bams/{sample_con}_{chrom}.vcf.gz.csi",
     log:
-        "output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLs_target_bams/{sample_con}_{chrom}.log",
     threads: 4
     benchmark:
-        "benchmarks/GLs_target_bams/{sample}_{chrom}.tsv"
+        "benchmarks/GLs_target_bams/{sample_con}_{chrom}.tsv"
     shell:
         """
         bcftools mpileup -f {input.ref_fasta_chr} -I -E -a 'FORMAT/DP' -T {input.ref_panel_sites_vcf} -r {wildcards.chrom} {input.target_bams_chr} -Ou | \
@@ -44,20 +44,20 @@ rule impute_HC_concordance:
     Impute each sample seperately
     """
     input:
-        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample}_{chrom}.vcf.gz",
+        GL_vcf_HC_target_bams="output/GLIMPSE_concordance/GLs_target_bams/{sample_con}_{chrom}.vcf.gz",
         ref_concordance_sample_excl_filltags_filter="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter.phased.bcf",
         chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
-        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.txt",
     output:
-        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
-        imputed_csi="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf.csi",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}.00.bcf",
+        imputed_csi="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}.00.bcf.csi",
     params:
-        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}",
     threads: 2
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}.log",
     benchmark:
-        "benchmarks/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_imputed/{sample_con}_{chrom}.tsv"
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -82,11 +82,11 @@ rule ligate_HC_list_concordance:
     """
     input:
         chunks="output/GLIMPSE_concordance/chunks/{chrom}_chunks.txt",
-        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}.00.bcf",
+        imputed="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}.00.bcf",
     output:
-        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample_con}_{chrom}.txt",
     params:
-        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample}_{chrom}",
+        prefix="output/GLIMPSE_concordance/GLIMPSE_imputed/{sample_con}_{chrom}",
     shell:
         """
         while IFS="" read -r LINE || [ -n "$LINE" ];
@@ -102,15 +102,15 @@ rule ligate_HC_concordance:
     Merge all imputed chunks
     """
     input:
-        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample}_{chrom}.txt",
+        ligated_list="output/GLIMPSE_concordance/GLIMPSE_ligated/ligated_list_{sample_con}_{chrom}.txt",
     output:
-        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
-        ligated_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf.csi",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.bcf",
+        ligated_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.bcf.csi",
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.log",
     threads: 4
     benchmark:
-        "benchmarks/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_ligate \
@@ -127,26 +127,23 @@ rule phase_HC_concordance:
     Phase!!!
     """
     input:
-        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
+        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.bcf",
     output:
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
-        phased_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf.csi",
+        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample_con}_{chrom}.bcf",
+        phased_bcf_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample_con}_{chrom}.bcf.csi",
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample_con}_{chrom}.log",
     threads: 4
     benchmark:
-        "benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.tsv"
+        "benchmarks/GLIMPSE_phased/phased.{sample_con}_{chrom}.tsv"
     shell:
         """
         GLIMPSE_sample \
-        --input {input.ligated_bcf} \
-        --solve \
-        --output {output.phased_bcf} \
+        --input {input.ligated_bcf} --solve --output {output.phased_bcf} \
         --thread {threads} 2> {log}
 
         bcftools index -f {output.phased_bcf}
         """
-
 
 rule annotate_fields_concordance_HC:
     """
@@ -154,17 +151,16 @@ rule annotate_fields_concordance_HC:
     GP is needed to be annotatedm since it's used downstream for recalibrating the INFO score
     """
     input:
-        phased_bcf="output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample}_{chrom}.bcf",
-        ligated_bcf="output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample}_{chrom}.bcf",
+        phased_bcf = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased.{sample_con}_{chrom}.bcf',
+        ligated_bcf = 'output/GLIMPSE_concordance/GLIMPSE_ligated/merged_ligated.{sample_con}_{chrom}.bcf',
     output:
-        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz",
+        phased_vcf_annotate = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}.vcf.gz',
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz.log",
-    threads: 4
+        'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}.vcf.gz.log'
     benchmark:
-        "benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.tsv"
+        'benchmarks/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}.tsv'
     shell:
-        """
+        '''
         bcftools annotate \
         --annotations {input.ligated_bcf} \
         --columns FORMAT/DS,FORMAT/GP,FORMAT/HS \
@@ -172,4 +168,5 @@ rule annotate_fields_concordance_HC:
         --output {output.phased_vcf_annotate} {input.phased_bcf} 2> {log}
         
         bcftools index -f {output.phased_vcf_annotate}
-        """
+        '''
+

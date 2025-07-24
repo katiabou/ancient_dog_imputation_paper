@@ -82,8 +82,8 @@ rule prep_canid_list:
     Prepare canid group list of samples (both modern and ancient)
     """
     input:
-        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.tsv",
-        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.tsv",
+        modern_canid_subset="sample_lists/ref_panel_filt_{canid_subset}.txt",
+        imputed_canid_subset="sample_lists/names_imputed_{canid_subset}.txt",
     output:
         modern_imputed_canid_subset="output/GLIMPSE_imputation/PCA/merged_phased_modern_vcf/modern_imputed_{canid_subset}.txt",
     shell:
@@ -316,5 +316,4 @@ rule plot_smartpca:
         smartpca_P1P2="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2.png",
         smartpca_P1P2_labelled="output/GLIMPSE_imputation/plots/PCA/merged_modern_phased_annotated.allchrom_MAF_{maf_cutoff}_recalibrated_INFO_{info}_{canid_subset}_smartpca_P1P2_labelled.png",
     script:
-        # TODO replace with `shell: Rscript script/*.R --arg1 etc
         "../scripts/smartpca_phased_dataset.R"

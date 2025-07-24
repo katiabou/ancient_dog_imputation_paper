@@ -6,16 +6,13 @@
 # License:   MIT
 
 # import libraries
-quiet <- function(x) {
-    suppressMessages(suppressWarnings(x))
-}
-quiet(library(readr))
-quiet(library(ggplot2))
-quiet(library(reshape2))
-quiet(library(dplyr))
-quiet(library("MetBrewer"))
-quiet(library(stringr))
-quiet(library(data.table))
+library(readr)
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+library("MetBrewer")
+library(stringr)
+library(data.table)
 
 # import data
 args <- commandArgs(trailingOnly = TRUE)
@@ -103,7 +100,7 @@ dev.off()
 
 # plot with all wolf samples and all INFO/cov
 
-# subset wolves
+# subset dogs
 mdata_wolves <- mdata %>% filter(species == "Pleistocene_wolf")
 
 # order alphabetically
@@ -111,7 +108,7 @@ mdata_wolves <- mdata_wolves[order(mdata_wolves$sample), ]
 
 cols <- met.brewer(name = "Hokusai3", n = 3, type = "discrete")
 
-# plot with all wolves samples and all INFO/cov
+# plot with all dog samples and all INFO/cov
 png(args[4], width = 10, height = 7, units = "in", res = 200, pointsize = 4)
 par(
     mar      = c(5, 5, 2, 2),

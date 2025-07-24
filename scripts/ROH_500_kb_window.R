@@ -5,9 +5,18 @@
 # Email:     katia.bougiouri@gmail.com
 # License:   MIT
 
+#load libraries
+library(dplyr)
+
+if (!requireNamespace("windowscanr", quietly = TRUE)) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    install.packages("devtools")
+  }
+  devtools::install_github("tavareshugo/windowscanr")
+}
+library(windowscanr)
 library(data.table)
 library(tidyverse)
-library(windowscanr)
 
 options(scipen = 999)
 

@@ -18,7 +18,7 @@ rule vcf_coverage:
     Estimate depth of coverage of reference panel samples to filter out low coverage ones
     """
     input:
-        ref=config["reference_panel"],
+        ref="data/reference_panel_vcf/1697g_WildSled.SNP.INDEL.chrAll.newID.vcf.gz"
     output:
         ref_depth="output/reference_panel/reference_panel_depth.idepth",
     log:
@@ -61,7 +61,7 @@ rule remove_sample_indels_multiallelic_snps:
     Remove samples, trim-alt alleles created, normalise indels, only keep biallelic snps
     """
     input:
-        ref=config["reference_panel"],
+        ref="data/reference_panel_vcf/1697g_WildSled.SNP.INDEL.chrAll.newID.vcf.gz",
         sample_list_exclude="output/reference_panel/remove_samples.txt",
     output:
         ref_sample_snp=temp(
@@ -141,21 +141,21 @@ rule filter_sites:
 
 rule phase_modern_data_shapeit5:
     """
-    Phase filtered reference panel with shapeit5
+    Phase filtered reference panel with shapeit5 (Cannot output to vcf.gz format using the conda version of shapeit5. Have to )
     """
     input:
         ref_sample_snp_filltags_filter="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
-        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.txt",
     output:
-        ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
-        ref_panel_phased_tbi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi",
+        ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf",
+        ref_panel_phased_csi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf.csi",
     log:
-        log_shapeit="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log",
+        log_shapeit="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf.log",
     resources:
         mem_mb=720 * 1024,
     threads: 96
     benchmark:
-        "benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tsv"
+        "benchmarks/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf.tsv"
     shell:
         """
         SHAPEIT5_phase_common \
@@ -163,7 +163,28 @@ rule phase_modern_data_shapeit5:
         --map {input.gen_map} \
         --region {wildcards.chrom} \
         --output {output.ref_panel_phased} \
+        --output-format bcf \
         --thread {threads} &> {log.log_shapeit}
 
-        bcftools index --tbi {output.ref_panel_phased}
+        bcftools index -f --csi {output.ref_panel_phased}
+        """
+
+rule phase_modern_data_vcf:
+    """
+    Make file vcf.gz since shapeit5 in conda does not output this format
+    """
+    input:
+        ref_panel_phased_bcf="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf",
+        ref_panel_phased_csi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.bcf.csi",
+    output:
+        ref_panel_phased_vcf="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
+        ref_panel_phased_tbi="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.tbi",
+    log:
+        log_vcf="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz.log",
+    threads: 8
+    shell:
+        """
+        bcftools view {input.ref_panel_phased_bcf} -Oz -o {output.ref_panel_phased_vcf}  2> {log}
+
+        bcftools index -f --tbi {output.ref_panel_phased_vcf}
         """

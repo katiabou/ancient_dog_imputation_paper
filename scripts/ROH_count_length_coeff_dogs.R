@@ -20,8 +20,6 @@ library("cowplot")
 library(ggpubr)
 
 # import imputed ROH data and info
-# info <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
-# roh <- read.csv('~/Downloads/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info <- read.delim(snakemake@input[[1]])
 roh <- read.csv(snakemake@input[[3]], sep = "")
 
@@ -38,31 +36,16 @@ roh$Sample[roh$Sample == "WolfHead"] <- "Wolf_head_IN18-016"
 final <- left_join(roh, info %>% dplyr::select(Sample, Wolf_Dog_PCA, Dog_PCA, Meta.Population, Species, Age_Mean_BP), "Sample")
 
 # import modern ROH data and info
-# info_ref <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Modern.tsv')
-# roh_ref <- read.csv('~/Downloads/ref-panel_allchrom_sample-snp_filltags_filter_MAF_0.01_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info_ref <- read.delim(snakemake@input[[2]])
 roh_ref <- read.csv(snakemake@input[[4]], sep = "")
 colnames(info_ref)[colnames(info_ref) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(info_ref)[colnames(info_ref) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"
 
 # make new column without number in IDs
-# roh_ref$Sample <- sub("_[^_]+$", "", roh_ref$FID)
-# colnames(info_ref)[1] <- "Sample"
 colnames(info_ref)[3] <- "Sample"
 colnames(roh_ref)[1] <- "Sample"
 
 # fix sample names which lost part of name in previous step:
-# roh_ref$Sample[roh_ref$Sample == 'Bern'] <- 'Bern_AlpineDachsbracke'
-# roh_ref$Sample[roh_ref$Sample == 'CatahoulaLeopardDog01_Reseq'] <- 'CatahoulaLeopardDog01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX'] <- 'MIX_Dachshund01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_AmericanCocker'] <- 'MIX_AmericanCocker_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_KerryBlueTerrier'] <- 'MIX_KerryBlueTerrier_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_MiniatureSchnauzer'] <- 'MIX_MiniatureSchnauzer_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'VillDog'] <- 'VillDog_Australia01'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO001'] <- 'Wolf_WO001_895'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO002'] <- 'Wolf_WO002_732'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO003'] <- 'Wolf_WO003_636'
-
 roh_ref$Sample[roh_ref$Sample == "Wolf107"] <- "RWJR007"
 roh_ref$Sample[roh_ref$Sample == "Wolf108"] <- "RWJR016"
 roh_ref$Sample[roh_ref$Sample == "Wolf109"] <- "RWJR012"
@@ -82,7 +65,6 @@ final_ref$Age_Mean_BP <- 0
 
 # import genome sizes per chromosome (for Froh estimation)
 sizes_autosomes <- read.table(snakemake@input[[5]], quote = "\"", comment.char = "")
-# sizes_autosomes <- read.table('~/Downloads/CanFam31_allchrom_size.genome', quote="\"", comment.char="")
 total_genome_size <- sum(sizes_autosomes$V2)
 
 # add type column
@@ -170,9 +152,6 @@ group_names <- c(
     "European_Dogs" = "Europe"
 )
 
-# chosen_dogs <- c('AL2022_Turkey','AL2571_Iran', 'ASHQ06_P8903', 'C89_Ajvide','C90_Ajvide','SOTN01_merged',
-#                 'TRF.04.09','CGG6','PortauChoix','TRF.05.14','TRF.02.25','OL4061_Veretye', 'KT0056')
-
 # ROH count against size
 png(snakemake@output[[1]], width = 7, height = 8, units = "in", res = 200, pointsize = 4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab = 2)
@@ -184,7 +163,8 @@ a <- ggplot(no_wolves, aes(x = ROH_tol_2, y = n)) +
     geom_smooth(method = "lm", se = FALSE, color = "gray28", size = 0.5, alpha = 0.8) +
     geom_label_repel(
         data = no_wolves %>% filter(ROH_tol_2 > 500 & type != "modern"),
-        aes(x = ROH_tol_2, y = n, label = Sample), size = 3, box.padding = 1, max.overlaps = Inf
+        #aes(x = ROH_tol_2, y = n, label = Sample), size = 3, box.padding = 1, max.overlaps = Inf
+        aes(x = ROH_tol_2, y = n, label = Sample), size = 3, box.padding = 0.8, label.padding = 0.1, max.overlaps = Inf, nudge_y = 0.1
     ) +
     labs(x = "Total ROH length (Mb)", y = "Total # ROH") +
     labs(fill = "Sample age (ybp)") +
@@ -288,8 +268,6 @@ d <- ggplot(no_wolves, aes(x = Age_Mean_KBP, y = froh)) +
     scale_x_continuous(breaks = seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
     scale_y_continuous(trans = log1p_trans()) +
     coord_trans(y = expm1_trans()) +
-    # geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs),
-    #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
     geom_label_repel(
         data = no_wolves %>% filter(type == "imputed"),
         aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 2, box.padding = 1, max.overlaps = Inf
@@ -320,7 +298,8 @@ c_label_2 <- ggplot(no_wolves, aes(x = Age_Mean_KBP, y = froh)) +
     geom_point(data = df_layer_2, aes(fill = Meta.Population), size = 3, shape = 21, alpha = 0.8) +
     geom_label_repel(
         data = no_wolves %>% filter(froh > 0.1 & type == "imputed"),
-        aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1
+        #aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1
+        aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 3, box.padding = 0.5, label.padding = 0.1, max.overlaps = Inf, nudge_y = 0.15
     ) +
     scale_fill_manual(values = cols) +
     scale_x_continuous(breaks = seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
@@ -354,7 +333,6 @@ type_names <- c(
 # specify x-axis names to use
 levels(no_wolves$Meta.Population) <- c("Near East", "Europe", "Arctic")
 
-# png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab = 2)
 options(scipen = 999)
 e <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
@@ -381,8 +359,6 @@ e <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
     ) +
     labs(y = expression(paste(italic("F")[ROH]))) +
     facet_grid(. ~ type, labeller = as_labeller(type_names))
-# e
-# dev.off()
 
 
 
@@ -633,8 +609,6 @@ c_long <- ggplot(no_wolves, aes(x = Age_Mean_KBP, y = froh)) +
         data = no_wolves %>% filter(froh > 0.1 & type == "imputed"),
         aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 3, box.padding = 1, max.overlaps = Inf, nudge_y = 0.1
     ) +
-    # geom_label_repel(data = no_wolves %>% filter(type=='imputed'),
-    #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=2, box.padding = 1, max.overlaps = Inf)+
     labs(x = "Time (kya)", y = expression(paste(italic("F")[ROH], " (ROH >= 1.6Mb)", sep = ""))) +
     theme_bw() +
     theme(legend.position = "none") +
@@ -668,8 +642,6 @@ d_long <- ggplot(no_wolves, aes(x = Age_Mean_KBP, y = froh)) +
     scale_x_continuous(breaks = seq(round(min(no_wolves$Age_Mean_KBP)), 0, 1)) +
     scale_y_continuous(trans = log1p_trans(), labels = c("0.0", "0.1", "0.2", "0.3", "0.4", "0.5"), breaks = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5)) +
     coord_trans(y = expm1_trans()) +
-    # geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs),
-    #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
     geom_label_repel(
         data = no_wolves %>% filter(type == "imputed"),
         aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 2, box.padding = 1, max.overlaps = Inf
@@ -703,7 +675,6 @@ type_names <- c(
 # specify x-axis names to use
 levels(no_wolves$Meta.Population) <- c("Near East", "Europe", "Arctic")
 
-# png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab = 2)
 options(scipen = 999)
 e_long <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
@@ -731,8 +702,6 @@ e_long <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
     labs(y = expression(paste(italic("F")[ROH], " (ROH >= 1.6Mb)", sep = ""))) +
     ylim(-0.0001, 0.8) +
     facet_grid(. ~ type, labeller = as_labeller(type_names))
-# e_long
-# dev.off()
 
 
 #### Mann–Whitney U test to check if Froh is different between the 3 dog pops
@@ -902,8 +871,6 @@ a_short <- ggplot(no_wolves, aes(x = ROH_tol_2, y = n)) +
     geom_point(data = df_layer_2, aes(fill = Age_Mean_BP), size = 3, shape = 21, alpha = 0.8) +
     scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option = "G") +
     geom_smooth(method = "lm", se = FALSE, color = "gray28", size = 0.5, alpha = 0.8) +
-    # geom_label_repel(data = no_wolves %>% filter(ROH_tol_2 > 240 & type=='imputed'),
-    #                 aes(x = ROH_tol_2,y = n, label=Sample),size=3, box.padding = 1, max.overlaps = Inf, nudge_x = 1)+
     labs(x = "Total ROH length (Mb) (ROH < 1.6Mb)", y = "Total # ROH (ROH < 1.6Mb)") +
     labs(fill = "Sample age (ybp)") +
     facet_wrap(. ~ factor(Meta.Population, levels = c("African_NearEast_India_Dogs", "European_Dogs", "Arctic_Dogs")), labeller = as_labeller(group_names), ncol = 1, strip.position = "right") +
@@ -1015,8 +982,6 @@ d_short <- ggplot(no_wolves, aes(x = Age_Mean_KBP, y = froh)) +
         data = no_wolves %>% filter(type == "imputed"),
         aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 2, box.padding = 1, max.overlaps = Inf
     ) +
-    # geom_label_repel(data = no_wolves %>% filter(Sample %in% chosen_dogs),
-    #                 aes(x=Age_Mean_KBP, y=froh, label=Sample),size=3, box.padding = 3, max.overlaps = Inf)+
     labs(x = "Time (kya)", y = expression(paste(italic("F")[ROH], " (ROH < 1.6Mb)", sep = ""))) +
     theme_bw() +
     theme(legend.position = "none") +
@@ -1047,7 +1012,6 @@ type_names <- c(
 # specify x-axis names to use
 levels(no_wolves$Meta.Population) <- c("Near East", "Europe", "Arctic")
 
-# png(snakemake@output[[]], width=12, height=6, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab = 2)
 options(scipen = 999)
 e_short <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
@@ -1075,9 +1039,6 @@ e_short <- ggplot(no_wolves, aes(x = Meta.Population, y = froh)) +
     labs(y = expression(paste(italic("F")[ROH], " (ROH < 1.6Mb)", sep = ""))) +
     ylim(-0.0001, 0.8) +
     facet_grid(. ~ type, labeller = as_labeller(type_names))
-# e_short
-# dev.off()
-
 
 #### Mann–Whitney U test to check if Froh is different between the 3 dog pops
 
@@ -1189,7 +1150,6 @@ options(scipen = 999)
 
 # all samples, no cutoff
 samples <- read.delim(snakemake@input[[1]])
-# samples <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
 
 
 sites <- samples %>% select("name_haplo_VCF", "Lat", "Long", "Meta.Population", "Age_Mean_BP", "Other_ID")
@@ -1208,12 +1168,14 @@ final_map_imputed_dogs$Long[is.na(final_map_imputed_dogs$Long)] <- 23.924860
 
 # Start plotting:
 worldmap <- map_data("world")
-set.seed(24)
+#set.seed(24)
+#set.seed(62)
+set.seed(65) #keep this seed
 
 # add noise to the data to avoid overlapping points and add size variance for date_bp
 sites_2 <- final_map_imputed_dogs
-sites_2$Lat <- sites_2$Lat + rnorm(length(sites_2$Lat), 0, 0.7)
-sites_2$Long <- sites_2$Long + rnorm(length(sites_2$Long), 0, 0.7)
+sites_2$Lat <- sites_2$Lat + rnorm(length(sites_2$Lat), 0, 0.5)
+sites_2$Long <- sites_2$Long + rnorm(length(sites_2$Long), 0, 0.5)
 
 sites_2$Long[sites_2$Sample == "TRF.02.49"] <- 189
 
@@ -1221,7 +1183,6 @@ sites_2$Long[sites_2$Sample == "TRF.02.49"] <- 189
 sites_2$name_age <- paste(sites_2$Sample, " (", sites_2$Age_Mean_BP.x, " BP)", sep = "")
 
 
-# png(snakemake@output[[]], width=8, height=8, units='in', res=200, pointsize=4)
 par(mar = c(5, 5, 2, 2), xaxs = "i", yaxs = "i", cex.axis = 2, cex.lab = 2)
 map_plot <- ggplot() +
     geom_polygon(
@@ -1244,11 +1205,12 @@ map_plot <- ggplot() +
             y = as.numeric(Lat), fill = froh
         ), alpha = .7, size = 3, shape = 21
     ) +
-    # scale_fill_viridis_c(option='A', trans = "log") +
     scale_fill_viridis_c(option = "A", direction = -1) +
     geom_label_repel(
         data = sites_2 %>% filter(froh > 0.1),
-        aes(x = as.numeric(Long), y = as.numeric(Lat), label = name_age), size = 3, box.padding = 1, max.overlaps = Inf
+        #aes(x = as.numeric(Long), y = as.numeric(Lat), label = name_age), size = 3, box.padding = 1, max.overlaps = Inf
+        aes(x = as.numeric(Long), y = as.numeric(Lat), label = name_age), size = 3, box.padding = 1, label.padding = 0.1, max.overlaps = Inf
+
     ) +
     theme(legend.position = "right", legend.direction = "vertical") +
     theme(title = element_text(size = 12)) +
@@ -1267,8 +1229,6 @@ map_plot <- ggplot() +
         legend.direction = "vertical"
     ) +
     labs(fill = bquote("" ~ italic(F)[ROH] * ""))
-# map_plot
-# dev.off()
 
 
 
@@ -1320,3 +1280,15 @@ ggarrange(e, e_long, e_short,
     ncol = 1, nrow = 3
 )
 dev.off()
+
+
+# main figure pdf
+ggdraw() +
+    draw_plot(c_label_2, x = 0.02, y = .4, width = .5, height = .6) +
+    draw_plot(a, x = .55, y = .4, width = .45, height = .6) +
+    draw_plot(map_plot, x = 0, y = 0, width = 1, height = .4) +
+    draw_plot_label(
+        label = c("A", "B", "C"), size = 20,
+        x = c(0.02, 0.56, 0.02), y = c(1, 1, 0.4)
+    )
+ggsave(snakemake@output[[18]], width=10, height=9, units='in', dpi=300)

@@ -115,7 +115,6 @@ b$coverage <- ifelse(grepl(paste("_", cov6, "x", sep = ""), b$Sample), cov6, b$c
 
 # add high coverage value:
 b$coverage <- as.character(ifelse(b$target != "reference_panel" & is.na(b$coverage), "HC", b$coverage))
-# b$coverage <- ifelse(b$target != 'reference_panel' & is.na(b$coverage), cov_hc, b$coverage)
 
 # plotting
 df_layer_1 <- b[b$target == "reference_panel", ]

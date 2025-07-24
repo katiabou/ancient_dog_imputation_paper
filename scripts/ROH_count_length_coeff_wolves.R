@@ -21,8 +21,6 @@ library(ggpubr)
 
 
 # import imputed ROH data and info
-# info <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
-# roh <- read.csv('~/Downloads/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info <- read.delim(snakemake@input[[1]])
 roh <- read.csv(snakemake@input[[3]], sep = "")
 
@@ -39,31 +37,16 @@ roh$Sample[roh$Sample == "WolfHead"] <- "Wolf_head_IN18-016"
 final <- left_join(roh, info %>% dplyr::select(Sample, Wolf_Dog_PCA, Dog_PCA, Meta.Population, Species, Age_Mean_BP), "Sample")
 
 # import modern ROH data and info
-# info_ref <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Modern.tsv')
-# roh_ref <- read.csv('~/Downloads/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 info_ref <- read.delim(snakemake@input[[2]])
 roh_ref <- read.csv(snakemake@input[[4]], sep = "")
 colnames(info_ref)[colnames(info_ref) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(info_ref)[colnames(info_ref) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"
 
 # make new column without number in IDs
-# roh_ref$Sample <- sub("_[^_]+$", "", roh_ref$FID)
-# colnames(info_ref)[1] <- "Sample"
 colnames(info_ref)[3] <- "Sample"
 colnames(roh_ref)[1] <- "Sample"
 
 # fix sample names which lost part of name in previous step:
-# roh_ref$Sample[roh_ref$Sample == 'Bern'] <- 'Bern_AlpineDachsbracke'
-# roh_ref$Sample[roh_ref$Sample == 'CatahoulaLeopardDog01_Reseq'] <- 'CatahoulaLeopardDog01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX'] <- 'MIX_Dachshund01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_AmericanCocker'] <- 'MIX_AmericanCocker_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_KerryBlueTerrier'] <- 'MIX_KerryBlueTerrier_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'MIX_MiniatureSchnauzer'] <- 'MIX_MiniatureSchnauzer_Beagle01'
-# roh_ref$Sample[roh_ref$Sample == 'VillDog'] <- 'VillDog_Australia01'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO001'] <- 'Wolf_WO001_895'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO002'] <- 'Wolf_WO002_732'
-# roh_ref$Sample[roh_ref$Sample == 'Wolf_WO003'] <- 'Wolf_WO003_636'
-
 roh_ref$Sample[roh_ref$Sample == "Wolf107"] <- "RWJR007"
 roh_ref$Sample[roh_ref$Sample == "Wolf108"] <- "RWJR016"
 roh_ref$Sample[roh_ref$Sample == "Wolf109"] <- "RWJR012"
@@ -84,7 +67,6 @@ final_ref$Age_Mean_BP <- 0
 
 # import genome sizes per chromosome (for Froh estimation)
 sizes_autosomes <- read.table(snakemake@input[[5]], quote = "\"", comment.char = "")
-# sizes_autosomes <- read.table('~/Downloads/CanFam31_allchrom_size.genome', quote="\"", comment.char="")
 total_genome_size <- sum(sizes_autosomes$V2)
 
 # add type column
@@ -180,9 +162,6 @@ ggplot(wolves, aes(x = ROH_tol_2, y = n)) +
     geom_point(data = df_layer_1, size = 4, alpha = 0.6, colour = "grey") +
     geom_point(data = df_layer_2, aes(fill = Age_Mean_BP), size = 6, shape = 21, alpha = 0.7) +
     scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option = "F") +
-    # geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-    # geom_label_repel(data = wolves %>% filter(type=='modern' & c(ROH_tol_2>400 | n>350)),
-    #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
     labs(x = "Total ROH length (Mb)", y = "Total # ROH") +
     labs(fill = "Sample age (kya)") +
     facet_wrap(. ~ factor(Meta.Population, levels = c("Pleistocene_Wolves", "Eastern_Eurasian_Wolves", "Western_Eurasian_Wolves", "North_American_Wolves")), labeller = as_labeller(group_names)) +
@@ -312,9 +291,6 @@ ggplot(wolves_long, aes(x = ROH_tol_2, y = n)) +
     geom_point(data = df_layer_1, size = 4, alpha = 0.6, colour = "grey") +
     geom_point(data = df_layer_2, aes(fill = Age_Mean_BP), size = 6, shape = 21, alpha = 0.7) +
     scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option = "F") +
-    # geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-    # geom_label_repel(data = wolves_long %>% filter(type=='modern' & c(ROH_tol_2>400 | n>350)),
-    #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
     labs(x = "Total ROH length (Mb) (ROH >= 1.6Mb)", y = "Total # ROH (ROH >= 1.6Mb)") +
     labs(fill = "Sample age (kya)") +
     facet_wrap(. ~ factor(Meta.Population, levels = c("Pleistocene_Wolves", "Eastern_Eurasian_Wolves", "Western_Eurasian_Wolves", "North_American_Wolves")), labeller = as_labeller(group_names)) +
@@ -445,9 +421,6 @@ ggplot(wolves_short, aes(x = ROH_tol_2, y = n)) +
     geom_point(data = df_layer_1, size = 4, alpha = 0.6, colour = "grey") +
     geom_point(data = df_layer_2, aes(fill = Age_Mean_BP), size = 6, shape = 21, alpha = 0.7) +
     scale_fill_viridis_c(trans = "log", breaks = my_breaks, labels = my_labels, option = "F") +
-    # geom_smooth(method='lm', se=FALSE, color='gray28', size=0.5, alpha=0.8) +
-    # geom_label_repel(data = wolves_short %>% filter(type=='modern' & c(ROH_tol_2>400 | n>350)),
-    #                 aes(x=ROH_tol_2, y=n, label=Sample),size=3.5, box.padding = 3, max.overlaps = Inf)+
     labs(x = "Total ROH length (Mb) (ROH < 1.6Mb)", y = "Total # ROH (ROH < 1.6Mb)") +
     labs(fill = "Sample age (kya)") +
     facet_wrap(. ~ factor(Meta.Population, levels = c("Pleistocene_Wolves", "Eastern_Eurasian_Wolves", "Western_Eurasian_Wolves", "North_American_Wolves")), labeller = as_labeller(group_names)) +
@@ -531,8 +504,6 @@ wolves_coeff <- ggplot(wolves_all_ROHs, aes(x = Age_Mean_KBP, y = froh)) +
     geom_point(data = df_layer_2, aes(fill = Meta.Population), size = 3, shape = 21, alpha = 0.8) +
     scale_fill_manual(values = cols, labels = group_names, name = "Population") +
     scale_x_continuous(breaks = seq(round(min(wolves_short$Age_Mean_KBP + 1)), 0, 10)) +
-    # scale_y_continuous(trans=log1p_trans()) +
-    # coord_trans(y=expm1_trans()) +
     labs(x = "Time (kya)", y = expression(paste(italic("F")[ROH]))) +
     theme_bw() +
     facet_grid(factor(category) ~ ., labeller = as_labeller(category_names)) +
@@ -560,8 +531,6 @@ wolves_coeff <- ggplot(wolves_all_ROHs, aes(x = Age_Mean_KBP, y = froh)) +
     geom_point(data = df_layer_2, aes(fill = Meta.Population), size = 3, shape = 21, alpha = 0.8) +
     scale_fill_manual(values = cols, labels = group_names, name = "Population") +
     scale_x_continuous(breaks = seq(round(min(wolves_short$Age_Mean_KBP + 1)), 0, 10)) +
-    # scale_y_continuous(trans=log1p_trans()) +
-    # coord_trans(y=expm1_trans()) +
     geom_label_repel(
         data = wolves_all_ROHs %>% filter(type == "imputed"),
         aes(x = Age_Mean_KBP, y = froh, label = Sample), size = 2, box.padding = 1, max.overlaps = Inf
@@ -590,7 +559,6 @@ dev.off()
 
 cols <- c("royalblue4", "green4", "yellow3")
 
-# png(snakemake@output[[6]], width=12, height=4, units='in', res=200, pointsize=4)
 modern_wolves_box <- wolves_all_ROHs %>%
     filter(type == "modern") %>%
     ggplot(aes(x = Meta.Population, y = froh)) +
@@ -617,12 +585,9 @@ modern_wolves_box <- wolves_all_ROHs %>%
     ) +
     labs(y = expression(paste(italic("F")[ROH]))) +
     facet_grid(. ~ category, labeller = as_labeller(category_names))
-# modern_wolves_box
-# dev.off()
 
 cols <- c("royalblue4", "darkturquoise", "yellow3")
 
-# png(snakemake@output[[7]], width=12, height=4, units='in', res=200, pointsize=4)
 ancient_wolves_sub <- wolves_all_ROHs %>% filter(type == "imputed")
 ancient_wolves_sub$Meta.Population[ancient_wolves_sub$Meta.Population == "Eastern_Eurasian_Wolves"] <- "Holocene"
 ancient_wolves_sub$Meta.Population[ancient_wolves_sub$Meta.Population == "Western_Eurasian_Wolves"] <- "Holocene"
@@ -649,8 +614,6 @@ ancient_wolves_box <- ancient_wolves_sub %>%
     ) +
     labs(y = expression(paste(italic("F")[ROH]))) +
     facet_grid(. ~ category, labeller = as_labeller(category_names))
-# ancient_wolves_box
-# dev.off()
 
 ####################################### merge_plots  ######################################
 

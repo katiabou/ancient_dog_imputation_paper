@@ -89,7 +89,6 @@ ggplot(data = melt_data2, aes(x = INFO, y = value_2, fill = MAF_bins, label = ro
     ) +
     facet_grid(Sample_cov ~ Ref_panel, labeller = labeller(Ref_panel = ref.labs, Sample_cov = sample.labs)) +
     scale_fill_manual(values = cols, name = "MAF bins") +
-    # scale_y_continuous(breaks = seq(0, 1600, by = 100))+
     ylab(bquote("Number of sites "(10^3))) +
     theme_bw() +
     theme(axis.text.x = element_text(size = 14, vjust = 0.5)) +

@@ -21,13 +21,6 @@ meta <- read.delim(snakemake@input[[4]])
 info <- read.delim(snakemake@input[[5]])
 canid_group <- as.character(snakemake@params[["canid_group"]])
 
-# eigenval_output <- read.table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves_eigenval_output', quote="\"", comment.char="")
-# eigenvec_output <- read_table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves_eigenvec_output', col_names = FALSE)
-# fam <- read.table('~/Downloads/merged_modern_phased_annotated.allchrom_MAF_0.01_recalibrated_INFO_0.8_wolves-mod.fam', quote="\"", comment.char="")
-# meta <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Modern.tsv')
-# info <- read.delim('~/Downloads/Dog_Wolf_aDNA_WG-Master.tsv')
-# canid_group <- 'Wolves'
-
 # fix modern metadata file column name (can't use the meta.population column since it has gaps)
 colnames(meta)[colnames(meta) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(meta)[colnames(meta) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"

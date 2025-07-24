@@ -69,9 +69,7 @@ mdata_dogs <- mdata %>% filter(species == "Dogs")
 mdata_dogs <- mdata_dogs[order(mdata_dogs$sample), ]
 
 # specify colour palettes
-# cols = met.brewer(name="Juarez", n=6, type="discrete")
 cols <- met.brewer(name = "Archambault", n = 6, type = "discrete")
-# cols = met.brewer(name="Derain", n=6, type="discrete")
 
 png(args[4], width = 12, height = 19, units = "in", res = 200, pointsize = 4)
 par(

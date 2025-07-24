@@ -15,20 +15,111 @@ library(dplyr)
 library(tidyr)
 library(viridis)
 library(cowplot)
+library(ggpubr)
 
-# import data
 args <- commandArgs(trailingOnly = TRUE)
 
 list_of_concordance_phased <- args[1]
 list_of_validation <- args[2]
 list_of_phased <- args[3]
-sample_name <- args[4]
-cov_sample <- args[5]
-info_sample <- args[6]
-site_type <- args[7]
-# ref_fasta_chr_size <- read.delim(args[13], header=FALSE)
-ref_fasta_chr_size <- read.table(args[13], quote = "\"", comment.char = "")
+chr_length <- read.delim(args[4], header = FALSE)
+name <- args[5]
+chrom <- args[6]
+cov_hc <- args[7]
+name_title <- args[8]
+name_title_2 <- gsub("_", " ", name_title)
+site_type <- args[9]
 
+a <- str_split(list_of_concordance_phased, pattern = ",")
+b <- str_split(list_of_validation, pattern = ",")
+f <- str_split(list_of_phased, pattern = ",")
+
+a[[1]][7] <- NA
+a[[1]][7] <- b[[1]]
+a[[1]][8] <- NA
+a[[1]][8] <- f[[1]]
+
+d <- c()
+
+for (i in 1:length(a[[1]])) {
+    tmp <- read.csv(a[[1]][i], sep = "")
+    d <- rbind(d, tmp)
+}
+
+size_chr <- chr_length[1, 2]
+
+# put same cov for imputed and genotyped HC:
+d$name[d$cov == "HC_imputed"] <- "HC"
+d$name[d$cov == "HC_genotyped"] <- "HC"
+d$name <- ifelse(is.na(d$name), d$cov, d$name)
+
+# replace name
+d$cov <- gsub("x", "x imputed", d$cov)
+d$cov <- gsub("HC_genotyped", paste("HC (", cov_hc, "x)", sep = ""), d$cov)
+d$cov <- gsub("HC_imputed", paste("HC imputed (", cov_hc, "x)", sep = ""), d$cov)
+
+name_HC_imputed <- paste("HC imputed (", cov_hc, "x)", sep = "")
+name_HC <- paste("HC (", cov_hc, "x)", sep = "")
+
+# reorder names
+d$cov <- factor(d$cov, levels = c("0.05x imputed", "0.1x imputed", "0.2x imputed", "0.5x imputed", "1x imputed", "2x imputed", name_HC_imputed, name_HC))
+
+# rescale x axis
+new_sub_final <- d %>%
+    mutate(
+        POS1 = POS1 / 1e+6,
+        POS2 = POS2 / 1e+6,
+        MB = KB / 1000
+    )
+
+size_chr_mb <- size_chr / 1e+6
+
+#name_title_final <- paste(name_title_2, " - ", name, " (", site_type, ")", sep = "")
+name_title_final <- 'Neolithic European dog - NGDG'
+
+# plot
+par(
+    mar      = c(5, 5, 2, 2),
+    xaxs     = "i",
+    yaxs     = "i",
+    cex.axis = 2,
+    cex.lab  = 2
+)
+options(scipen = 10000)
+a1 <- ggplot(data = new_sub_final) +
+    geom_hline(aes(yintercept = cov), color = "#d8dee9", size = 0.4) +
+    geom_segment(aes(y = cov, yend = cov, x = POS1, xend = POS2, colour = name), linewidth = 10) +
+    scale_colour_viridis(discrete = TRUE, option = "D") +
+    scale_x_continuous(breaks = seq(0, size_chr_mb, 10)) +
+    theme_bw() +
+    xlab(paste("Genomic position ", chrom, " (Mb)", sep = "")) +
+    theme(
+        axis.title.y = element_blank(),
+        axis.title.x = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        legend.position = "none",
+        #plot.title = element_text(hjust = 0.45, size = 18, face = "bold"),
+        plot.title = element_text(hjust = 0.45, size = 18),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "gray60")
+    ) +
+    labs(colour = "Coverage") +
+    ggtitle(name_title_final)
+a1
+
+
+#############################################
+#                                           #
+#             ACCURACY GRAPHS.              #
+#                                           #
+#############################################
+
+list_of_concordance_phased <- args[10]
+list_of_validation <- args[11]
+list_of_phased <- args[12]
+ref_fasta_chr_size <- read.table(args[13], quote = "\"", comment.char = "")
 
 aa <- str_split(list_of_concordance_phased, pattern = ",")
 bb <- str_split(list_of_validation, pattern = ",")
@@ -49,7 +140,7 @@ validation <- read.csv(bb[[1]][1], sep = "")
 # remove extra line used for plotting (in case no ROH was found) and use GRanges to create approprite format
 get_gr <- function(roh) {
     test <- roh %>%
-        filter(IID != 0 & IID == sample_name) %>%
+        filter(IID != 0 & IID == name) %>%
         mutate(range = paste(POS1, "-", POS2, sep = ""))
     GRanges(
         seqnames = test$CHR,
@@ -133,7 +224,7 @@ get_seg_stats <- function(hits, get_phased, get_val, df) {
 
     # summarize:
     all_stats_segment <- data.frame(
-        sample = sample_name,
+        sample = name,
         # cov=unique(get_phased$cov),
         cov = unique(df$cov),
         TP = TP,
@@ -222,7 +313,7 @@ get_length_stats <- function(overlap, gen_size, get_phased, hits, get_val, df) {
     FDR <- FP / (TP + FP)
 
     all_stats_length <- data.frame(
-        sample = sample_name,
+        sample = name,
         # cov=unique(get_phased$cov),
         cov = unique(df$cov),
         TP = TP,
@@ -261,8 +352,8 @@ all_length_stats <- rbind(
 
 
 # export both files:
-write.table(all_seg_stats, file = args[8], quote = FALSE, sep = "\t", col.names = TRUE, row.names = FALSE)
-write.table(all_length_stats, file = args[9], quote = FALSE, sep = "\t", col.names = TRUE, row.names = FALSE)
+#write.table(all_seg_stats, file = args[14], quote = FALSE, sep = "\t", col.names = TRUE, row.names = FALSE)
+#write.table(all_length_stats, file = args[15], quote = FALSE, sep = "\t", col.names = TRUE, row.names = FALSE)
 
 
 # merge both df together (segment and length) based on common columns (mcc is only for length)
@@ -285,16 +376,15 @@ all_stats_final <- na.omit(all_stats_final)
 
 ## plotting
 
-name_HC_imputed <- paste("HC (", cov_sample, "x)", sep = "")
+name_HC_imputed <- paste("HC (", cov_hc, "x)", sep = "")
 all_stats_final$cov <- gsub("HC_imputed", name_HC_imputed, all_stats_final$cov)
 all_stats_final$metric <- gsub("mcc_norm", "nMCC", all_stats_final$metric)
 
-name_title_2 <- gsub("_", " ", info_sample)
-name_title_final <- paste(name_title_2, " - ", sample_name, " (", site_type, ")", sep = "")
+name_title_2 <- gsub("_", " ", name_title)
+name_title_final <- paste(name_title_2, " - ", name, " (", site_type, ")", sep = "")
 
 
 # F1 and nMCC (segment and length together)
-png(args[10], width = 9, height = 6, units = "in", res = 200, pointsize = 4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -302,13 +392,12 @@ par(
     cex.axis = 2,
     cex.lab  = 2
 )
-ggplot(all_stats_final, aes(x = cov, y = values, colour = type)) +
+b1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = type)) +
     geom_line(aes(group = interaction(type, metric), linetype = metric), linewidth = 1.2) +
     geom_point(size = 3) +
     scale_color_manual(values = c("steelblue", "orange")) +
     ylim(0, 1) +
     labs(x = "Coverage", colour = "Count type", linetype = "Metric") +
-    ggtitle(name_title_final) +
     theme_bw() +
     theme(
         axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
@@ -321,7 +410,7 @@ ggplot(all_stats_final, aes(x = cov, y = values, colour = type)) +
         panel.grid.minor = element_blank(),
         legend.key.width = unit(1.5, "cm")
     )
-dev.off()
+b1
 
 
 
@@ -336,7 +425,6 @@ all_stats_final <- na.omit(all_stats_final)
 all_stats_final$cov <- gsub("HC_imputed", name_HC_imputed, all_stats_final$cov)
 
 ## plotting FDR, specificity and sensitivity
-png(args[11], width = 9, height = 6, units = "in", res = 200, pointsize = 4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -344,13 +432,12 @@ par(
     cex.axis = 2,
     cex.lab  = 2
 )
-ggplot(all_stats_final, aes(x = cov, y = values, colour = metric)) +
+c1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = metric)) +
     geom_line(aes(group = interaction(type, metric)), linewidth = 1.2) +
     geom_point(size = 3) +
     scale_color_manual(values = c("gold2", "darkolivegreen4", "lightpink3")) +
     ylim(0, 1) +
     labs(x = "Coverage", colour = "Metric") +
-    ggtitle(name_title_final) +
     theme_bw() +
     theme(
         axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
@@ -363,13 +450,12 @@ ggplot(all_stats_final, aes(x = cov, y = values, colour = metric)) +
         panel.grid.minor = element_blank(),
         legend.key.width = unit(1.5, "cm")
     )
-dev.off()
+c1
 
 
 ## plotting specificity against sensitivity
 all_length_stats$cov <- gsub("HC_imputed", name_HC_imputed, all_length_stats$cov)
 
-png(args[12], width = 9, height = 6, units = "in", res = 200, pointsize = 4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -377,23 +463,59 @@ par(
     cex.axis = 2,
     cex.lab  = 2
 )
-ggplot(all_length_stats, aes(x = specificity, y = sensitivity, colour = cov)) +
+d1 <- ggplot(all_length_stats, aes(x = specificity, y = sensitivity, colour = cov)) +
     geom_point(size = 3) +
     scale_colour_viridis(discrete = TRUE, option = "D") +
     ylim(0, 1) +
     xlim(0, 1) +
     labs(x = "Specificity", y = "Sensitivity", colour = "Coverage") +
-    ggtitle(name_title_final) +
     theme_bw() +
     theme(
-        axis.text.x = element_text(size = 16),
+        axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
         axis.text.y = element_text(size = 16),
         axis.title.x = element_text(size = 18),
         axis.title.y = element_text(size = 18),
         legend.text = element_text(size = 16),
         legend.title = element_text(size = 16),
         plot.title = element_text(hjust = 0.5, size = 18),
-        panel.grid = element_blank(),
+        panel.grid.minor = element_blank(),
         legend.key.width = unit(1.5, "cm")
     )
-dev.off()
+d1
+
+
+
+#### merge all plots per sample together:
+
+all1 <- ggarrange(a1,
+    labels = c("A"),
+    ncol = 1, nrow = 1,
+    font.label = list(size = 20)
+)
+# all1
+
+
+all2 <- ggarrange(b1, c1, d1,
+    labels = c("B", "C", "D"),
+    ncol = 3, nrow = 1,
+    font.label = list(size = 20),
+    vjust = -0.1
+)
+# all2
+
+
+all <- ggarrange(all1, all2,
+    ncol = 1, nrow = 2,
+    font.label = list(size = 20)
+)
+
+# all
+alll <- ggarrange(all1, NULL, all2,
+    ncol = 1, nrow = 3,
+    heights = c(0.45, 0.05, 0.5)
+)
+
+
+# Export plot for publication in pdf format:
+ggsave(args[[14]], plot=alll, width=20, height=9, units='in', dpi=300)
+

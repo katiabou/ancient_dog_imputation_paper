@@ -26,19 +26,9 @@ chr_length <- read.delim(args[4], header = FALSE)
 name <- args[5]
 chrom <- args[6]
 cov_hc <- args[7]
-
-# name <- 'CGG32'
-# chrom <- 'chr1'
-# cov_hc <- 14.5
-
 name_title <- args[8]
 name_title_2 <- gsub("_", " ", name_title)
-
-# name_title <- 'Pleistocene_wolf'
-# name_title_2 <- gsub('_',' ',name_title)
-
 site_type <- args[9]
-# site_type <- 'Transversions+transitions'
 
 a <- str_split(list_of_concordance_phased, pattern = ",")
 b <- str_split(list_of_validation, pattern = ",")
@@ -56,20 +46,6 @@ for (i in 1:length(a[[1]])) {
     d <- rbind(d, tmp)
 }
 
-
-# b1 <- read.csv("~/Downloads/phased.CGG32_chr1_0.05x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b2 <- read.csv("~/Downloads/phased.CGG32_chr1_0.1x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b3 <- read.csv("~/Downloads/phased.CGG32_chr1_0.2x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b4 <- read.csv("~/Downloads/phased.CGG32_chr1_0.5x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b5 <- read.csv("~/Downloads/phased.CGG32_chr1_1x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b6 <- read.csv("~/Downloads/phased.CGG32_chr1_2x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b7 <- read.csv("~/Downloads/phased.CGG32_chr1_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b8 <- read.csv("~/Downloads/CGG32_chr1_validation_filt_qual_dp_ab_all_sites_hom_win_het_1_plink-temp.hom", sep="")
-
-# d <- rbind(b1, b2, b3, b4, b5, b6, b7, b8)
-
-# chr length
-# chr_length <- read.delim("~/Downloads/CanFam31_chr1_size.genome", header=FALSE)
 size_chr <- chr_length[1, 2]
 
 # put same cov for imputed and genotyped HC:
@@ -98,11 +74,9 @@ new_sub_final <- d %>%
 
 size_chr_mb <- size_chr / 1e+6
 
-# name_title_final <- paste(name_title_2, ' - ', name,sep='')
 name_title_final <- paste(name_title_2, " - ", name, " (", site_type, ")", sep = "")
 
 # plot
-# png(args[9], width=16, height=4, units='in', res=250, pointsize=4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -116,7 +90,6 @@ a1 <- ggplot(data = new_sub_final) +
     geom_segment(aes(y = cov, yend = cov, x = POS1, xend = POS2, colour = name), linewidth = 10) +
     scale_colour_viridis(discrete = TRUE, option = "D") +
     scale_x_continuous(breaks = seq(0, size_chr_mb, 10)) +
-    # theme_void()+
     theme_bw() +
     xlab(paste("Genomic position ", chrom, " (Mb)", sep = "")) +
     theme(
@@ -124,7 +97,8 @@ a1 <- ggplot(data = new_sub_final) +
         axis.title.x = element_text(size = 14),
         axis.text = element_text(size = 12),
         legend.position = "none",
-        plot.title = element_text(hjust = 0.45, size = 18, face = "bold"),
+        #plot.title = element_text(hjust = 0.45, size = 18, face = "bold"),
+        plot.title = element_text(hjust = 0.45, size = 18),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
@@ -133,8 +107,6 @@ a1 <- ggplot(data = new_sub_final) +
     labs(colour = "Coverage") +
     ggtitle(name_title_final)
 a1
-# dev.off()
-
 
 
 #############################################
@@ -147,7 +119,6 @@ list_of_concordance_phased <- args[10]
 list_of_validation <- args[11]
 list_of_phased <- args[12]
 ref_fasta_chr_size <- read.table(args[13], quote = "\"", comment.char = "")
-# ref_fasta_chr_size <- read.table("~/Downloads/CanFam31_allchrom_size.genome", quote="\"", comment.char="")
 
 aa <- str_split(list_of_concordance_phased, pattern = ",")
 bb <- str_split(list_of_validation, pattern = ",")
@@ -164,17 +135,6 @@ f <- read.csv(aa[[1]][6], sep = "")
 g <- read.csv(ff[[1]][1], sep = "")
 
 validation <- read.csv(bb[[1]][1], sep = "")
-
-
-# a <- read.csv("~/Downloads/phased.CGG32_allchrom_0.05x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# b <- read.csv("~/Downloads/phased.CGG32_allchrom_0.1x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# c <- read.csv("~/Downloads/phased.CGG32_allchrom_0.2x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# d <- read.csv("~/Downloads/phased.CGG32_allchrom_0.5x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# e <- read.csv("~/Downloads/phased.CGG32_allchrom_1x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# f <- read.csv("~/Downloads/phased.CGG32_allchrom_2x_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# g <- read.csv("~/Downloads/phased.CGG32_allchrom_INFO_0.8_MAF_0.01_all_sites_hom_win_het_1-temp.hom", sep="")
-# validation <- read.csv("~/Downloads/CGG32_allchrom_validation_filt_qual_dp_ab_all_sites_hom_win_het_1_plink-temp.hom", sep="")
-
 
 # remove extra line used for plotting (in case no ROH was found) and use GRanges to create approprite format
 get_gr <- function(roh) {
@@ -424,7 +384,6 @@ name_title_final <- paste(name_title_2, " - ", name, " (", site_type, ")", sep =
 
 
 # F1 and nMCC (segment and length together)
-# png(args[10], width=9, height=6, units='in', res=200, pointsize=4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -438,7 +397,6 @@ b1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = type)) +
     scale_color_manual(values = c("steelblue", "orange")) +
     ylim(0, 1) +
     labs(x = "Coverage", colour = "Count type", linetype = "Metric") +
-    # ggtitle(name_title_final) +
     theme_bw() +
     theme(
         axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
@@ -452,7 +410,6 @@ b1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = type)) +
         legend.key.width = unit(1.5, "cm")
     )
 b1
-# dev.off()
 
 
 
@@ -467,7 +424,6 @@ all_stats_final <- na.omit(all_stats_final)
 all_stats_final$cov <- gsub("HC_imputed", name_HC_imputed, all_stats_final$cov)
 
 ## plotting FDR, specificity and sensitivity
-# png(args[11], width=9, height=6, units='in', res=200, pointsize=4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -481,7 +437,6 @@ c1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = metric)) +
     scale_color_manual(values = c("gold2", "darkolivegreen4", "lightpink3")) +
     ylim(0, 1) +
     labs(x = "Coverage", colour = "Metric") +
-    # ggtitle(name_title_final) +
     theme_bw() +
     theme(
         axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
@@ -495,13 +450,11 @@ c1 <- ggplot(all_stats_final, aes(x = cov, y = values, colour = metric)) +
         legend.key.width = unit(1.5, "cm")
     )
 c1
-# dev.off()
 
 
 ## plotting specificity against sensitivity
 all_length_stats$cov <- gsub("HC_imputed", name_HC_imputed, all_length_stats$cov)
 
-# png(args[12], width=9, height=6, units='in', res=200, pointsize=4)
 par(
     mar      = c(5, 5, 2, 2),
     xaxs     = "i",
@@ -515,7 +468,6 @@ d1 <- ggplot(all_length_stats, aes(x = specificity, y = sensitivity, colour = co
     ylim(0, 1) +
     xlim(0, 1) +
     labs(x = "Specificity", y = "Sensitivity", colour = "Coverage") +
-    # ggtitle(name_title_final) +
     theme_bw() +
     theme(
         axis.text.x = element_text(angle = 30, size = 16, vjust = 0.5),
@@ -529,14 +481,13 @@ d1 <- ggplot(all_length_stats, aes(x = specificity, y = sensitivity, colour = co
         legend.key.width = unit(1.5, "cm")
     )
 d1
-# dev.off()
 
 
 
 #### merge all plots per sample together:
 
 all1 <- ggarrange(a1,
-    labels = c("a"),
+    labels = c("A"),
     ncol = 1, nrow = 1,
     font.label = list(size = 20)
 )
@@ -544,7 +495,7 @@ all1 <- ggarrange(a1,
 
 
 all2 <- ggarrange(b1, c1, d1,
-    labels = c("b", "c", "d"),
+    labels = c("B", "C", "D"),
     ncol = 3, nrow = 1,
     font.label = list(size = 20),
     vjust = -0.1
@@ -561,7 +512,6 @@ all <- ggarrange(all1, all2,
 
 
 png(args[[16]], width = 20, height = 9, units = "in", res = 200, pointsize = 4)
-# png('~/Downloads/testf.png', width=20, height=9, units='in', res=200, pointsize=4)
 alll <- ggarrange(all1, NULL, all2,
     ncol = 1, nrow = 3,
     heights = c(0.45, 0.05, 0.5)

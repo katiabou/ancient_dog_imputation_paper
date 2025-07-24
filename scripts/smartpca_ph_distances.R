@@ -52,7 +52,6 @@ for (i in 1:10) {
 HC_PC <- target_sub1 %>%
     filter(target_sub1$Sample == name) %>%
     select(2:11)
-# HC_imputed_PC <- target_sub %>% filter(target_sub$Sample==paste(name, "_HC_imputed", sep="")) %>% select(2:11)
 
 target_sub <- target_sub1 %>% filter(target_sub1$Sample != name)
 
@@ -69,26 +68,9 @@ for (j in 1:nrow(target_sub)) {
     }
 }
 
-# HC imputed
-# get_PC_imputed_dist <- function(PC,df,row_num){
-#  gg <- paste('PC', PC, sep="")
-#  abs(HC_imputed_PC[PC]-df[row_num,gg])*PCs[PC]
-# }
-
-# HC_PC_imputed_dist <- data.frame()
-# for (j in 1:nrow(target_sub)){
-#  for (i in 1:10){
-#    HC_PC_imputed_dist[j,i] <- get_PC_imputed_dist(i, target_sub, j)
-#  }
-# }
-
-
 # sum the weighted distances for all 10 PCs:
 HC_PC_dist <- HC_PC_dist %>%
     mutate(Total = select(., PC1:PC10) %>% rowSums(na.rm = TRUE))
-
-# HC_PC_imputed_dist <- HC_PC_imputed_dist %>%
-#  mutate(Total = select(., PC1:PC10) %>% rowSums(na.rm = TRUE))
 
 # make plot where x is the DoC and y is the sum of % across 10 PCs. Each line will be a sample and the p-value will be per sample (?)
 
@@ -109,15 +91,12 @@ cov6 <- 2
 target_sub$coverage <- ifelse(grepl(paste("_", cov6, "x", sep = ""), target_sub$Sample), paste(cov6, "x", sep = ""), target_sub$coverage)
 
 # add high coverage value:
-# target_sub$coverage <- as.character(ifelse(is.na(target_sub$coverage), 'HC', target_sub$coverage))
 target_sub$type <- as.character(ifelse(grepl("imputed", target_sub$Sample), "Imputed", "Pseudohaploid"))
 
 
 HC_PC_dist$cov <- target_sub$coverage
-# HC_PC_imputed_dist$cov <- target_sub$coverage
 
 HC_PC_dist$type <- target_sub$type
-# HC_PC_imputed_dist$type <- target_sub$type
 
 
 # plot
@@ -125,7 +104,6 @@ HC_PC_dist$type <- target_sub$type
 
 name_title_final <- paste(name_title_2, " - ", name, sep = "")
 name_HC <- paste("HC (", cov_sample, "x)", sep = "")
-# HC_PC_imputed_dist$cov <- gsub("HC",name_HC, HC_PC_imputed_dist$cov)
 HC_PC_dist$cov <- gsub("HC", name_HC, HC_PC_dist$cov)
 
 
@@ -170,5 +148,4 @@ HC_PC_dist_prop <- HC_PC_dist %>%
     mutate(sample = name)
 
 # export data table
-# write.table(HC_PC_dist_prop, file='~/Downloads/test.tsv', quote=FALSE, sep='\t', row.names = FALSE)
 write.table(HC_PC_dist_prop, file = snakemake@output[[2]], quote = FALSE, sep = "\t", row.names = FALSE)

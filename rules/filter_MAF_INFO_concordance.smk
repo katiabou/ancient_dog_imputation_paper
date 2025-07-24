@@ -51,13 +51,13 @@ rule maf_INFO_sites_concordance_phased:
     """
     input:
         ref_concordance_sample_excl_filltags_filter_maf_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz",
-        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.vcf.gz",
+        phased_vcf_annotate = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_{coverage_val}x.vcf.gz',
     output:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz",
     params:
         info=config["info_cutoff"],
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_{coverage_val}x_INFO_{info}_MAF_{maf}.vcf.gz.log",
     threads: 4
     shell:
         """
@@ -77,13 +77,13 @@ rule maf_INFO_sites_concordance_HC_phased:
     """
     input:
         ref_concordance_sample_excl_filltags_filter_maf_tsv="output/GLIMPSE_concordance/reference_panel/{chrom}_ref_panel_filltags_filter_MAF_{maf}.phased.tsv.gz",
-        phased_vcf_annotate="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}.vcf.gz",
+        phased_vcf_annotate = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}.vcf.gz',
     output:
-        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
+        phased_maf_info="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz",
     params:
         info=config["info_cutoff"],
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_INFO_{info}_MAF_{maf}.vcf.gz.log",
     threads: 4
     shell:
         """

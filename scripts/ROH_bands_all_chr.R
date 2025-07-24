@@ -15,8 +15,6 @@ library(ggplotify)
 # imputed dogs
 info <- read.delim(snakemake@input[[1]])
 roh <- read.csv(snakemake@input[[3]], sep = "")
-# info <- read.delim('~/Desktop/Copenhagen_PhD/files/IMPUTATION_2023/IMPUTATION_ROH_PAPER/files/Dog_Wolf_aDNA_WG-Master.tsv')
-# roh <- read.csv('~/Downloads/merged_phased.allchrom_MAF_0.01_INFO_0.8_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 
 colnames(info)[colnames(info) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(info)[colnames(info) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"
@@ -37,8 +35,6 @@ final$name_age <- paste(final$Sample, final$Age_Mean_BP, "bp", sep = "_")
 ##### reference panel selection of dogs:
 info_ref <- read.delim(snakemake@input[[2]])
 roh_ref <- read.csv(snakemake@input[[4]], sep = "")
-# info_ref <- read.delim('~/Desktop/Copenhagen_PhD/files/IMPUTATION_2023/IMPUTATION_ROH_PAPER/files/Dog_Wolf_aDNA_WG-Modern.tsv')
-# roh_ref <- read.csv('~/Downloads/ref-panel_allchrom_sample-snp_filltags_filter_all_sites_hom_win_het_1_dogwolf.hom', sep="")
 
 colnames(info_ref)[colnames(info_ref) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(info_ref)[colnames(info_ref) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"

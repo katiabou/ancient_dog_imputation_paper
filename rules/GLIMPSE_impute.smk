@@ -18,7 +18,7 @@ rule extract_chrom_ref_fast:
     Extract chromosome from fasta reference file
     """
     input:
-        ref_fasta=config["ref_fasta_file"],
+        ref_fasta="data/reference_fasta/canFam3_withY.fa",
     output:
         ref_fasta_chr="output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta",
         ref_fasta_chr_fai="output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta.fai",
@@ -64,7 +64,7 @@ rule compute_GLs_imputed_samples:
     Compute GLs of bams (do not need to extract exact chrom from bams)
     """
     input:
-        imputation_bams="samples/bam/{sample}_merged.bam",
+        imputation_bams=lambda wildcards: samples_df.loc[wildcards.sample, "bam_path"],
         ref_panel_sites_vcf="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.vcf.gz",
         ref_panel_sites_tsv="output/GLIMPSE_imputation/reference_panel/{chrom}_ref_panel_sites.tsv.gz",
         ref_fasta_chr="output/GLIMPSE_imputation/reference_genome/CanFam31_{chrom}.fasta",
@@ -107,16 +107,15 @@ rule chunk_spliting:
         """
 
 
-rule imput_phase:
+rule impute_phase:
     """
     Impute all samples individually
     """
     input:
         GL_imputed_bams="output/GLIMPSE_imputation/GLs_imputed_bams/{sample}_{chrom}.vcf.gz",
-        #ref_sample_snp_filltags_filter = "output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.vcf.gz",
         ref_panel_phased="output/reference_panel/ref-panel_{chrom}_sample-snp_filltags_filter.phased.vcf.gz",
         chunks="output/GLIMPSE_imputation/chunks/{chrom}_chunks.txt",
-        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.tsv",
+        gen_map="data/gen_map/{chrom}_average_canFam3.1_modified.txt",
     output:
         imputed="output/GLIMPSE_imputation/GLIMPSE_imputed/{sample}_imputed.{chrom}.00.bcf",
     params:

@@ -91,35 +91,35 @@ rule MAF_bins_sites_ref_pan:
         """
 
 
-rule prepare_merged_chr_list_ligated:
+rule prepare_merged_chr_list_phased:
     """ 
     Prepare list to merge chromosomes for imputed unfiltered
     """
     input:
         phased_vcf_annotate=expand(
-            "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.vcf.gz",
+            "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_{coverage_val}x.vcf.gz",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased/chr_list.{sample}_{coverage_val}x.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased/chr_list.{sample_con}_{coverage_val}x.txt",
     shell:
         """
         ls -v {input.phased_vcf_annotate} >> {output.chr_list}
         """
 
 
-rule merge_chr_concordance_ligated:
+rule merge_chr_concordance_phased:
     """
     Merge all chrom imputed unfiltered
     """
     input:
-        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased/chr_list.{sample}_{coverage_val}x.txt",
+        chr_list="output/GLIMPSE_concordance/GLIMPSE_phased/chr_list.{sample_con}_{coverage_val}x.txt",
     output:
-        phased_allchrom="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf",
-        phased_allchrom_csi="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf.csi",
+        phased_allchrom = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf',
+        phased_allchrom_csi = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf.csi'
     log:
-        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.log",
+        "output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.log",
     threads: 4
     shell:
         """
@@ -145,16 +145,16 @@ rule MAF_bins_sites_ref_pan_concordance_imputed:
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_05_0_1="output/GLIMPSE_concordance/reference_panel_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_05_0_1.tsv.gz",
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_1_0_2="output/GLIMPSE_concordance/reference_panel_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_1_0_2.tsv.gz",
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_2_0_5="output/GLIMPSE_concordance/reference_panel_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_2_0_5.tsv.gz",
-        phased_allchrom="output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf",
+        phased_allchrom = 'output/GLIMPSE_concordance/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf',
     output:
-        phased_maf_info_0_0_001="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
-        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
-        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
-        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
-        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
-        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
-        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
-        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
+        phased_maf_info_0_0_001="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
+        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
+        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
+        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
+        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
+        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
+        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
+        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
     params:
         info="{info_cutoff}",
     threads: 4
@@ -231,42 +231,42 @@ rule count_sites:
     Count number of sites per bin
     """
     input:
-        phased_maf_info_0_0_001="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
-        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
-        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
-        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
-        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
-        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
-        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
-        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
+        phased_maf_info_0_0_001="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
+        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
+        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
+        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
+        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
+        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
+        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
+        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
     output:
-        sample_file="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
+        sample_file="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
     threads: 4
     shell:
         """
         SITES=$(bcftools view -H {input.phased_maf_info_0_0_001} | wc -l)
-        echo {input.phased_maf_info_0_0_001} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES > {output.sample_file}
+        echo {input.phased_maf_info_0_0_001} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES > {output.sample_file}
         
         SITES=$(bcftools view -H {input.phased_maf_info_0_001_0_002} | wc -l)
-        echo {input.phased_maf_info_0_001_0_002} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_001_0_002} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
        
         SITES=$(bcftools view -H {input.phased_maf_info_0_002_0_005} | wc -l)
-        echo {input.phased_maf_info_0_002_0_005} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_002_0_005} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_005_0_01} | wc -l)
-        echo {input.phased_maf_info_0_005_0_01} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_005_0_01} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_01_0_05} | wc -l)
-        echo {input.phased_maf_info_0_01_0_05} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_01_0_05} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_05_0_1} | wc -l)
-        echo {input.phased_maf_info_0_05_0_1} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_05_0_1} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_1_0_2} | wc -l)
-        echo {input.phased_maf_info_0_1_0_2} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_1_0_2} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_2_0_5} | wc -l)
-        echo {input.phased_maf_info_0_2_0_5} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_2_0_5} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
         """
 
 
@@ -276,12 +276,12 @@ rule merge_counted_sites:
     """
     input:
         sample_file=expand(
-            "output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
+            "output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
             info_cutoff=INFO_CUTOFF,
             allow_missing=True,
         ),
     output:
-        sample_file_merge="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_all.txt",
+        sample_file_merge="output/GLIMPSE_concordance/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_all.txt",
     shell:
         """
         cat {input.sample_file} >> {output.sample_file_merge}
@@ -371,35 +371,35 @@ rule MAF_bins_sites_ref_pan_dogs_only:
         """
 
 
-rule prepare_merged_chr_list_ligated_only_dogs:
+rule prepare_merged_chr_list_phased_only_dogs:
     """ 
     Prepare list to merge chromosomes for imputed unfiltered
     """
     input:
         phased_vcf_annotate=expand(
-            "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample}_{chrom}_{coverage_val}x.vcf.gz",
+            "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample_con}_{chrom}_{coverage_val}x.vcf.gz",
             chrom=CHROM,
             allow_missing=True,
         ),
     output:
-        chr_list="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/chr_list.{sample}_{coverage_val}x.txt",
+        chr_list="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/chr_list.{sample_con}_{coverage_val}x.txt",
     shell:
         """
         ls -v {input.phased_vcf_annotate} >> {output.chr_list}
         """
 
 
-rule merge_chr_concordance_ligated_only_dogs:
+rule merge_chr_concordance_phased_only_dogs:
     """
     Merge all chrom imputed unfiltered
     """
     input:
-        chr_list="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/chr_list.{sample}_{coverage_val}x.txt",
+        chr_list="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/chr_list.{sample_con}_{coverage_val}x.txt",
     output:
-        phased_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf",
-        phased_allchrom_csi="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf.csi",
+        phased_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf",
+        phased_allchrom_csi="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf.csi",
     log:
-        "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.log",
+        "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.log",
     threads: 4
     shell:
         """
@@ -425,19 +425,19 @@ rule MAF_bins_sites_ref_pan_dogs_only_concordance_imputed:
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_05_0_1="output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_05_0_1.tsv.gz",
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_1_0_2="output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_1_0_2.tsv.gz",
         ref_concordance_sample_excl_filltags_filter_maf_tsv_0_2_0_5="output/GLIMPSE_concordance_only_dogs/reference_panel_only_dogs_MAF_bins/allchrom_ref_panel_filltags_filter_MAF_0_2_0_5.tsv.gz",
-        phased_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample}_allchrom_{coverage_val}x.bcf",
+        phased_allchrom="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased/phased_annotated.{sample_con}_allchrom_{coverage_val}x.bcf",
     output:
-        phased_maf_info_0_0_001="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
-        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
-        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
-        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
-        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
-        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
-        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
-        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
+        phased_maf_info_0_0_001="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
+        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
+        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
+        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
+        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
+        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
+        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
+        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
     params:
         info="{info_cutoff}",
-    threads: 4
+    threads: 8
     shell:
         """
         bcftools view {input.phased_allchrom} \
@@ -511,42 +511,42 @@ rule count_sites_dogs_only:
     Count number of sites per bin
     """
     input:
-        phased_maf_info_0_0_001="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
-        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
-        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
-        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
-        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
-        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
-        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
-        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
+        phased_maf_info_0_0_001="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_0_001.vcf.gz",
+        phased_maf_info_0_001_0_002="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_001_0_002.vcf.gz",
+        phased_maf_info_0_002_0_005="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_002_0_005.vcf.gz",
+        phased_maf_info_0_005_0_01="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_005_0_01.vcf.gz",
+        phased_maf_info_0_01_0_05="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_01_0_05.vcf.gz",
+        phased_maf_info_0_05_0_1="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_05_0_1.vcf.gz",
+        phased_maf_info_0_1_0_2="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_1_0_2.vcf.gz",
+        phased_maf_info_0_2_0_5="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}_MAF_0_2_0_5.vcf.gz",
     output:
-        sample_file="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
+        sample_file="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
     threads: 4
     shell:
         """
         SITES=$(bcftools view -H {input.phased_maf_info_0_0_001} | wc -l)
-        echo {input.phased_maf_info_0_0_001} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES > {output.sample_file}
+        echo {input.phased_maf_info_0_0_001} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES > {output.sample_file}
         
         SITES=$(bcftools view -H {input.phased_maf_info_0_001_0_002} | wc -l)
-        echo {input.phased_maf_info_0_001_0_002} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_001_0_002} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
        
         SITES=$(bcftools view -H {input.phased_maf_info_0_002_0_005} | wc -l)
-        echo {input.phased_maf_info_0_002_0_005} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_002_0_005} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_005_0_01} | wc -l)
-        echo {input.phased_maf_info_0_005_0_01} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_005_0_01} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_01_0_05} | wc -l)
-        echo {input.phased_maf_info_0_01_0_05} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_01_0_05} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_05_0_1} | wc -l)
-        echo {input.phased_maf_info_0_05_0_1} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_05_0_1} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_1_0_2} | wc -l)
-        echo {input.phased_maf_info_0_1_0_2} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_1_0_2} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
 
         SITES=$(bcftools view -H {input.phased_maf_info_0_2_0_5} | wc -l)
-        echo {input.phased_maf_info_0_2_0_5} {wildcards.sample} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
+        echo {input.phased_maf_info_0_2_0_5} {wildcards.sample_con} 'all_autosomes' {wildcards.coverage_val} {wildcards.info_cutoff} $SITES >> {output.sample_file}
         """
 
 
@@ -556,12 +556,12 @@ rule merge_counted_sites_dogs_only:
     """
     input:
         sample_file=expand(
-            "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
+            "output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_{info_cutoff}.txt",
             info_cutoff=INFO_CUTOFF,
             allow_missing=True,
         ),
     output:
-        sample_file_merge="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample}_allchrom_{coverage_val}x_INFO_all.txt",
+        sample_file_merge="output/GLIMPSE_concordance_only_dogs/GLIMPSE_phased_MAF_bins/phased_annotated.{sample_con}_allchrom_{coverage_val}x_INFO_all.txt",
     shell:
         """
         cat {input.sample_file} >> {output.sample_file_merge}

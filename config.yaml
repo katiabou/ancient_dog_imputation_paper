@@ -1,14 +1,6 @@
 # chr number
 chromosome_number: 38
 
-# path to reference panel
-# TODO make this a relative path
-reference_panel: '/projects/racimolab/people/qcj125/MUNICH_FILES/REFERENCE_MUNICH/PUBLISHABLE_VERSION/1701g_WildSled.SNP.INDEL.chrAll.vcf.gz'
-
-# reference fasta file
-# TODO check where this came from and make a rule to download and/or create this fasta file
-ref_fasta_file: '/projects/racimolab/people/qcj125/MUNICH_FILES/canFam3_withY.fa'
-
 # depth cutoff for individuals in reference panel
 depth_cutoff: 8
 

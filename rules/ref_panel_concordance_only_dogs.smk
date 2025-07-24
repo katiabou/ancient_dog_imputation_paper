@@ -86,7 +86,7 @@ rule filter_sites_concordance_only_dogs:
         "benchmarks/reference_panel_only_dogs/ref-panel_{chrom}_sample-snp_filltags_filter.phased.tsv"
     shell:
         """
-        bcftools view -i 'FILTER=="PASS" & F_MISSING<{params.f_missing}' {input.ref_sample_snp_filltags} \
+        bcftools view -i 'F_MISSING<{params.f_missing}' {input.ref_sample_snp_filltags} \
         --threads {threads} \
         -Oz -o {output.ref_sample_snp_filltags_filter} 2> {log}
 
