@@ -1,11 +1,11 @@
-Original_ID	bam_path	Coverage	Info	Dog_PCA	Wolf_Dog_PCA
-NGDG	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/NGDG_fullmerge_rmdup_rmdup_realgined_6_5_15.bam	28	Neolithic_Europe	European_Dogs	Dogs
-TRF.02.53	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/TRF.02.53_Merged.CanFam3.1Y.rmdup.bam	20.8	Historical_Siberia	Arctic_Dogs	Dogs
-PortauChoix	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/PortauChoix.CanFam3.1Y.rmdup.bam	19.6	North_America_pre-contact	preContact_Dogs	Dogs
-CGG33	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/CGG33.CanFam3.1Y.rmdup.bam	15.3	Pleistocene_wolf	Wolves	Pleistocene_wolf
-WolfHead	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/IN18_016.bam	13	Pleistocene_wolf	Wolves	Pleistocene_wolf
-CGG32	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/CGG32.CanFam3.1Y.rmdup.bam	14.5	Pleistocene_wolf	Wolves	Pleistocene_wolf
-TRF.05.05	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/TRF.05.05_Merged.CanFam3.1Y.rmdup.bam	11.8	Iron_Age_Siberia	Arctic_Dogs	Dogs
-SOTN01_merged	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED/SOTN01_merged_P8903_1005_S5_L005_1006_S6_L006_seqprep_reheader.bam	11.2	Neolithic_Europe	European_Dogs	Dogs
-FAMINGR00004	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED_MODERN/FAMINGR00004.realigned.bam	19	Village_dog_Nigeria	African_NearEast_India_Dogs	Dogs
-FAMICHN00012	/projects/racimolab/people/qcj125/MUNICH_FILES/PUBLISHED_BAMS/PUBLISHED_MODERN/FAMICHN00012.realigned.bam	17.8	Village_dog_China	East_Asian_Dogs	Dogs
+Original_ID	bam	Coverage	Info	Dog_PCA	Wolf_Dog_PCA	bam_path
+NGDG	NGDG_fullmerge_rmdup_rmdup_realgined_6_5_15.bam	28	Neolithic_Europe	European_Dogs	Dogs	data/samples/bams_concordance/NGDG_fullmerge_rmdup_rmdup_realgined_6_5_15.bam
+TRF.02.53	TRF.02.53_Merged.CanFam3.1Y.rmdup.bam	20.8	Historical_Siberia	Arctic_Dogs	Dogs	data/samples/bams_concordance/TRF.02.53_Merged.CanFam3.1Y.rmdup.bam
+PortauChoix	PortauChoix.CanFam3.1Y.rmdup.bam	19.6	North_America_pre-contact	preContact_Dogs	Dogs	data/samples/bams_concordance/PortauChoix.CanFam3.1Y.rmdup.bam
+CGG33	CGG33.CanFam3.1Y.rmdup.bam	15.3	Pleistocene_wolf	Wolves	Pleistocene_wolf	data/samples/bams_concordance/CGG33.CanFam3.1Y.rmdup.bam
+WolfHead	IN18_016.bam	13	Pleistocene_wolf	Wolves	Pleistocene_wolf	data/samples/bams_concordance/IN18_016.bam
+CGG32	CGG32.CanFam3.1Y.rmdup.bam	14.5	Pleistocene_wolf	Wolves	Pleistocene_wolf	data/samples/bams_concordance/CGG32.CanFam3.1Y.rmdup.bam
+TRF.05.05	TRF.05.05_Merged.CanFam3.1Y.rmdup.bam	11.8	Iron_Age_Siberia	Arctic_Dogs	Dogs	data/samples/bams_concordance/TRF.05.05_Merged.CanFam3.1Y.rmdup.bam
+SOTN01_merged	SOTN01_merged_P8903_1005_S5_L005_1006_S6_L006_seqprep_reheader.bam	11.2	Neolithic_Europe	European_Dogs	Dogs	data/samples/bams_concordance/SOTN01_merged_P8903_1005_S5_L005_1006_S6_L006_seqprep_reheader.bam
+FAMINGR00004	FAMINGR00004.realigned.bam	19	Village_dog_Nigeria	African_NearEast_India_Dogs	Dogs	data/samples/bams_concordance/FAMINGR00004.realigned.bam
+FAMICHN00012	FAMICHN00012.realigned.bam	17.8	Village_dog_China	East_Asian_Dogs	Dogs	data/samples/bams_concordance/FAMICHN00012.realigned.bam
