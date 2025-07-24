@@ -254,7 +254,7 @@ rule go_analysis_dogs:
         modern_roh_allchrom_sum = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_hom_win_het_{hom_win_het}_dogs.hom.summary',
         modern_roh_ind = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_chr1_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_hom_win_het_{hom_win_het}_dogs.hom.indiv',
         windows_cov_subset_allchrom = 'output/GLIMPSE_imputation/ROH_islands_deserts/window_depth/dogs_allchrom_windows_cov_500kb.txt',
-        DLA_regions = 'data/DLA_regions/dla_regions.tsv'
+        DLA_regions = 'data/dla_regions.tsv'
     output:
         cnv_freq_density = 'output/GLIMPSE_imputation/ROH_islands_deserts/CNV_windows/cnv_window_freq_density_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs.png',
         ROH_prev_cnv_freq = 'output/GLIMPSE_imputation/ROH_islands_deserts/CNV_windows/ROH_prevelance_cnv_freq_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_dogs.png',
@@ -279,7 +279,7 @@ rule go_analysis_wolves:
         modern_roh_allchrom_sum = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_allchrom_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_hom_win_het_{hom_win_het}_wolves.hom.summary',
         modern_roh_ind = 'output/GLIMPSE_imputation/ROH_ref_panel/ref-panel_chr1_sample-snp_filltags_filter_MAF_{maf_cutoff}_all_sites_hom_win_het_{hom_win_het}_wolves.hom.indiv',
         windows_cov_subset_allchrom = 'output/GLIMPSE_imputation/ROH_islands_deserts/window_depth/dogs_allchrom_windows_cov_500kb.txt',
-        DLA_regions = 'data/DLA_regions/dla_regions.tsv'
+        DLA_regions = 'data/dla_regions.tsv'
     output:
         cnv_freq_density = 'output/GLIMPSE_imputation/ROH_islands_deserts/CNV_windows/cnv_window_freq_density_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_wolves.png',
         ROH_prev_cnv_freq = 'output/GLIMPSE_imputation/ROH_islands_deserts/CNV_windows/ROH_prevelance_cnv_freq_{maf_cutoff}_INFO_{info}_all_sites_hom_win_het_{hom_win_het}_wolves.png',
