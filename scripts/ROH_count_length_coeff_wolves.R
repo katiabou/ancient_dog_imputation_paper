@@ -43,7 +43,7 @@ colnames(info_ref)[colnames(info_ref) == "Dog_PCA..European..Arctic.NA..East.Asi
 colnames(info_ref)[colnames(info_ref) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"
 
 # make new column without number in IDs
-colnames(info_ref)[3] <- "Sample"
+colnames(info_ref)[1] <- "Sample"
 colnames(roh_ref)[1] <- "Sample"
 
 # fix sample names which lost part of name in previous step:

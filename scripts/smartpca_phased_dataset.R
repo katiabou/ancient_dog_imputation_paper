@@ -25,7 +25,7 @@ canid_group <- as.character(snakemake@params[["canid_group"]])
 colnames(meta)[colnames(meta) == "Dog_PCA..European..Arctic.NA..East.Asia..Near.Eastern.Africa."] <- "Dog_PCA"
 colnames(meta)[colnames(meta) == "Wolf.Dog_PCA"] <- "Wolf_Dog_PCA"
 meta$Dog_PCA <- ifelse(meta$Dog_PCA == "Wolves", meta$Wolf_Dog_PCA, meta$Dog_PCA)
-ref_meta <- meta %>% select(Other_ID_2, Dog_PCA)
+ref_meta <- meta %>% select(Sample_Name, Dog_PCA)
 colnames(ref_meta) <- c("Sample", "Group")
 ref_meta$type <- "modern"
 
